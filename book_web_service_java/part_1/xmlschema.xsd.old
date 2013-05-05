@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns="http://www-users.cs.umn.edu/~saurabh/assignment6"
+targetNamespace="http://www-users.cs.umn.edu/~saurabh/assignment6" >
+
+ <xsd:annotation>
+         <xsd:documentation xml:lang="en">
+                     Book Schema
+          </xsd:documentation>
+ </xsd:annotation>
+
+ <!-- Complex Type definition -->
+ <xsd:complexType name="authorType" >
+        <xsd:sequence>
+                <xsd:element name="firstname" type="xsd:string" />
+                <xsd:element name="lastname" type="xsd:string" />
+        </xsd:sequence>
+        <xsd:choice>
+                <xsd:attribute ref="personTitle" />
+                <xsd:attribute ref="title" />
+        </xsd:choice>
+ </xsd:complexType>
+
+ <!-- Simple Type definition -->
+ <xsd:simpleType name="titleType" >
+          <xsd:restriction base="xsd:string" >
+                <xsd:enumeration value="Doctor" />
+                <xsd:enumeration value="Professor" />
+          </xsd:restriction>
+ </xsd:simpleType>
+
+ <xsd:simpleType name="isbnType">
+        <xsd:restriction base="xsd:string">
+                <xsd:pattern value="[0-9]{3}[-][0-9]{5}" />
+        </xsd:restriction>
+ </xsd:simpleType>
+
+ <xsd:simpleType name="priceType" >
+        <xsd:restriction base="xsd:string">
+		<xsd:pattern value="[1-9]([0-9])?([0-9])?[.][0-9]{2}" />
+        </xsd:restriction>
+ </xsd:simpleType>
+
+ <xsd:simpleType name="yearType">
+        <xsd:restriction base="xsd:integer">
+                <xsd:minInclusive value="1900" />
+                <xsd:maxInclusive value="2020" />
+        </xsd:restriction>
+ </xsd:simpleType>
+
+ <xsd:simpleType name="editionNumber" >
+        <xsd:restriction base="xsd:integer">
+                <xsd:minInclusive value="1" />
+                <xsd:maxInclusive value="10" />
+        </xsd:restriction>
+ </xsd:simpleType>
+
+ <xsd:simpleType name="coverType" >
+          <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="Hardcover" />
+                <xsd:enumeration value="Paperback" />
+          </xsd:restriction>
+ </xsd:simpleType>
+
+ <xsd:complexType name="bookType" >
+        <xsd:sequence>
+                <xsd:element name="title" type="xsd:string" />
+                <xsd:element name="author" type="authorType" maxOccurs="3" />
+                <xsd:element name="description" type="xsd:string" minOccurs="0" />
+                <xsd:element name="isbn" type="isbnType" />
+                <xsd:element name="price" type="priceType" />
+                <xsd:element name="publisher" type="xsd:string" />
+                <xsd:element name="year" type="yearType" minOccurs="0" />
+                <xsd:element name="edition" type="editionNumber" minOccurs="0" />
+        </xsd:sequence>
+        <xsd:attribute ref="id" />
+        <xsd:attribute ref="cover" />
+ </xsd:complexType>
+
+ <!-- Definition of attributes -->
+ <xsd:attribute name="id" type="xsd:ID" />
+ <xsd:attribute name="cover" type="coverType" />
+ <xsd:attribute name="personTitle" type="titleType" />
+ <xsd:attribute name="title" type="titleType" />
+
+ <xsd:element name="book" type="bookType" />
+</xsd:schema>
+

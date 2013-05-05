@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://axis/BookWebService" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://axis/BookWebService" xmlns:intf="http://axis/BookWebService" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://axis/BookWebService" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_soapenc_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="soapenc:string[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getEditionByISBNRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getEditionByTitleRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getTitlesResponse">
+
+      <wsdl:part name="getTitlesReturn" type="impl:ArrayOf_soapenc_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPriceByTitleResponse">
+
+      <wsdl:part name="getPriceByTitleReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getEditionByISBNResponse">
+
+      <wsdl:part name="getEditionByISBNReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAuthorsByISBNResponse">
+
+      <wsdl:part name="getAuthorsByISBNReturn" type="impl:ArrayOf_soapenc_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getEditionByTitleResponse">
+
+      <wsdl:part name="getEditionByTitleReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getTitlesRequest">
+
+      <wsdl:part name="in0" type="impl:ArrayOf_soapenc_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getTitleResponse">
+
+      <wsdl:part name="getTitleReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPublisherByTitleRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getTitleRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAuthorsByTitleResponse">
+
+      <wsdl:part name="getAuthorsByTitleReturn" type="impl:ArrayOf_soapenc_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPublisherByTitleResponse">
+
+      <wsdl:part name="getPublisherByTitleReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPriceByISBNResponse">
+
+      <wsdl:part name="getPriceByISBNReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getISBNRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPublisherByISBNResponse">
+
+      <wsdl:part name="getPublisherByISBNReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAuthorsByTitleRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPublicationYearByISBNResponse">
+
+      <wsdl:part name="getPublicationYearByISBNReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getBooksResponse">
+
+      <wsdl:part name="getBooksReturn" type="impl:ArrayOf_soapenc_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPriceByTitleRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPriceByISBNRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getISBNResponse">
+
+      <wsdl:part name="getISBNReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getBooksRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPublicationYearByISBNRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPublisherByISBNRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPublicationYearByTitleResponse">
+
+      <wsdl:part name="getPublicationYearByTitleReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAuthorsByISBNRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getPublicationYearByTitleRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="BookWebServicePortType">
+
+      <wsdl:operation name="getBooks" parameterOrder="in0">
+
+         <wsdl:input message="impl:getBooksRequest" name="getBooksRequest"/>
+
+         <wsdl:output message="impl:getBooksResponse" name="getBooksResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getISBN" parameterOrder="in0">
+
+         <wsdl:input message="impl:getISBNRequest" name="getISBNRequest"/>
+
+         <wsdl:output message="impl:getISBNResponse" name="getISBNResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAuthorsByTitle" parameterOrder="in0">
+
+         <wsdl:input message="impl:getAuthorsByTitleRequest" name="getAuthorsByTitleRequest"/>
+
+         <wsdl:output message="impl:getAuthorsByTitleResponse" name="getAuthorsByTitleResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPublisherByTitle" parameterOrder="in0">
+
+         <wsdl:input message="impl:getPublisherByTitleRequest" name="getPublisherByTitleRequest"/>
+
+         <wsdl:output message="impl:getPublisherByTitleResponse" name="getPublisherByTitleResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getEditionByTitle" parameterOrder="in0">
+
+         <wsdl:input message="impl:getEditionByTitleRequest" name="getEditionByTitleRequest"/>
+
+         <wsdl:output message="impl:getEditionByTitleResponse" name="getEditionByTitleResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPriceByTitle" parameterOrder="in0">
+
+         <wsdl:input message="impl:getPriceByTitleRequest" name="getPriceByTitleRequest"/>
+
+         <wsdl:output message="impl:getPriceByTitleResponse" name="getPriceByTitleResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPublicationYearByTitle" parameterOrder="in0">
+
+         <wsdl:input message="impl:getPublicationYearByTitleRequest" name="getPublicationYearByTitleRequest"/>
+
+         <wsdl:output message="impl:getPublicationYearByTitleResponse" name="getPublicationYearByTitleResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getTitles" parameterOrder="in0">
+
+         <wsdl:input message="impl:getTitlesRequest" name="getTitlesRequest"/>
+
+         <wsdl:output message="impl:getTitlesResponse" name="getTitlesResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAuthorsByISBN" parameterOrder="in0">
+
+         <wsdl:input message="impl:getAuthorsByISBNRequest" name="getAuthorsByISBNRequest"/>
+
+         <wsdl:output message="impl:getAuthorsByISBNResponse" name="getAuthorsByISBNResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPublisherByISBN" parameterOrder="in0">
+
+         <wsdl:input message="impl:getPublisherByISBNRequest" name="getPublisherByISBNRequest"/>
+
+         <wsdl:output message="impl:getPublisherByISBNResponse" name="getPublisherByISBNResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getEditionByISBN" parameterOrder="in0">
+
+         <wsdl:input message="impl:getEditionByISBNRequest" name="getEditionByISBNRequest"/>
+
+         <wsdl:output message="impl:getEditionByISBNResponse" name="getEditionByISBNResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPriceByISBN" parameterOrder="in0">
+
+         <wsdl:input message="impl:getPriceByISBNRequest" name="getPriceByISBNRequest"/>
+
+         <wsdl:output message="impl:getPriceByISBNResponse" name="getPriceByISBNResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPublicationYearByISBN" parameterOrder="in0">
+
+         <wsdl:input message="impl:getPublicationYearByISBNRequest" name="getPublicationYearByISBNRequest"/>
+
+         <wsdl:output message="impl:getPublicationYearByISBNResponse" name="getPublicationYearByISBNResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getTitle" parameterOrder="in0">
+
+         <wsdl:input message="impl:getTitleRequest" name="getTitleRequest"/>
+
+         <wsdl:output message="impl:getTitleResponse" name="getTitleResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="BookWebServiceSoapBinding" type="impl:BookWebServicePortType">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getBooks">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getBooksRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getBooksResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getISBN">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getISBNRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getISBNResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAuthorsByTitle">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAuthorsByTitleRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAuthorsByTitleResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPublisherByTitle">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getPublisherByTitleRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getPublisherByTitleResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getEditionByTitle">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getEditionByTitleRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getEditionByTitleResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPriceByTitle">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getPriceByTitleRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getPriceByTitleResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPublicationYearByTitle">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getPublicationYearByTitleRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getPublicationYearByTitleResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getTitles">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getTitlesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getTitlesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAuthorsByISBN">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAuthorsByISBNRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAuthorsByISBNResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPublisherByISBN">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getPublisherByISBNRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getPublisherByISBNResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getEditionByISBN">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getEditionByISBNRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getEditionByISBNResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPriceByISBN">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getPriceByISBNRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getPriceByISBNResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getPublicationYearByISBN">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getPublicationYearByISBNRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getPublicationYearByISBNResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getTitle">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getTitleRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getTitleResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://axis/BookWebService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="BookWebServicePortTypeService">
+
+      <wsdl:port binding="impl:BookWebServiceSoapBinding" name="BookWebService">
+
+         <wsdlsoap:address location="http://swedishchef.cs.umn.edu:8080/axis/BookWebService.jws"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

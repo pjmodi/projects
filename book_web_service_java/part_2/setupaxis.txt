@@ -1,0 +1,36 @@
+module load java/mysql-connector
+module load soft/mysql
+
+#1st step:
+setenv  AXIS_HOME /home/grad05/modi/TOMCAT/apache-tomcat-6.0.18/webapps/axis
+
+#2nd step:
+setenv AXIS_LIB $AXIS_HOME/WEB-INF/lib
+
+#3rd step:
+setenv  AXISCLASSPATH ${AXIS_LIB}/axis.jar:${AXIS_LIB}/axis-ant.jar:${AXIS_LIB}/commons-discovery-0.2.jar:${AXIS_LIB}/commons-logging-1.0.4.jar:${AXIS_LIB}/jaxrpc.jar:${AXIS_LIB}/log4j-1.2.8.jar:${AXIS_LIB}/saaj.jar:${AXIS_LIB}/wsdl4j-1.5.1.jar
+
+#4th step:
+setenv CLASSPATH ${CLASSPATH}:${AXIS_LIB}/axis.jar:${AXIS_LIB}/axis-ant.jar:${AXIS_LIB}/commons-discovery-0.2.jar:${AXIS_LIB}/commons-logging-1.0.4.jar:${AXIS_LIB}/jaxrpc.jar:${AXIS_LIB}/log4j-1.2.8.jar:${AXIS_LIB}/saaj.jar:${AXIS_LIB}/wsdl4j-1.5.1.jar:/home/grad05/modi/TOMCAT/apache-tomcat-6.0.18/webapps/ROOT:${AXIS_LIB}/mysql-connector-java-5.1.7-bin.jar
+
+# Go to the axis directory
+cd /home/grad05/modi/TOMCAT/apache-tomcat-6.0.18/webapps/axis/
+
+# Create the WSDL file so that the client can use it
+java -cp .:$AXISCLASSPATH org.apache.axis.wsdl.Java2WSDL -l http://swedishchef.cs.umn.edu:8080/axis/BookWebService.jws -n http://axis/BookWebService BookWebServicePortType -o BookWebService.wsdl
+
+# These commands are for the client side. We assume that the client is being run from the Home Directory
+cp BookWebService.wsdl ~/.		# Copy the file
+cd ~				
+rm -rf axis/BookWebService		# Delete if it exists
+java -cp $AXISCLASSPATH org.apache.axis.wsdl.WSDL2Java BookWebService.wsdl	# Create Java files from WSDL and compile
+cd axis/BookWebService
+javac -cp $AXISCLASSPATH *.java
+cd ..
+cp -r BookWebService/ ~/Desktop/A6/axis/
+cd ~/Desktop/A6
+
+javac -cp .:$AXISCLASSPATH BookClientStub.java
+java -cp .:$AXISCLASSPATH BookClientStub getBooks "Sevak Ram"
+javac -cp .:$AXISCLASSPATH BookClientDynamic.java
+java -cp .:$AXISCLASSPATH BookClientDynamic getBooks "Sevak Ram"

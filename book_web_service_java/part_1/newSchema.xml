@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<book  xmlns="http://www-users.cs.umn.edu/~saurabh/assignment6"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www-users.cs.umn.edu/~saurabh/assignment6 
+      http://www-users.cs.umn.edu/~saurabh/assignment6/xmlschema.xsd"
+       id="A123"   cover="Hardcover" >
+  <title>Introduction to WSDL</title>
+  <author personTitle="Professor">
+     <firstname>Walter</firstname>
+     <lastname>Webb</lastname>
+  </author>
+
+  <description>This is about XML and WSDL</description>
+  <isbn>123-45678</isbn> 
+  <price>219.99</price> 
+  <publisher> IBM  </publisher>
+  <edition>  5 </edition> 
+</book>

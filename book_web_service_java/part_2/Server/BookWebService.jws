@@ -1,0 +1,374 @@
+import java.sql.*;
+import java.util.ArrayList;
+
+
+// See the parsing concept to handle multiple authors for same book
+
+public class BookWebService{
+ 
+	Connection conn = null;
+	public BookWebService(){
+		System.out.println("MySQL Connect Example.");
+	    String url = "jdbc:mysql://db.itlabs.umn.edu:3311/";
+	    String dbName = "c5131s09u32";
+	    String driver = "com.mysql.jdbc.Driver";
+	    String userName = "c5131s09u32"; 
+	    String password = "saurabh";	
+	    try {
+	        Class.forName(driver).newInstance();
+	        System.out.println("Connected to the database");
+	        conn = DriverManager.getConnection(url+dbName,userName,password);
+	        System.out.println("Connected to the database");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	   	}	
+	}
+		
+/*	public static void main(String[] args) {
+    
+		BookWebService servicehandle = new BookWebService();
+		servicehandle.getBooks("Dr. Pushkar Modi");
+	}
+*/
+ public String[] getBooks(String author){
+
+          BookWebService servicehandle= new BookWebService();
+          ArrayList<String> books = new ArrayList<String>();
+          ResultSet rs;
+          Statement s;
+          String booktitle = new String();
+          int count = 0;
+
+          try {
+                  s = conn.createStatement();
+                  s.executeQuery ("SELECT Title FROM BookTable where Author = '" + author + "'");
+                  rs = s.getResultSet ();
+                  count = 0;
+                  while (rs.next ())
+                  {
+                     booktitle = rs.getString("Title");
+                        System.out.println (
+              "Title:" + booktitle);
+                        books.add(booktitle);
+                        ++count;
+                  }
+                  rs.close ();
+                  s.close ();
+          }catch(Exception e){
+                e.printStackTrace();
+          }
+          System.out.println (count + " books were retrieved");
+
+          return books.toArray(new String[0]);
+         }
+
+  
+  public String getISBN(String title){
+	  
+	  String isbnnumber = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT ISBN FROM BookTable where Title = '" + title + "'");
+		  rs = s.getResultSet();
+		  if(rs.next())	{
+		  	isbnnumber = rs.getString("ISBN");
+			  System.out.println (
+              "ISBN number is:" + isbnnumber);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return isbnnumber;
+  }
+  
+  public String [] getAuthorsByTitle(String title){
+	  
+	  String [] authors = null;
+	  ResultSet rs;
+	  Statement s;
+	  String authorname = new String();
+	  int count = 0;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Author FROM BookTable where Title = '" + title + "'");
+		  rs = s.getResultSet ();
+		  count = 0;
+		  if (rs.next ())
+			  {
+				 authorname = rs.getString("Author");
+				System.out.println (
+	              "Author:" + authorname);
+		      		authors = authorname.split("-");
+				++count;
+			  }
+		   rs.close ();
+		   s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }
+  	 
+  	 return authors;
+  }
+  
+  public String getPublisherByTitle(String title){
+	  
+	  String publisher = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Publisher FROM BookTable where Title = '" + title + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  publisher = rs.getString("Publisher");
+			  System.out.println (
+              "publisher of this book is:" + publisher);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return publisher; 
+  }
+  
+  public String getEditionByTitle(String title){
+	  
+	  String edition = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Edition FROM BookTable where Title = '" + title + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  edition = rs.getString("Edition");
+			  System.out.println (
+              "Edition of book is:" + edition);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return edition; 
+  }
+  
+  public String getPriceByTitle(String title){
+
+	  String price = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Price FROM BookTable where Title = '" + title + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  price = rs.getString("Price");
+			  System.out.println (
+              "Price of book is:" + price);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return price; 
+  }
+  
+  public String getPublicationYearByTitle(String title){
+	
+	  String publicationYear = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Year FROM BookTable where Title = '" + title + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  publicationYear = rs.getString("Year");
+			  System.out.println (
+              "Price of book is:" + publicationYear);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return publicationYear;
+  }
+  
+  public String getTitle(String isbn){
+		
+	  String booktitle = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Title FROM BookTable where ISBN = '" + isbn + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  booktitle = rs.getString("Title");
+			  System.out.println (
+              "Title of book is:" + booktitle);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return booktitle;
+  }
+  
+  public String[] getTitles(String[] isbn){
+	  
+	  ArrayList<String> titles = new ArrayList<String>();
+	  ResultSet rs;
+	  Statement s;
+	  String booktitle = new String();
+	  int i = 0;
+	  try {  
+		  while ( i < isbn.length){
+		  
+			  s = conn.createStatement();
+			  s.executeQuery ("SELECT Title FROM BookTable where ISBN = '" + isbn[i] + "'");
+			  rs = s.getResultSet ();
+			  if (rs.next()){
+				  booktitle = rs.getString("Title");
+				  System.out.println (
+						  "BookTitle:" + booktitle);
+				  titles.add(booktitle);
+				  ++i;
+			  }
+			  rs.close ();
+			  s.close ();
+		  } 
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }
+	  System.out.println (i + " Titles were retrieved");
+	  return titles.toArray(new String[0]);
+  }
+  
+  public String[] getAuthorsByISBN(String isbn){
+	  
+ 	  String [] authors = null;
+	  ResultSet rs;
+	  Statement s;
+	  String authorname = new String();
+	  int i = 0;
+	  try {  
+		 s = conn.createStatement();
+		 s.executeQuery ("SELECT Author FROM BookTable where ISBN = '" + isbn + "'");
+		 rs = s.getResultSet ();
+		 if (rs.next()){
+			 authorname = rs.getString("Author");
+				  System.out.println (
+						  "AuthorName:" + authorname);
+				  authors = authorname.split("-");
+				  ++i;
+		}
+		 rs.close ();
+		 s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }
+	//  System.out.println (i + " Titles were retrieved");
+	//  return authors.toArray(new String[0]);
+  	return authors;
+  }
+  
+  public String getPublisherByISBN(String isbn){
+	  
+	  String publisher = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Publisher FROM BookTable where ISBN = '" + isbn + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  publisher = rs.getString("Publisher");
+			  System.out.println (
+              "publisher of this book is:" + publisher);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return publisher; 
+  }
+  
+  public String getEditionByISBN(String isbn){
+	  
+	  String edition = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Edition FROM BookTable where ISBN = '" + isbn + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  edition = rs.getString("Edition");
+			  System.out.println (
+              "Edition of book is:" + edition);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return edition; 
+  }
+  
+  public String getPriceByISBN(String isbn){
+
+	  String price = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Price FROM BookTable where ISBN = '" + isbn + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  price = rs.getString("Price");
+			  System.out.println (
+              "Price of book is:" + price);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return price; 
+  }
+  
+  public String getPublicationYearByISBN(String isbn){
+	
+	  String publicationYear = new String();
+	  ResultSet rs;
+	  Statement s;
+	  try {  
+		  s = conn.createStatement();
+		  s.executeQuery ("SELECT Year FROM BookTable where ISBN = '" + isbn + "'");
+		  rs = s.getResultSet ();
+		  if (rs.next()){
+			  publicationYear = rs.getString("Year");
+			  System.out.println (
+              "Price of book is:" + publicationYear);
+			  rs.close ();
+		  }
+		  s.close ();
+	  }catch(Exception e){
+		e.printStackTrace();		
+	  }  
+	  return publicationYear;
+  }
+  
+}
+

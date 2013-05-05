@@ -1,0 +1,18 @@
+INSERT INTO BookTable (ISBN, Title, Author, Year, Price, Edition, Publisher, Description )
+VALUES( 0130923613, 'Python How to Program', 'Dr. Pushkar Modi', '1900', '69.99', '3.0', 'Tata Mcgra Hills', 'Python man Python');
+
+INSERT INTO BookTable (ISBN, Title, Author, Year, Price, Edition, Publisher, Description)
+VALUES (0130622214, 'C# How to Program', 'Dr. John Riedl', '2002', '69.95', '1.0', 'Manik Chand Gutka', 'Leanring C#..hmm');
+
+
+INSERT INTO BookTable (ISBN, Title, Author, Year, Price, Edition, Publisher, Description)
+VALUES  (0130341517, 'Java How to Program', 'Sevak Ram', '1986', '79.99', '1.0', 'Chintu publishers', 'Leanring Java');
+
+
+INSERT INTO BookTable (ISBN, Title, Author, Year, Price, Edition, Publisher, Description)
+VALUES  (0130308978, 'Internet and WWW How to Program', 'Dr. Anand Tripathi', '2002', '15.55', '6.0', 'Totaram publisher', 'Leanring Internet.. hehe');
+
+
+INSERT INTO BookTable (ISBN, Title, Author, Year, Price, Edition, Publisher, Description)
+VALUES  (0130308979, 'Internet', 'Dr. Anand Tripathi', '2002', '15.55', '6.0', 'Totaram publisher', 'Leanring Internet.. hehe');
+

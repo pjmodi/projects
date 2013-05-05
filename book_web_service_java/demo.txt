@@ -1,0 +1,3 @@
+http://www-users.cs.umn.edu/~saurabh/assignment6/xmlschema.xsd
+
+mysql -u c5131s09u32 -hdb.itlabs.umn.edu -P3311 -p c5131s09u32 
