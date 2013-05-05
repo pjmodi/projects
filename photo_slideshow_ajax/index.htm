@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>CSci 5131: Assignment 2</title>
+<link href="includes/a2.css" rel="stylesheet" type="text/css" />
+<script src="includes/slideshow.js" language="JavaScript" type="text/javascript"></script>
+<script src="includes/sync.js" language="JavaScript" type="text/javascript"></script>
+</head>
+<body onload="showInfo();">
+<table width="950" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td colspan="2"><form id="form1" name="form1" method="post" action="">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="30%"><input name="btnStart" onclick="first();" type="button" id="btnStart" value="Start" disabled="disabled" />
+              <input name="btnNext" onclick="next();" type="button" id="btnNext" value="Next" />
+              <input name="btnPrevious" onclick="previous();" type="button" id="btnPrevious" value="Previous" /></td>
+            <td>Show Information
+              <select name="mnuInfoType" id="mnuInfoType" onchange="showInfo();">
+                <option selected="selected" value="optNone">None</option>
+                <option value="optArch">Architect</option>
+                <option value="optYear">Year</option>
+                <option value="optDesc">Description</option>
+              </select>
+            </td>
+            <td width="35%"><div align="right">
+                <input name="btnStartShow" onclick="startShow();" type="button" id="btnStartShow" value="Start Slide Show" />
+                <input name="btnStopShow" onclick="stopShow();"  type="button" id="btnStopShow" value="Stop Slide Show" disabled="disabled"/>
+              </div></td>
+          </tr>
+        </table>
+      </form>
+      <hr /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><script language="JavaScript" type="text/javascript">initShow();</script>
+      <hr /><br />
+    </td>
+  </tr>
+  <tr>
+    <td width="55%"><img id="imgSlide" src="images/img_00.jpg" width="500" height="300" /></td>
+    <td valign="top"><table class="info" width="100%" border="0" cellspacing="10" cellpadding="0">
+      <tr>
+        <td>Image Information</td>
+      </tr>
+      <tr>
+        <td id="bldgName">&nbsp;</td>
+      </tr>
+      <tr>
+        <td id="bldgInfo">&nbsp;</td>
+      </tr>
+    </table>	</td>
+  </tr>
+</table>
+</body>
+</html>
