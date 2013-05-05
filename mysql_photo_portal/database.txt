@@ -1,0 +1,71 @@
+#Database contains 3 tables:
+1.	LOGIN_TABLE
+2.	SESSION_TABLE
+3.	PhotoFileList
+
+#Structure of each table is shown below.
+
+mysql> describe LOGIN_TABLE
+    -> ;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| loginname | varchar(30) | NO   | PRI |         |       |
+| password  | varchar(30) | YES  |     | NULL    |       |
+| role      | varchar(10) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+
+
+mysql> describe SESSION_TABLE;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| sessionID | varchar(40) | NO   | PRI |         |       |
+| role      | varchar(10) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+
+
+mysql> describe PhotoFileList;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| id        | varchar(20)  | NO   | PRI |         |       |
+| fname     | varchar(50)  | NO   |     |         |       |
+| title     | varchar(100) | YES  |     | NULL    |       |
+| category  | varchar(20)  | NO   |     |         |       |
+| descfile  | varchar(20)  | YES  |     | NULL    |       |
+| loginname | varchar(30)  | NO   |     |         |       |
++-----------+--------------+------+-----+---------+-------+
+
+
+LOGIN_TABLE and PhotoFileList are self-explanatory. 
+SESSION_TABLE is used to store the cookies. 
+Corresponding cookie is deleted whenever user logs out of session.
+
+
+########SAMPLE DATA####################
+Some sample data is as follows. You can use this to verify output.
+mysql> select * from LOGIN_TABLE;
++-----------+----------+---------+
+| loginname | password | role    |
++-----------+----------+---------+
+| owner     | owner    | Owner   |
+| o         | o        | Owner   |
+| v         | v        | Visitor |
+| e         | e        | Editor  |
+| X         | X        | Owner   |
+| editor    | editor   | Editor  |
++-----------+----------+---------+
+
+mysql> select * from PhotoFileList;
++-------+------------+---------------+-----------+----------+-----------+
+| id    | fname      | title         | category  | descfile | loginname |
++-------+------------+---------------+-----------+----------+-----------+
+| img_1 | img_1.jpg  | img 1         | Landscape | desc.txt | e         |
+| img_3 | img_6.jpg  | Photo 6       | Nature    | desc.txt | o         |
+| img_2 | img_4.jpg  | Test          | Nature    | desc.txt | o         |
+| img_0 | img_10.jpg | Uploaded by o | Nature    | desc.txt | o         |
+| img_4 | img_8.jpg  | Photo 8       | Campus    | desc.txt | o         |
+| img_5 | img_5.jpg  | Campus 5      | Campus    | desc.txt | o         |
++-------+------------+---------------+-----------+----------+-----------+
+

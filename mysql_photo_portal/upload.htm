@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<body>
+<form action="upload.cgi" method="post" enctype="multipart/form-data">
+  <table width="350" border="0" cellspacing="10" cellpadding="0">
+    <tr>
+      <td width="100">File</td>
+      <td ><input name="file" type="file" onchange="return checkExtension(this)" value="" size="30"/></td>
+    </tr>
+    <tr>
+      <td>Title</td>
+      <td><input name="title" type="text" id="title" size="42" /></td>
+    </tr>
+    <tr>
+      <td>Category</td>
+      <td><select name="category" id="selCatUpload">
+        <option value="Nature" selected="selected">Nature</option>
+        <option value="Landscape">Landscape</option>
+        <option value="Personal">Personal</option>
+        <option value="Campus">Campus</option>
+        <option value="Work">Work</option>
+        </select>
+      </td>
+    </tr>	
+    <tr>
+      <td valign="top">Description</td>
+      <td><textarea name="desc" cols="32" rows="4" id="desc"></textarea></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+      <input type="hidden" name="user" id="userName" />
+      <input id="btnSubmit" type="submit" name="btnSubmit" value="Upload" disabled="disabled" />
+        <input name="btnReset" type="reset" id="btnReset" value="Reset" />
+        <input onclick="addUploadLink();" name="btnCancel" type="button" id="btnCancel" value="Cancel" /></td>
+    </tr>
+  </table>
+</form>
+</body>
+</html>

@@ -1,0 +1,36 @@
+BODY {
+	padding: 0px;
+	margin: 0px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+	font-family: Verdana, Arial, Tahoma, sans-serif;
+	color: #333333;
+	font-size: 12px;
+	}
+
+HR	{
+	height: 1px;
+	color: #DDDDDD;
+	}
+
+/*******************************************************************************/
+
+P.redtxt {
+	color: #FF0000;
+}
+
+IMG.noborder {
+	border: 2px solid #FFFFFF;
+	margin: 10px;
+	cursor: pointer;
+}
+
+IMG.redborder {
+	border: 2px solid #FF0000;
+	margin: 10px;	
+	cursor: default;
+}
+
+TABLE.info	{
+	font-size: 14px;
+	}
