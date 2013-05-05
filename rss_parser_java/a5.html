@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+	 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<title>CSci 5131: Assignment 5</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+<body bgcolor="white">
+<form method="get" action="/examples/servlets/servlet/RSSView" name="RSS-Form">
+
+<p> PLEASE SELECT ONE OR MORE SOURCES OF RSS FEED <br>
+<select name="RssFeeds" size="4" multiple="multiple">
+<option value="CNN">CNN</option>
+<option value="ABC">ABC</option>
+<option value="NBC">NBC</option>
+<option value="BBC">BBC</option>
+</select>
+</p>
+
+<p> Please enter one or more words using which you want to select newsitems. <br>
+Search Terms <input type="text" name="searchwords"  size="100" maxlength="200" />
+</p>
+
+<p>Indicate if search should match ANY or ALL words in your list
+<label><input type="radio" name="searchmode" value="ANY" checked="checked" />ANY</label>
+<label><input type="radio" name="searchmode" value="ALL" />ALL</label>
+</p>
+ 
+<input type="submit" value="Submit" />
+<input type="reset" value="Reset" />
+</form>
+</body>
+</html>
