@@ -1,0 +1,37 @@
+﻿<Page x:Class="AlzUI.SendMessage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="SendMessage"
+    >
+  <Page.Resources>
+    <Style TargetType="{x:Type Button}">
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="FontSize" Value="40" />
+      <Setter Property="Foreground" Value="Black" />
+    </Style>
+  </Page.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="70" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="180" />
+    </Grid.RowDefinitions>
+
+    <TextBlock Padding="20" FontSize="40" TextAlignment="Center" Grid.Row="0" Background="Beige" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Stretch" >
+      Use Your Finger To Paint On The White Canvas
+    </TextBlock>
+  
+  <InkCanvas Grid.Row="1">
+    <InkCanvas.DefaultDrawingAttributes>
+      <DrawingAttributes Color="Red" Width="5" FitToCurve="True" />
+    </InkCanvas.DefaultDrawingAttributes>
+  </InkCanvas>
+
+  <Button Background="DarkSlateGray" Foreground="White" Grid.Row="2" Click="Return_Click" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+    Touch Here To Return To The Fun Page
+  </Button>
+    
+  </Grid>
+</Page>

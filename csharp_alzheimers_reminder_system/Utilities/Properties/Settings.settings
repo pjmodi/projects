@@ -1,0 +1,36 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Properties.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FromEmail" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">modix018@umn.edu</Value>
+    </Setting>
+    <Setting Name="FromEmailDisplayText" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">AlzKiosk</Value>
+    </Setting>
+    <Setting Name="ToEmail" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">modi@cs.umn.edu</Value>
+    </Setting>
+    <Setting Name="ToEmailDisplayText" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Caregiver</Value>
+    </Setting>
+    <Setting Name="SmtpServer" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">smtp.gmail.com</Value>
+    </Setting>
+    <Setting Name="SmtpPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">587</Value>
+    </Setting>
+    <Setting Name="SmtpUsername" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">pushkar.umn@gmail.com</Value>
+    </Setting>
+    <Setting Name="SmtpSSLEnabled" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SubjectPrefix" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">[AlzUI]</Value>
+    </Setting>
+    <Setting Name="SmtpPassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Scuderia21</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

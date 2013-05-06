@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlzUI", "AlzUI\AlzUI.csproj", "{75EF3761-FBA6-4FC1-AB78-9F6CC952D475}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Utilities.csproj", "{388E02A2-9994-4356-8F57-57396B75DCAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75EF3761-FBA6-4FC1-AB78-9F6CC952D475}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75EF3761-FBA6-4FC1-AB78-9F6CC952D475}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75EF3761-FBA6-4FC1-AB78-9F6CC952D475}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75EF3761-FBA6-4FC1-AB78-9F6CC952D475}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F947720E-D73D-435B-BA37-87C705A6A891}.Debug|Any CPU.ActiveCfg = Debug
+		{F947720E-D73D-435B-BA37-87C705A6A891}.Release|Any CPU.ActiveCfg = Release
+		{388E02A2-9994-4356-8F57-57396B75DCAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{388E02A2-9994-4356-8F57-57396B75DCAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{388E02A2-9994-4356-8F57-57396B75DCAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{388E02A2-9994-4356-8F57-57396B75DCAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

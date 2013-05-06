@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TaskList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Task>
+    <ID>4</ID>
+    <Title>Brushing teeth</Title>
+    <Important>false</Important>
+    <Description>Please brush your teeth</Description>
+    <StartTime>2007-12-18T14:55:00</StartTime>
+    <TimeOut>10</TimeOut>
+    <Status>Pending</Status>
+    <Instructions>
+      <Instruction>Go to the bathroom</Instruction>
+      <Instruction>The brush and toothpaste are in the closet above the sink</Instruction>
+      <Instruction>Use the mouth wash after you brush your teeth</Instruction>
+    </Instructions>
+    <ImageFilePath>images/ToothBrush.jpg</ImageFilePath>
+  </Task>
+  <Task>
+    <ID>3</ID>
+    <Title>Breakfast</Title>
+    <Important>false</Important>
+    <Description>Please have breakfast</Description>
+    <StartTime>2007-12-12T18:36:00</StartTime>
+    <TimeOut>20</TimeOut>
+    <Status>Pending</Status>
+    <Instructions>
+      <Instruction>Go to the kitchen</Instruction>
+      <Instruction>Your breakfast is served on the table</Instruction>
+      <Instruction>Drink juice after you eat</Instruction>
+    </Instructions>
+    <ImageFilePath>images/Breakfast.jpg</ImageFilePath>
+  </Task>
+  <Task>
+    <ID>6</ID>
+    <Title>Lunch</Title>
+    <Important>false</Important>
+    <Description>Please have your lunch</Description>
+    <StartTime>2007-12-12T18:37:00</StartTime>
+    <TimeOut>20</TimeOut>
+    <Status>Pending</Status>
+    <Instructions>
+      <Instruction>Go to the kitchen</Instruction>
+      <Instruction>Lunch is served on the table</Instruction>
+      <Instruction>Don't forget to eat the eggs</Instruction>
+    </Instructions>
+    <ImageFilePath>images/Lunch.jpg</ImageFilePath>
+  </Task>
+  <Task>
+    <ID>1</ID>
+    <Title>Medication</Title>
+    <Important>true</Important>
+    <Description>Please take your medication</Description>
+    <StartTime>2007-12-14T17:50:00</StartTime>
+    <TimeOut>20</TimeOut>
+    <Status>Pending</Status>
+    <Instructions>
+      <Instruction>The medicine box is on the table next to your bed</Instruction>
+      <Instruction>Consume your medication for today</Instruction>
+      <Instruction>Close the box after use</Instruction>
+    </Instructions>
+    <ImageFilePath>images/Medicine.jpg</ImageFilePath>
+  </Task>
+  <Task>
+    <ID>2</ID>
+    <Title>Appointment with the Doctor</Title>
+    <Important>true</Important>
+    <Description>You have an appointment with the doctor</Description>
+    <StartTime>2007-12-12T18:39:00</StartTime>
+    <TimeOut>20</TimeOut>
+    <Status>Pending</Status>
+    <Instructions>
+      <Instruction>Get dressed</Instruction>
+      <Instruction>Be ready 30 minutes before</Instruction>
+      <Instruction>This appointment is important</Instruction>
+    </Instructions>
+    <ImageFilePath>images/Doctor.jpg</ImageFilePath>
+  </Task>
+  <Task>
+    <ID>2</ID>
+    <Title>Appointment with the Doctor</Title>
+    <Important>true</Important>
+    <Description>blah</Description>
+    <StartTime>2007-12-12T07:00:00</StartTime>
+    <TimeOut>10</TimeOut>
+    <Status>Pending</Status>
+    <Instructions>
+      <Instruction>blah</Instruction>
+      <Instruction>blah</Instruction>
+      <Instruction>blah</Instruction>
+    </Instructions>
+    <ImageFilePath>images/Doctor.jpg</ImageFilePath>
+  </Task>
+</TaskList>

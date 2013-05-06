@@ -1,0 +1,6 @@
+obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\Utilities.dll
+bin\Debug\Utilities.pdb
+obj\Debug\Utilities.dll
+obj\Debug\Utilities.pdb
+bin\Debug\Utilities.dll.config

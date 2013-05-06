@@ -1,0 +1,6 @@
+E:\Projects\UMn\UID\Alzheimers\Utilities\bin\Debug\Utilities.dll.config
+E:\Projects\UMn\UID\Alzheimers\Utilities\bin\Debug\Utilities.dll
+E:\Projects\UMn\UID\Alzheimers\Utilities\bin\Debug\Utilities.pdb
+E:\Projects\UMn\UID\Alzheimers\Utilities\obj\Debug\ResolveAssemblyReference.cache
+E:\Projects\UMn\UID\Alzheimers\Utilities\obj\Debug\Utilities.dll
+E:\Projects\UMn\UID\Alzheimers\Utilities\obj\Debug\Utilities.pdb

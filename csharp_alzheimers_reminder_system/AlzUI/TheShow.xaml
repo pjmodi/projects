@@ -1,0 +1,31 @@
+﻿<Window
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="Slideshow.TheShow"
+	x:Name="Window"
+	Title="WPF Slideshow"
+	Icon="Documents 2.ico"
+	Width="640" Height="480" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized" Background="#FF000000">
+
+	<Window.ContextMenu>
+		<ContextMenu>
+			<MenuItem Header="Slide Delay">
+				<MenuItem Click="newDelay" x:Name="sec1" Header="1 second" IsCheckable="True"/>
+				<MenuItem Click="newDelay" x:Name="sec2" Header="2 second" IsCheckable="True"/>
+				<MenuItem Click="newDelay" x:Name="sec3" Header="3 second" IsCheckable="True"/>
+				<MenuItem Click="newDelay" x:Name="sec4" Header="4 second" IsCheckable="True"/>
+				<MenuItem Click="newDelay" x:Name="sec5" Header="5 second" IsCheckable="True" IsChecked="True"/>
+			</MenuItem>
+			<Separator/>
+			<MenuItem Header="Exit Slideshow" Click="closer"/>
+		</ContextMenu>
+	</Window.ContextMenu>
+
+	<Grid x:Name="LayoutRoot">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Rectangle x:Name="rec1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+		<Rectangle x:Name="rec2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+	</Grid>
+</Window>

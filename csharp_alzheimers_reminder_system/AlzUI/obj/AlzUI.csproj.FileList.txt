@@ -1,0 +1,123 @@
+.\bin\Debug\AlzUI.exe
+.\bin\Debug\AlzUI.pdb
+obj\Debug\ResolveAssemblyReference.cache
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\App.g.cs
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\AlzUI_MarkupCompile.cache
+obj\Debug\AlzUI.g.resources
+obj\Debug\AlzUI.Properties.Resources.resources
+obj\Debug\AlzUI.csproj.GenerateResource.Cache
+obj\Debug\AlzUI.exe
+obj\Debug\AlzUI.pdb
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\Welcome.baml
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\Welcome.g.cs
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\WnMain.baml
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\WnMain.g.cs
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\TopBar.baml
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\TopBar.g.cs
+E:\UMn\Projects\Temp\Alzheimers\AlzUI\obj\Debug\App.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\TopBar.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Welcome.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\TopBar.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Welcome.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\App.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\AlzUI_MarkupCompile.cache
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Fun.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Fun.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\SendMessage.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\SendMessage.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Schedule.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Schedule.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Help.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Help.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\MainWindow.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\MainWindow.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Transparent.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\Transparent.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\TaskReminder.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\TaskReminder.g.cs
+.\bin\Debug\Utilities.dll
+.\bin\Debug\Utilities.pdb
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\PhotoAlbum.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\PhotoAlbum.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Fun.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Help.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Instructions.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\PhotoAlbum.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Schedule.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\SendMessage.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\TaskReminder.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\TopBar.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Transparent.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Welcome.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\MainWindow.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Fun.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Help.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Instructions.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\PhotoAlbum.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Schedule.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\SendMessage.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\TaskReminder.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\TopBar.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Transparent.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\Welcome.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\MainWindow.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\App.g.cs
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\AlzUI_MarkupCompile.cache
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\TaskAlert.baml
+C:\Documents and Settings\pnshetty\Desktop\AD_Recent\AlzUI\obj\Debug\TaskAlert.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\TaskAlert.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\TaskAlert.g.cs
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\InstructionsPopup.baml
+E:\UMn\Projects\Alzheimers\AlzUI\obj\Debug\InstructionsPopup.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Fun.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Help.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\InstructionsPopup.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\PhotoAlbum.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Schedule.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\SendMessage.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\TaskAlert.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\TaskReminder.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\TopBar.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Transparent.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Welcome.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\MainWindow.baml
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Fun.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Help.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\InstructionsPopup.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\PhotoAlbum.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Schedule.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\SendMessage.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\TaskAlert.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\TaskReminder.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\TopBar.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Transparent.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\Welcome.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\MainWindow.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\App.g.cs
+E:\Projects\UMn\Alzheimers\AlzUI\obj\Debug\AlzUI_MarkupCompile.cache
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Fun.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Help.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\InstructionsPopup.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\PhotoAlbum.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Schedule.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\SendMessage.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\TaskAlert.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\TaskReminder.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\TopBar.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Transparent.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Welcome.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\MainWindow.baml
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Fun.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Help.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\InstructionsPopup.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\PhotoAlbum.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Schedule.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\SendMessage.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\TaskAlert.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\TaskReminder.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\TopBar.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Transparent.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\Welcome.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\MainWindow.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\App.g.cs
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\AlzUI_MarkupCompile.cache

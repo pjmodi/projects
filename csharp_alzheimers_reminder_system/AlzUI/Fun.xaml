@@ -1,0 +1,54 @@
+﻿<Page x:Class="AlzUI.Fun"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Fun"
+    >
+
+  <Page.Resources>
+    <Style TargetType="{x:Type Button}">
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="FontSize" Value="40" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalAlignment" Value="Stretch" />      
+    </Style>
+
+    <Style TargetType="{x:Type TextBlock}">
+      <Setter Property="TextWrapping" Value="Wrap"></Setter>
+      <Setter Property="TextAlignment" Value="Center"></Setter>
+    </Style>
+  </Page.Resources>
+  
+  
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="180" />
+    </Grid.RowDefinitions>
+
+    <DockPanel Grid.Row="0">
+
+      <Button Background="LightBlue" DockPanel.Dock="Left" Width="640" Click="PhotoAlbum_Click">
+        <StackPanel>
+          <Image Source="images/icons/album.gif" Height="200"/>
+          <TextBlock FontSize="30">Touch Here To</TextBlock>
+          <TextBlock FontSize="10"></TextBlock>
+          <TextBlock FontSize="40">See A Photo Album</TextBlock>
+        </StackPanel>
+      </Button>
+
+      <Button Background="Beige" DockPanel.Dock="Right" Width="640" Click="Message_Click">
+        <StackPanel>
+          <Image Source="images/icons/draw.gif" Height="200"/>
+          <TextBlock FontSize="30">Touch Here To</TextBlock>
+          <TextBlock FontSize="10"></TextBlock>
+          <TextBlock FontSize="40">Draw A Picture</TextBlock>
+        </StackPanel>
+      </Button>
+
+    </DockPanel>
+
+    <Button Background="DarkSlateGray" Foreground="White"  Grid.Row="1" Click="Return_Click">
+      Touch Here To Return To The Main Screen
+    </Button>
+  </Grid>
+</Page>

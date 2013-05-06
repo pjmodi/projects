@@ -1,0 +1,9 @@
+﻿<Window 
+    x:Class="AlzUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="AlzUI" WindowStyle="None" WindowState="Maximized" Name="mainWindow">
+  <Grid Name="wn_Grid">   
+   
+  </Grid>
+</Window>

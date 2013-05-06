@@ -1,0 +1,2 @@
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\AlzUI.exe
+E:\Projects\UMn\UID\Alzheimers\AlzUI\obj\Debug\AlzUI.pdb
