@@ -33,5 +33,23 @@ public function inOrder(Node root) {
 
 // No recursion
 public function preOrderBST(Node root) {
+	if (root == null) {
+		return null;
+	}
 
+	NodeStack s = new NodeStack();
+	s.push(root);
+
+	while (s.size() > 0) {
+		Node n = s.pop();
+		n.printValue();
+
+		if (n.getRight() != null) {
+			s.push(n.getRight());
+		}
+
+		if (n.getLeft() != null) {
+			s.push(n.getLeft());
+		}
+	}
 }
