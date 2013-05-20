@@ -45,19 +45,27 @@ class PracticeTrees {
 		} else {
 			System.out.println("Not found.");
 		}
+
+		System.out.println("\nBreadth first search for 99...");
+		tree.breadthFirstSearch(tree.getRoot(), 99);
+
+		System.out.println("\n\nDepth first search for 99...");
+		tree.depthFirstSearch(tree.getRoot(), 99);
+
+		System.out.println("\n\n");
 	}
 
-	private static ArrayList<Integer> generateRandomNumbers(int count) {
-		ArrayList<Integer> values = new ArrayList<Integer>();
+	// private static ArrayList<Integer> generateRandomNumbers(int count) {
+	// 	ArrayList<Integer> values = new ArrayList<Integer>();
 
-		while(values.size() < count) {
-			int number = (int) Math.floor(Math.random() * 100);
+	// 	while(values.size() < count) {
+	// 		int number = (int) Math.floor(Math.random() * 100);
 			
-			if (!values.contains(number)) {
-				values.add(number);
-			}
-		}
+	// 		if (!values.contains(number)) {
+	// 			values.add(number);
+	// 		}
+	// 	}
 
-		return values;
-	}
+	// 	return values;
+	// }
 }

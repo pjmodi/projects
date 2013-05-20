@@ -161,4 +161,60 @@ class BTree {
 
 		return null;
 	}
+
+	public BTNode breadthFirstSearch(BTNode root, int value) {
+		if (root == null) {
+			return null;
+		}
+
+		Queue<BTNode> queue = new LinkedList<BTNode>();
+		queue.add(root);
+
+		while(queue.size() > 0) {
+			BTNode currentBTNode = queue.remove();
+			System.out.print(currentBTNode.getValue() + " ");
+
+			if (currentBTNode.getValue() == value) {
+				return currentBTNode;
+			} else {
+				// Add children
+				if (currentBTNode.getLeftChild() != null) {
+					queue.add(currentBTNode.getLeftChild());
+				}
+				if (currentBTNode.getRightChild() != null) {
+					queue.add(currentBTNode.getRightChild());
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public BTNode depthFirstSearch(BTNode root, int value) {
+		if (root == null) {
+			return null;
+		}
+
+		Stack<BTNode> stack = new Stack<BTNode>();
+		stack.push(root);
+
+		while (!stack.isEmpty()) {
+			BTNode currentBTNode = stack.pop();
+			System.out.print(currentBTNode.getValue() + " ");
+
+			if (currentBTNode.getValue() == value) {
+				return currentBTNode;
+			} else {
+				if (currentBTNode.getRightChild() != null) {
+					stack.push(currentBTNode.getRightChild());
+				}
+				if (currentBTNode.getLeftChild() != null) {
+					stack.push(currentBTNode.getLeftChild());
+				}
+			}
+		}
+
+		return null;
+	}
+
 }
