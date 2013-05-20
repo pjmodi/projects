@@ -84,11 +84,9 @@ class BTree {
 			return findCommonAncestor(root.getRightChild(), v1, v2);
 		} else if (currVal > v1 && currVal > v2) {
 			return findCommonAncestor(root.getLeftChild(), v1, v2);
-		} else if ((currVal > v1 && currVal < v2) || (currVal > v2 && currVal < v1)) {
+		} else {
 			return root;
 		}
-
-		return null;
 	}
 
 	public void preOrder(BTNode root) {
@@ -146,7 +144,7 @@ class BTree {
 		inOrder(root.getRightChild());
 	}
 
-
+	// In a BST, the smallest value is the left lower-most child
 	public int minValue() {
 		BTNode currentNode = this.root;
 
@@ -157,6 +155,7 @@ class BTree {
 		return currentNode.getValue();
 	}
 
+	// In a BST, the greatest value is the right lower-most child
 	public int maxValue() {
 		BTNode currentNode = this.root;
 		
