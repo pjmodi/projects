@@ -7,6 +7,9 @@ class PracticeSorting {
 				Arrays.asList(84, 54, 85, 59, 31, 3, 63, 99, 86, 87)
 			);
 
+			Sorting s = new Sorting();
+			s.SelectionSort(values);
+			
 
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
