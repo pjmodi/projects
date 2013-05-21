@@ -11,7 +11,8 @@ class PracticeSorting {
 			// s.SelectionSort(values);
 			// s.BubbleSort(values);
 			// s.InsertionSort(values);
-			System.out.println(s.MergeSort(values));
+			// System.out.println(s.MergeSort(values));
+			System.out.println(s.QuickSort(values));
 
 		} catch(Exception e) {
 			System.out.println(e.getMessage());
