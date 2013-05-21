@@ -5,7 +5,7 @@ class StringUtil {
 	}
 
 	public String reverseStringWords(String input) {
-		String reverseInput = reverseString(input);
+		String reverseInput = reverseString(input.toCharArray());
 		String[] words = reverseInput.split(" ");
 		StringBuilder sb = new StringBuilder();
 
@@ -13,16 +13,14 @@ class StringUtil {
 			if (sb.length() > 0) {
 				sb.append(" ");
 			}
-			sb.append(reverseString(words[i]));
+			sb.append(reverseString(words[i].toCharArray()));
 		}
 		
 		System.out.println(sb.toString());
 		return sb.toString();
 	}
 
-	public String reverseString(String input) {
-		char[] s = input.toCharArray();
-		
+	public String reverseString(char[] s) {
 		for(int i=0; i<s.length/2; i++) {
 			int j = s.length - 1 - i;
 			swap(s, i, j);
