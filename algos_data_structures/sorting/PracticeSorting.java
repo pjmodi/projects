@@ -10,8 +10,8 @@ class PracticeSorting {
 			Sorting s = new Sorting();
 			// s.SelectionSort(values);
 			// s.BubbleSort(values);
-			s.InsertionSort(values);
-			
+			// s.InsertionSort(values);
+			System.out.println(s.MergeSort(values));
 
 		} catch(Exception e) {
 			System.out.println(e.getMessage());

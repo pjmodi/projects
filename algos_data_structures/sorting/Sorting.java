@@ -21,6 +21,7 @@ class Sorting {
 		return input;
 	}
 
+	// Insert the smaller value towards the front on every cycle
 	public ArrayList<Integer> InsertionSort(ArrayList<Integer> input) {
 		int n = input.size();
 
@@ -37,7 +38,52 @@ class Sorting {
 	}
 
 	public ArrayList<Integer> MergeSort(ArrayList<Integer> input) {
-		return null;
+		if (input.size() < 2) {
+			return input;
+		}
+
+		int middle = input.size() / 2;
+		ArrayList<Integer> left = new ArrayList<Integer>();
+		ArrayList<Integer> right = new ArrayList<Integer>();
+		
+		// Split the array into two
+		for(int i=0; i<input.size(); i++) {
+			if (i<middle) {
+				left.add(input.get(i));
+			} else {
+				right.add(input.get(i));
+			}
+		}
+
+		System.out.println(left + " --- " + right);
+		MergeSort(left);
+		MergeSort(right);
+		return Merge(input, left, right);
+	}
+
+	private ArrayList<Integer> Merge(ArrayList<Integer> dest, ArrayList<Integer> left, ArrayList<Integer> right) {
+		int dind = 0;
+		int lind = 0;
+		int rind = 0;
+
+		// Go thru both left and right arrays and add the lower value to the destination array
+		while(lind < left.size() && rind < right.size()) {
+			if (left.get(lind) <= right.get(rind)) {
+				dest.set(dind++, left.get(lind++));
+			} else {
+				dest.set(dind++, right.get(rind++));
+			}
+		}
+
+		// Copy balance values over (incase left and right are not the same size)
+		while(lind < left.size()) {
+			dest.set(dind++, left.get(lind++));
+		}
+		while(rind < right.size()) {
+			dest.set(dind++, right.get(rind++));
+		}
+
+		return dest;
 	}
 
 	public ArrayList<Integer> QuickSort(ArrayList<Integer> input) {
