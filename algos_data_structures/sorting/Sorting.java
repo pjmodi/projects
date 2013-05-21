@@ -5,8 +5,20 @@ class Sorting {
 
 	}
 
+	// Bubble up the highest value on every cycle
 	public ArrayList<Integer> BubbleSort(ArrayList<Integer> input) {
-		return null;
+		int n = input.size();
+
+		for(int i=0; i<n; i++) {
+			for(int j=1; j<(n-i); j++) {
+				if (input.get(j-1) > input.get(j)) {
+					swap(input, j-1, j);
+					System.out.println(input);
+				}
+			}
+		}
+
+		return input;
 	}
 
 	public ArrayList<Integer> InsertionSort(ArrayList<Integer> input) {
@@ -21,10 +33,12 @@ class Sorting {
 		return null;
 	}
 
+	// Swap the first element with the smallest element from 2-n and so on.
 	public ArrayList<Integer> SelectionSort(ArrayList<Integer> input) {
 		int minIndex = 0;
+		int n = input.size();
 
-		for(int i=0; i<input.size(); i++) {
+		for(int i=0; i<n; i++) {
 			System.out.println(input);
 			minIndex = findMinimumIndex(input, i);
 			if (i<minIndex) {
@@ -48,8 +62,6 @@ class Sorting {
 	}
 
 	public static void swap(ArrayList<Integer> list, int i, int j) {
-		// System.out.println("Swap index " + i + " & " + j);
-
 		if (i!=j) {
 			int temp = list.get(j);
 			list.set(j, list.get(i));

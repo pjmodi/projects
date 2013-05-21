@@ -8,7 +8,8 @@ class PracticeSorting {
 			);
 
 			Sorting s = new Sorting();
-			s.SelectionSort(values);
+			// s.SelectionSort(values);
+			s.BubbleSort(values);
 			
 
 		} catch(Exception e) {
