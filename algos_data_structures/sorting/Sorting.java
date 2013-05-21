@@ -22,7 +22,18 @@ class Sorting {
 	}
 
 	public ArrayList<Integer> InsertionSort(ArrayList<Integer> input) {
-		return null;
+		int n = input.size();
+
+		for(int i=0; i<n; i++) {
+			for(int j=i; j>0; j--) {
+				if (input.get(j-1) > input.get(j)) {
+					swap(input, j-1, j);
+					System.out.println(input);
+				}
+			}
+		}
+
+		return input;
 	}
 
 	public ArrayList<Integer> MergeSort(ArrayList<Integer> input) {
