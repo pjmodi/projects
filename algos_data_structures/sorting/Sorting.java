@@ -47,7 +47,7 @@ class Sorting {
 		return minIndex;
 	}
 
-	private void swap(ArrayList<Integer> list, int i, int j) {
+	public static void swap(ArrayList<Integer> list, int i, int j) {
 		// System.out.println("Swap index " + i + " & " + j);
 
 		if (i!=j) {
