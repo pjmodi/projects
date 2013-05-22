@@ -11,7 +11,8 @@ class PracticeStrings {
 			String b = s.reverseString("Reverse this string");
 			System.out.println(b);
 
-			
+			Character c = s.findFirstNonRepeatedChar("baa baa black sheep");
+			System.out.println("First non-repeated character: " + c);
 
 		} catch(Exception ex) {
 			System.out.println(ex.getMessage());
