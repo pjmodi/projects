@@ -7,12 +7,15 @@ class PracticeSorting {
 				Arrays.asList(84, 54, 85, 59, 31, 3, 63, 99, 86, 87)
 			);
 
-			Sorting s = new Sorting();
-			// s.SelectionSort(values);
-			// s.BubbleSort(values);
-			// s.InsertionSort(values);
-			// System.out.println(s.MergeSort(values));
-			System.out.println(s.QuickSort(values));
+			// BubbleSort s = new BubbleSort();
+			// SelectionSort s = new SelectionSort();
+			// InsertionSort s = new InsertionSort();
+			// QuickSort s = new QuickSort();
+			MergeSort s = new MergeSort();
+
+			System.out.println("Input: " + values);
+			ArrayList<Integer> output = s.sort(values);
+			System.out.println("Output: " + output);
 
 		} catch(Exception e) {
 			System.out.println(e.getMessage());

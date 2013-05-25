@@ -14,7 +14,7 @@ class PracticeStrings {
 			Character c = s.findFirstNonRepeatedChar("baa baa black sheep");
 			System.out.println("First non-repeated character: " + c);
 
-		} catch(Exception ex) {
+		} catch(Exception ex) {q
 			System.out.println(ex.getMessage());
 		} finally {
 			// Do something
