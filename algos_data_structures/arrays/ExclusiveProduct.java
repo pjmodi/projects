@@ -1,4 +1,4 @@
-// Given an array of numbers, return array of products of all other numbers
+// Given an array of numbers, return array of products of all other numbers in linear time.
 
 class ExclusiveProduct {
 	public static int[] findExclusiveProduct(int[] input) {
