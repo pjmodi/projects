@@ -3,13 +3,10 @@ public class ImageDithering {
 		int count = 0;
 
 		for(int i=0; i<dithered.length(); i++) {
-			char c = dithered.charAt(i);
-
 			for(int j=0; j<screen.length; j++) {
 				String line = screen[j];
 				for(int k=0; k<line.length(); k++) {
-					char in = line.charAt(k);
-					if (in == c) {
+					if (line.charAt(k) == dithered.charAt(i)) {
 						count++;
 					}
 				}
