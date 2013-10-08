@@ -25,7 +25,7 @@
                             <rect key="frame" x="150" y="48" width="150" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits"/>
+                            <textInputTraits key="textInputTraits" keyboardType="decimalPad"/>
                             <connections>
                                 <action selector="onEditBeginFahrenheit:" destination="-1" eventType="editingDidBegin" id="xgf-jP-WEo"/>
                             </connections>
@@ -34,7 +34,7 @@
                             <rect key="frame" x="150" y="94" width="150" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits"/>
+                            <textInputTraits key="textInputTraits" keyboardType="decimalPad"/>
                             <connections>
                                 <action selector="onEditBeginCelsius:" destination="-1" eventType="editingDidBegin" id="2CK-qe-Kv3"/>
                             </connections>
