@@ -67,6 +67,9 @@
 }
 
 - (void)calculateConversion {
+	[self.fahrenheitTextField resignFirstResponder];
+	[self.celsiusTextField resignFirstResponder];
+	
 	if ([self.fahrenheitTextField.text length] > 0) {
 		float fahrenheitValue = [self.fahrenheitTextField.text floatValue];
 		float celsiusValue = (((fahrenheitValue - 32.0) * 5.0) / 9.0);
