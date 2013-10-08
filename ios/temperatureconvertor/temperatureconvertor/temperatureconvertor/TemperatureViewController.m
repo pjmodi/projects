@@ -15,7 +15,7 @@
 - (IBAction)onTap:(id)sender;
 - (IBAction)onEditBeginFahrenheit:(id)sender;
 - (IBAction)onEditBeginCelsius:(id)sender;
-- (IBAction)onTouchDown:(id)sender;
+- (IBAction)onTouchDownConvertButton:(id)sender;
 
 - (void)resetUserInput;
 - (void)calculateConversion;
@@ -57,7 +57,7 @@
 	[self resetUserInput];
 }
 
-- (IBAction)onTouchDown:(id)sender {
+- (IBAction)onTouchDownConvertButton:(id)sender {
 	[self calculateConversion];
 }
 

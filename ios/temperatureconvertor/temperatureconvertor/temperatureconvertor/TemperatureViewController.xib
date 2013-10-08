@@ -62,7 +62,7 @@
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
-                                <action selector="onTouchDown:" destination="-1" eventType="touchDown" id="Shw-Y5-V5w"/>
+                                <action selector="onTouchDownConvertButton:" destination="-1" eventType="touchDown" id="IOg-vg-b3Q"/>
                             </connections>
                         </button>
                     </subviews>
