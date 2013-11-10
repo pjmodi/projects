@@ -1,0 +1,259 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor and C2HTML">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <title>256-Color VGA Programming in C - circle.c</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<font size="2">Back to <a href="../../shapes.html#shapes12.0">Primitive Shapes &amp; Lines</a></font><br><font size="6" face="tahoma, arial, helvetica"><strong>circle.c</strong></font><br>
+<font size="2"><a href="circle.c">Plain text version</a><br>&nbsp;</font><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+
+<pre><font color="#888888"><i>/**************************************************************************
+ * circle.c                                                               *
+ * written by David Brackeen                                              *
+ * http://www.brackeen.com/home/vga/                                      *
+ *                                                                        *
+ * This is a 16-bit program.                                              *
+ * Tab stops are set to 2.                                                *
+ * Remember to compile in the LARGE memory model!                         *
+ * To compile in Borland C: bcc -ml circle.c                              *
+ *                                                                        *
+ * This program will only work on DOS- or Windows-based systems with a    *
+ * VGA, SuperVGA or compatible video adapter.                             *
+ *                                                                        *
+ * Please feel free to copy this source code.                             *
+ *                                                                        *
+ * DESCRIPTION: This program demostrates drawing how much faster it is to *
+ * draw circles using tables rather than math functions.                  *
+ **************************************************************************/</i></font>
+
+<font color="#008800">#include</font> &lt;stdio<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;stdlib<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;dos<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;math<font color="#880088">.</font>h&gt;
+
+<font color="#008800">#define</font> VIDEO_INT           <font color="#880088">0x10</font>      <font color="#888888"><i>/* the BIOS video interrupt. */</i></font>
+<font color="#008800">#define</font> SET_MODE            <font color="#880088">0x00</font>      <font color="#888888"><i>/* BIOS func to set the video mode. */</i></font>
+<font color="#008800">#define</font> VGA_256_COLOR_MODE  <font color="#880088">0x13</font>      <font color="#888888"><i>/* use to set 256-color mode. */</i></font>
+<font color="#008800">#define</font> TEXT_MODE           <font color="#880088">0x03</font>      <font color="#888888"><i>/* use to set 80x25 text mode. */</i></font>
+
+<font color="#008800">#define</font> SCREEN_WIDTH        <font color="#880088">320</font>       <font color="#888888"><i>/* width in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> SCREEN_HEIGHT       <font color="#880088">200</font>       <font color="#888888"><i>/* height in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> NUM_COLORS          <font color="#880088">256</font>       <font color="#888888"><i>/* number of colors in mode 0x13 */</i></font>
+
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">char</font>  byte;
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">short</font> word;
+<font color="#0000FF">typedef</font> <font color="#0000FF">long</font>           fixed16_16;
+
+fixed16_16 SIN_ACOS[<font color="#880088">1024</font>];
+byte *VGA=(byte *)<font color="#880088">0xA0000000L</font>;        <font color="#888888"><i>/* this points to video memory. */</i></font>
+word *my_clock=(word *)<font color="#880088">0x0000046C</font>;    <font color="#888888"><i>/* this points to the 18.2hz system
+                                         clock. */</i></font>
+
+<font color="#888888"><i>/**************************************************************************
+ *  set_mode                                                              *
+ *     Sets the video mode.                                               *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> set_mode(byte mode)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>ah = SET_MODE;
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>al = mode;
+  int86(VIDEO_INT, &amp;regs, &amp;regs);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  circle_slow                                                           *
+ *    Draws a circle by using floating point numbers and math fuctions.   *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> circle_slow(<font color="#0000FF">int</font> x,<font color="#0000FF">int</font> y, <font color="#0000FF">int</font> radius, byte color)
+{
+  <font color="#0000FF">float</font> n=<font color="#880088">0</font>,invradius=<font color="#880088">1</font>/(<font color="#0000FF">float</font>)radius;
+  <font color="#0000FF">int</font> dx=<font color="#880088">0</font>,dy=radius-<font color="#880088">1</font>;
+  word dxoffset,dyoffset,offset=(y&lt;&lt;<font color="#880088">8</font>)+(y&lt;&lt;<font color="#880088">6</font>)+x;
+
+  <font color="#0000FF">while</font> (dx&lt;=dy)
+  {
+    dxoffset = (dx&lt;&lt;<font color="#880088">8</font>) + (dx&lt;&lt;<font color="#880088">6</font>);
+    dyoffset = (dy&lt;&lt;<font color="#880088">8</font>) + (dy&lt;&lt;<font color="#880088">6</font>);
+    VGA[offset+dy-dxoffset] = color;  <font color="#888888"><i>/* octant 0 */</i></font>
+    VGA[offset+dx-dyoffset] = color;  <font color="#888888"><i>/* octant 1 */</i></font>
+    VGA[offset-dx-dyoffset] = color;  <font color="#888888"><i>/* octant 2 */</i></font>
+    VGA[offset-dy-dxoffset] = color;  <font color="#888888"><i>/* octant 3 */</i></font>
+    VGA[offset-dy+dxoffset] = color;  <font color="#888888"><i>/* octant 4 */</i></font>
+    VGA[offset-dx+dyoffset] = color;  <font color="#888888"><i>/* octant 5 */</i></font>
+    VGA[offset+dx+dyoffset] = color;  <font color="#888888"><i>/* octant 6 */</i></font>
+    VGA[offset+dy+dxoffset] = color;  <font color="#888888"><i>/* octant 7 */</i></font>
+    dx++;
+    n+=invradius;
+    dy=radius * sin(acos(n));
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  circle_fast                                                           *
+ *    Draws a circle by using fixed point numbers and a trigonometry      *
+ *    table.                                                              *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> circle_fast(<font color="#0000FF">int</font> x,<font color="#0000FF">int</font> y, <font color="#0000FF">int</font> radius, byte color)
+{
+  fixed16_16 n=<font color="#880088">0</font>,invradius=(<font color="#880088">1</font>/(<font color="#0000FF">float</font>)radius)*<font color="#880088">0x10000L</font>;
+  <font color="#0000FF">int</font> dx=<font color="#880088">0</font>,dy=radius-<font color="#880088">1</font>;
+  word dxoffset,dyoffset,offset = (y&lt;&lt;<font color="#880088">8</font>)+(y&lt;&lt;<font color="#880088">6</font>)+x;
+
+  <font color="#0000FF">while</font> (dx&lt;=dy)
+  {
+    dxoffset = (dx&lt;&lt;<font color="#880088">8</font>) + (dx&lt;&lt;<font color="#880088">6</font>);
+    dyoffset = (dy&lt;&lt;<font color="#880088">8</font>) + (dy&lt;&lt;<font color="#880088">6</font>);
+    VGA[offset+dy-dxoffset] = color;  <font color="#888888"><i>/* octant 0 */</i></font>
+    VGA[offset+dx-dyoffset] = color;  <font color="#888888"><i>/* octant 1 */</i></font>
+    VGA[offset-dx-dyoffset] = color;  <font color="#888888"><i>/* octant 2 */</i></font>
+    VGA[offset-dy-dxoffset] = color;  <font color="#888888"><i>/* octant 3 */</i></font>
+    VGA[offset-dy+dxoffset] = color;  <font color="#888888"><i>/* octant 4 */</i></font>
+    VGA[offset-dx+dyoffset] = color;  <font color="#888888"><i>/* octant 5 */</i></font>
+    VGA[offset+dx+dyoffset] = color;  <font color="#888888"><i>/* octant 6 */</i></font>
+    VGA[offset+dy+dxoffset] = color;  <font color="#888888"><i>/* octant 7 */</i></font>
+    dx++;
+    n+=invradius;
+    dy = (<font color="#0000FF">int</font>)((radius * SIN_ACOS[(<font color="#0000FF">int</font>)(n&gt;&gt;<font color="#880088">6</font>)]) &gt;&gt; <font color="#880088">16</font>);
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  circle_fill                                                           *
+ *    Draws and fills a circle.                                           *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> circle_fill(<font color="#0000FF">int</font> x,<font color="#0000FF">int</font> y, <font color="#0000FF">int</font> radius, byte color)
+{
+  fixed16_16 n=<font color="#880088">0</font>,invradius=(<font color="#880088">1</font>/(<font color="#0000FF">float</font>)radius)*<font color="#880088">0x10000L</font>;
+  <font color="#0000FF">int</font> dx=<font color="#880088">0</font>,dy=radius-<font color="#880088">1</font>,i;
+  word dxoffset,dyoffset,offset = (y&lt;&lt;<font color="#880088">8</font>)+(y&lt;&lt;<font color="#880088">6</font>)+x;
+
+  <font color="#0000FF">while</font> (dx&lt;=dy)
+  {
+    dxoffset = (dx&lt;&lt;<font color="#880088">8</font>) + (dx&lt;&lt;<font color="#880088">6</font>);
+    dyoffset = (dy&lt;&lt;<font color="#880088">8</font>) + (dy&lt;&lt;<font color="#880088">6</font>);
+    <font color="#0000FF">for</font>(i=dy;i&gt;=dx;i--,dyoffset-=SCREEN_WIDTH)
+    {
+      VGA[offset+i -dxoffset] = color;  <font color="#888888"><i>/* octant 0 */</i></font>
+      VGA[offset+dx-dyoffset] = color;  <font color="#888888"><i>/* octant 1 */</i></font>
+      VGA[offset-dx-dyoffset] = color;  <font color="#888888"><i>/* octant 2 */</i></font>
+      VGA[offset-i -dxoffset] = color;  <font color="#888888"><i>/* octant 3 */</i></font>
+      VGA[offset-i +dxoffset] = color;  <font color="#888888"><i>/* octant 4 */</i></font>
+      VGA[offset-dx+dyoffset] = color;  <font color="#888888"><i>/* octant 5 */</i></font>
+      VGA[offset+dx+dyoffset] = color;  <font color="#888888"><i>/* octant 6 */</i></font>
+      VGA[offset+i +dxoffset] = color;  <font color="#888888"><i>/* octant 7 */</i></font>
+    }
+    dx++;
+    n+=invradius;
+    dy = (<font color="#0000FF">int</font>)((radius * SIN_ACOS[(<font color="#0000FF">int</font>)(n&gt;&gt;<font color="#880088">6</font>)]) &gt;&gt; <font color="#880088">16</font>);
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  Main                                                                  *
+ *    Draws 5000 circles                                                  *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> main()
+{
+  <font color="#0000FF">int</font> x,y,radius,color;
+  <font color="#0000FF">float</font> t1,t2;
+  word i,start;
+
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">1024</font>;i++)                 <font color="#888888"><i>/* create the sin(arccos(x)) table. */</i></font>
+  {
+    SIN_ACOS[i]=sin(acos((<font color="#0000FF">float</font>)i/<font color="#880088">1024</font>))*<font color="#880088">0x10000L</font>;
+  }
+
+  srand(*my_clock);                   <font color="#888888"><i>/* seed the number generator. */</i></font>
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode. */</i></font>
+
+  start=*my_clock;                    <font color="#888888"><i>/* record the starting time. */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">5000</font>;i++)                 <font color="#888888"><i>/* randomly draw 5000 circles. */</i></font>
+  {
+    radius=rand()%<font color="#880088">90</font>+<font color="#880088">1</font>;
+    x=rand()%(SCREEN_WIDTH-radius*<font color="#880088">2</font>)+radius;
+    y=rand()%(SCREEN_HEIGHT-radius*<font color="#880088">2</font>)+radius;
+    color=rand()%NUM_COLORS;
+    circle_slow(x,y,radius,color);
+  }
+
+  t1=(*my_clock-start)/<font color="#880088">18.2</font>;          <font color="#888888"><i>/* calculate how long it took. */</i></font>
+
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode again in order
+                                         to clear the screen. */</i></font>
+
+  start=*my_clock;                    <font color="#888888"><i>/* record the starting time. */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">5000</font>;i++)                 <font color="#888888"><i>/* randomly draw 5000 circles. */</i></font>
+  {
+    radius=rand()%<font color="#880088">90</font>+<font color="#880088">1</font>;
+    x=rand()%(SCREEN_WIDTH-radius*<font color="#880088">2</font>)+radius;
+    y=rand()%(SCREEN_HEIGHT-radius*<font color="#880088">2</font>)+radius;
+    color=rand()%NUM_COLORS;
+    circle_fast(x,y,radius,color);
+  }
+
+  t2=(*my_clock-start)/<font color="#880088">18.2</font>;          <font color="#888888"><i>/* calculate how long it took. */</i></font>
+
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode again in order
+                                         to clear the screen. */</i></font>
+
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">1000</font>;i++)                 <font color="#888888"><i>/* draw 1000 filled circles. */</i></font>
+  {
+    radius=rand()%<font color="#880088">90</font>+<font color="#880088">1</font>;
+    x=rand()%(SCREEN_WIDTH-radius*<font color="#880088">2</font>)+radius;
+    y=rand()%(SCREEN_HEIGHT-radius*<font color="#880088">2</font>)+radius;
+    color=rand()%NUM_COLORS;
+    circle_fill(x,y,radius,color);
+  }
+  set_mode(TEXT_MODE);                <font color="#888888"><i>/* set the video mode back to
+                                         text mode. */</i></font>
+
+  <font color="#888888"><i>/* output the results... */</i></font>
+  printf(<font color="#FF00FF">&quot;Slow circle drawing took %f seconds.\n&quot;</font>,t1);
+  printf(<font color="#FF00FF">&quot;Fast circle drawing took %f seconds.\n&quot;</font>,t2);
+  <font color="#0000FF">if</font> (t2 != <font color="#880088">0</font>) printf(<font color="#FF00FF">&quot;Fast circle drawing was %f times faster.\n&quot;</font>,t1/t2);
+
+  <font color="#0000FF">return</font>;
+}
+
+</pre>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+<p><font size="2">Back to <a href="../../shapes.html#shapes12.0">Primitive Shapes &amp; Lines</a></font></p></body>
+</html>

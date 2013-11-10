@@ -1,0 +1,512 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <link rel=stylesheet href="256vpc.css" type="text/css">
+  <title>256-Color VGA Programming in C - Announcements</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<script language="JavaScript"><!--
+nav = navVersion();
+ie = ieVersion();
+
+preloadImage("images/ui/subhead_left.gif");
+preloadImage("images/ui/subhead_right.gif");
+preloadImage("images/ui/dot.gif");
+preloadImage("images/ui/navigate_next_hover.gif");
+preloadImage("images/ui/navigate_prev_hover.gif");
+
+function navVersion()
+{
+	var ua = window.navigator.userAgent;
+	var nav = ua.indexOf ( "Mozilla/" );
+	if (nav>=0)
+		return parseInt ( ua.substring ( nav+8, ua.indexOf (".") ) );
+	else
+		return 0;	// is other browser
+}
+
+function ieVersion()
+{
+	var ua = window.navigator.userAgent;
+	var msie = ua.indexOf("MSIE ");
+	if (msie>=0)	
+		return parseInt ( ua.substring ( msie+5, ua.indexOf ( ".", msie ) ) );
+	else
+		return 0;	
+}
+
+function changeImage(image, filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image.src = "images/ui/" + filename + ".gif"
+	}
+}
+
+function preloadImage(filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image = new Image();
+    image.src = filename;
+	}
+
+}
+// --></script>
+
+<a href="index.html"><font size="2">256-Color VGA Programming in C</font></a><br><font size="6" face="tahoma, arial, helvetica"><strong><a name="top"></a>Announcements</strong></font><br>
+<strong>Contents:</strong><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce1.0"><font size="2">About this manual</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce2.0"><font size="2">May 12, 1999</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce3.0"><font size="2">April 25, 1999</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce4.0"><font size="2">October 9, 1997</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce5.0"><font size="2">August 1, 1997</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce6.0"><font size="2">July 11, 1997</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce7.0"><font size="2">March 31, 1997</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce8.0"><font size="2">February 19, 1997</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce9.0"><font size="2">December 16, 1996</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#announce10.0"><font size="2">December 5, 1996</font></a><br>
+
+
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce1.0"></a><strong>&nbsp;About this manual</strong></font></td>
+    <td align="right" valign="middle"><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce2.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: May 12, 1999" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>This document was created for a technical writing class. I
+decided to put it on the web to see if anyone would find it
+useful. So far, a lot of people have!</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce2.0"></a><strong>&nbsp;May 12, 1999</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce1.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: About this manual" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce3.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: April 25, 1999" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Minor update - I fixed some broken links on the source code
+pages, and updated the download page.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce3.0"></a><strong>&nbsp;April 25, 1999</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce2.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: May 12, 1999" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce4.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: October 9, 1997" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Hello. Okay, so it's been more than a year and a half since
+the last change! This will probably be the last major update for
+the site. I considered taking it down, since VGA programming in
+kinda out-of-date, but I realize that VGA programming is a good
+way to learn graphics programming, and that some schools and
+universities teach it in their graphics courses. Here's what's
+changed since the last update:</p>
+
+<ul>
+    <li>Created DJGPP versions of all the code.</li>
+    <li>Updated the FAQ.</li>
+    <li>Fixed stack overflow problem in mouse.c.</li>
+    <li>New download options.</li>
+    <li>Updated links.</li>
+    <li>Edited some of the text.</li>
+    <li>New look, and the HTML now works better in older
+        browsers.</li>
+</ul>
+
+<p>Thanks to everyone who has ever written congratulations, or
+pointed out a problem, or suggested a solution. You've really
+helped a lot. </p>
+
+<p>See ya,<br>
+Dave</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce4.0"></a><strong>&nbsp;October 9, 1997</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce3.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: April 25, 1999" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce5.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: August 1, 1997" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Hey everybody. I've been real busy with school and stuff.
+Nancy Sia pointed out a bug in the bitmap-reading code. Some
+paint programs store less than 256 palette entries in a 256-color
+bitmap, but the code always assumed there were 256 palette
+entries there. You can imagine what problems that can bring. The
+code is fixed now, though! That's the only update this time. </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce5.0"></a><strong>&nbsp;August 1, 1997</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce4.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: October 9, 1997" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce6.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: July 11, 1997" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Here's a small update for the site. Here's what I've done: </p>
+
+<ul>
+    <li>Expanded the <a href="resource.html">Other Resources</a>
+        section.</li>
+    <li>Now you can <a href="download.html">download</a> source
+        code, executables, and bitmaps in convenient zip files.
+        (This also eliminates the &quot;Server Error&quot; that
+        occurs when you try to download &quot;.exe&quot; files.)</li>
+    <li>The .c files have been color coded! Woo hoo! Life is
+        good.</li>
+    <li>For those of you who are still using Netscape 3.0 (hurry
+        up and upgrade to Netscape 4.0!) the navigation bar will
+        be a little easier to read.</li>
+</ul>
+
+<p>That's about it. Comments are welcome, but let me say one
+thing. Please do not rearrange, modify, or add code to the code
+at the site and then ask me to debug it! This is happening waaay
+too much. Debug your own code. I will, however, be happy to help
+you if the code from this site doesn't compile on your compiler.
+Check out the <a href="trouble.html">Trouble Shooting</a>
+section! </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce6.0"></a><strong>&nbsp;July 11, 1997</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce5.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: August 1, 1997" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce7.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: March 31, 1997" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Yay, it's summer time, and that means spare time to work on
+the web page. Sorry it's been such a long time, folks. The look
+has changed a bit and now theres a neat navigation bar on the
+left of each page. If you've got Internet Explorer 4.0, you can
+click on the folders to expand or collapse the outline!</p>
+
+<p>If you're still using Netscape Navigator 3.0, it's time to
+upgrade Netscape Navigator 4.0. This site uses Cascading Style
+Sheets that Netscape Navigator 3.0 can't handle!</p>
+
+<p>I haven't added much content this time. Basically the big
+difference is the <a href="trouble.html">Troubleshooting</a>
+page, which will help you with some common VGA programming
+problems.</p>
+
+<p>Also, I re-wrote some of the source code to eliminate
+warnings.</p>
+
+<p>I'll be updating the site again soon (as in, less than a
+month) so keep watching.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce7.0"></a><strong>&nbsp;March 31, 1997</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce6.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: July 11, 1997" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce8.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: February 19, 1997" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Once again, it's been a while since I updated the site! This
+time the look and navigation has changed, plus this site now
+works better with Navigator 4.0's implementation of style sheets.
+Both <a href="http://www.microsoft.com/ie/default.asp"
+target="_top">Microsoft's</a> and <a
+href="http://www.netscape.com/comprod/products/communicator/navigator.html"
+target="_top">Netscape's</a> implementations of <a
+href="http://www.w3.org/pub/WWW/Style/" target="_top">Cascading
+Style Sheets</a> are <i>different</i>, but the results are
+similar.</p>
+
+<p>I took out the responses section and the hexadecimal reference
+page -- they were both pretty useless. I added a few links to the
+main page. Two new sections were added: <a href="trouble.html">Compiler
+Information</a>, which talks about specific compilers (16- and
+32-bit) and how to program the VGA with them, and I added to the <a
+href="unchain.html">Unchained Mode</a> section, which covers the
+different modes you can get (like 320x240) by tweaking the VGA's
+registers.</p>
+
+<p>Oh yeah. Today's my birthday! I'm a whopping twenty-two years
+old.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce8.0"></a><strong>&nbsp;February 19, 1997</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce7.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: March 31, 1997" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce9.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: December 16, 1996" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Okay, it's been a while, but this site has finally been
+updated! Here's what's been added: </p>
+
+<ul>
+    <li>Responses, which is a collection of email messages sent
+        to me about this site.</li>
+    <li>This entire manual can now be <a href="download.html">downloaded</a>
+        for off-line browsing.</li>
+    <li>New section added! <a href="unchain.html">Double
+        Buffering, Page Flipping, and Unchained Mode</a></li>
+</ul>
+
+<p>Here's what's been fixed and changed: </p>
+
+<ul>
+    <li>At the beginning of the <a href="bitmaps.html">Bitmaps
+        and Palette Manipulation</a>, there was a broken link to
+        an image.</li>
+    <li>In the middle of <a href="bitmaps.html">Bitmaps and
+        Palette Manipulation</a>, a paragraph was added on how
+        the BMP format pads its scanlines to four bytes, and how
+        the code present does not reflect that fact.</li>
+    <li>At the end of the <a href="bitmaps.html">Bitmaps and
+        Palette Manipulation</a>, it was incorrectly stated that
+        the VGA's refresh rate is 60hz. This is true in some
+        modes, but in mode 13h, the refresh rate is 70hz.</li>
+    <li>In the appendix, the hexadecimal-to-binary table was
+        actually a decimal-to-binary table.</li>
+    <li>Added to the <a href="intro.html">introduction</a> about
+        a quirk in Turbo C compilers.</li>
+    <li>All of the black-and-white images were converted from
+        8-bit color to 4-bit color in order to save a little
+        space and decrease download time.</li>
+    <li>Almost everything on this site is done with style sheets
+        now, so if you don't have a Cascading Style Sheet (CSS-1)
+        capable browser, things may look a little different. The
+        content is still be readable by every browser. If you do
+        have a CSS-1 capable browser, you'll see different
+        colors, different fonts, and proper formatting.</li>
+</ul>
+
+<p>Remember, if anyone finds any errors or broken links, or if
+you want to see anything in an upcoming section, <a
+href="mailto:david@brackeen.com">email</a> me! </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce9.0"></a><strong>&nbsp;December 16, 1996</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce8.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: February 19, 1997" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce10.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: December 5, 1996" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>I was informed that I forgot to include the images for the
+program executables! Silly me. Anyway, they are there now. Thanks
+goes out to Parvinder Bhasin. </p>
+
+<p>The response from this site has been great, and I've decided
+to keep adding to it. The section I am currently working on is
+tentatively called &quot;Double Buffering, Page Fliping, and
+VGA's Unchained Mode,&quot; which has an introduction to mode X.
+I'm leaving for vacation on the 20th (mmm... warm Florida, I can
+taste you now) and if I don't have it done before then, it won't
+be done until the new year. </p>
+
+<p>Also, I've pretty much ditched Netscape Gold's html editor and
+gone with the html text-editor <a href="http://www.allaire.com"
+target="_top">HomeSite 2.0</a>, which I love. I'm also tired of
+using clumsy &lt;UL&gt; tags for text identation and decided to
+use style sheets. If this paragraph isn't indented, then your
+browser isn't style-sheet capable, and I'm sorry. </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce10.0"></a><strong>&nbsp;December 5, 1996</strong></font></td>
+    <td align="right" valign="middle"><a href="#announce9.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: December 16, 1996" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#announce11.0"><img src="images/ui/arrow_right.gif"
+    alt="Bottom" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>This document was created for a technical writing class. It
+was converted to html using Microsoft Word's so-called
+&quot;internet assistant,&quot; then modified with Netscape
+Navigator Gold's editor.</p>
+
+<p>The text in this document is very formal (sorry). If anyone
+finds anything useful on this page, let me know! If anyone wants
+to see another topic on this page, let me know! Any type of
+criticism, positive or negative, would be greatly appreciated.
+Also, if anyone finds any messed up links or if any of the code
+here doesn't work with your compiler, please let me know!</p>
+
+<p>I hope to add sections on mode X and VESA Super-VGA
+programming in the near future. </p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="announce11.0"></a>&nbsp;</font></td>
+    <td align="right" valign="middle"><a href="#announce10.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: December 5, 1996" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+<br><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td align="left" valign="top">&nbsp;</td><td align="right" valign="top">&nbsp;</td></tr></table><p>&nbsp;</p><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td>  <font size="2" face="tahoma, arial, helvetica"><strong><a href="index.html">256-Color VGA Programming in C</a></strong>
+ | <a href="intro.html">Introduction</a>
+ | <a href="basics.html">VGA Basics</a>
+ | <a href="shapes.html">Primitive Shapes &amp; Lines</a>
+ | <a href="bitmaps.html">Bitmaps &amp; Palette Manipulation</a>
+ | <a href="mouse.html">Mouse Support &amp; Animation</a>
+ | <a href="unchain.html">Double Buffering, Page Flipping, &amp; Unchained Mode</a>
+ | <a href="announce.html">Announcements</a>
+ | <a href="resource.html">Links and Other Resources</a>
+ | <a href="download.html">Download</a>
+ | <a href="trouble.html">FAQ and Troubleshooting</a>
+  </font></td></tr></table>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>

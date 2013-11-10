@@ -1,0 +1,498 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor and C2HTML">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <title>256-Color VGA Programming in C - unchain.c</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<font size="2">Back to <a href="../../unchain.html#unchain8.0">Double Buffering, Page Flipping, &amp; Unchained Mode</a></font><br><font size="6" face="tahoma, arial, helvetica"><strong>unchain.c</strong></font><br>
+<font size="2"><a href="unchain.c">Plain text version</a><br>&nbsp;</font><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+
+<pre><font color="#888888"><i>/**************************************************************************
+ * unchain.c                                                              *
+ * written by David Brackeen                                              *
+ * http://www.brackeen.com/home/vga/                                      *
+ *                                                                        *
+ * Tab stops are set to 2.                                                *
+ * This program compiles with DJGPP! (www.delorie.com)                    *
+ * To compile in DJGPP: gcc unchain.c -o unchain.exe                      *
+ *                                                                        *
+ * This program will only work on DOS- or Windows-based systems with a    *
+ * VGA, SuperVGA, or compatible video adapter.                            *
+ *                                                                        *
+ * Please feel free to copy this source code.                             *
+ *                                                                        *
+ * DESCRIPTION: This program demonstrates VGA's unchained mode            *
+ **************************************************************************/</i></font>
+
+<font color="#008800">#include</font> &lt;stdio<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;stdlib<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;dos<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;sys/nearptr<font color="#880088">.</font>h&gt;
+
+<font color="#008800">#define</font> VIDEO_INT           <font color="#880088">0x10</font>      <font color="#888888"><i>/* the BIOS video interrupt. */</i></font>
+<font color="#008800">#define</font> SET_MODE            <font color="#880088">0x00</font>      <font color="#888888"><i>/* BIOS func to set the video mode. */</i></font>
+<font color="#008800">#define</font> VGA_256_COLOR_MODE  <font color="#880088">0x13</font>      <font color="#888888"><i>/* use to set 256-color mode. */</i></font>
+<font color="#008800">#define</font> TEXT_MODE           <font color="#880088">0x03</font>      <font color="#888888"><i>/* use to set 80x25 text mode. */</i></font>
+
+
+<font color="#008800">#define</font> SC_INDEX            <font color="#880088">0x03c4</font>    <font color="#888888"><i>/* VGA sequence controller */</i></font>
+<font color="#008800">#define</font> SC_DATA             <font color="#880088">0x03c5</font>
+<font color="#008800">#define</font> PALETTE_INDEX       <font color="#880088">0x03c8</font>    <font color="#888888"><i>/* VGA digital-to-analog converter */</i></font>
+<font color="#008800">#define</font> PALETTE_DATA        <font color="#880088">0x03c9</font>
+<font color="#008800">#define</font> GC_INDEX            <font color="#880088">0x03ce</font>    <font color="#888888"><i>/* VGA graphics controller */</i></font>
+<font color="#008800">#define</font> GC_DATA             <font color="#880088">0x03cf</font>
+<font color="#008800">#define</font> CRTC_INDEX          <font color="#880088">0x03d4</font>    <font color="#888888"><i>/* VGA CRT controller */</i></font>
+<font color="#008800">#define</font> CRTC_DATA           <font color="#880088">0x03d5</font>
+<font color="#008800">#define</font> INPUT_STATUS_1      <font color="#880088">0x03da</font>
+
+<font color="#008800">#define</font> MAP_MASK            <font color="#880088">0x02</font>      <font color="#888888"><i>/* Sequence controller registers */</i></font>
+<font color="#008800">#define</font> ALL_PLANES          <font color="#880088">0xff02</font>
+<font color="#008800">#define</font> MEMORY_MODE         <font color="#880088">0x04</font>
+
+<font color="#008800">#define</font> LATCHES_ON          <font color="#880088">0x0008</font>    <font color="#888888"><i>/* Graphics controller registers */</i></font>
+<font color="#008800">#define</font> LATCHES_OFF         <font color="#880088">0xff08</font>
+
+<font color="#008800">#define</font> HIGH_ADDRESS        <font color="#880088">0x0C</font>      <font color="#888888"><i>/* CRT controller registers */</i></font>
+<font color="#008800">#define</font> LOW_ADDRESS         <font color="#880088">0x0D</font>
+<font color="#008800">#define</font> UNDERLINE_LOCATION  <font color="#880088">0x14</font>
+<font color="#008800">#define</font> MODE_CONTROL        <font color="#880088">0x17</font>
+
+<font color="#008800">#define</font> DISPLAY_ENABLE      <font color="#880088">0x01</font>      <font color="#888888"><i>/* VGA input status bits */</i></font>
+<font color="#008800">#define</font> VRETRACE            <font color="#880088">0x08</font>
+
+<font color="#008800">#define</font> SCREEN_WIDTH        <font color="#880088">320</font>       <font color="#888888"><i>/* width in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> SCREEN_HEIGHT       <font color="#880088">200</font>       <font color="#888888"><i>/* height in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> SCREEN_SIZE         (word)(SCREEN_WIDTH*SCREEN_HEIGHT)
+<font color="#008800">#define</font> NUM_COLORS          <font color="#880088">256</font>       <font color="#888888"><i>/* number of colors in mode 0x13 */</i></font>
+
+<font color="#008800">#define</font> BITMAP_WIDTH        <font color="#880088">32</font>
+<font color="#008800">#define</font> BITMAP_HEIGHT       <font color="#880088">25</font>
+<font color="#008800">#define</font> ANIMATION_FRAMES    <font color="#880088">24</font>
+<font color="#008800">#define</font> TOTAL_FRAMES        <font color="#880088">140</font>
+<font color="#008800">#define</font> VERTICAL_RETRACE              <font color="#888888"><i>/* comment out this line for more
+                                         accurate timing */</i></font>
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">char</font>  byte;
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">short</font> word;
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">long</font>  dword;
+
+byte *VGA = (byte *)<font color="#880088">0xA0000</font>;          <font color="#888888"><i>/* this points to video memory. */</i></font>
+word *my_clock = (word *)<font color="#880088">0x046C</font>;      <font color="#888888"><i>/* this points to the 18.2hz system
+                                         clock. */</i></font>
+
+<font color="#0000FF">typedef</font> <font color="#0000FF">struct</font> tagBITMAP              <font color="#888888"><i>/* the structure for a bitmap. */</i></font>
+{
+  word width;
+  word height;
+  byte palette[<font color="#880088">256</font>*<font color="#880088">3</font>];
+  byte *data;
+} BITMAP;
+
+<font color="#0000FF">typedef</font> <font color="#0000FF">struct</font> tagOBJECT              <font color="#888888"><i>/* the structure for a moving object
+                                         in 2d space; used for animation */</i></font>
+{
+  <font color="#0000FF">int</font> x,y;
+  <font color="#0000FF">int</font> dx,dy;
+  byte width,height;
+} OBJECT;
+
+<font color="#888888"><i>/**************************************************************************
+ *  fskip                                                                 *
+ *     Skips bytes in a file.                                             *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> fskip(FILE *fp, <font color="#0000FF">int</font> num_bytes)
+{
+   <font color="#0000FF">int</font> i;
+   <font color="#0000FF">for</font> (i=<font color="#880088">0</font>; i&lt;num_bytes; i++)
+      fgetc(fp);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  set_mode                                                              *
+ *     Sets the video mode.                                               *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> set_mode(byte mode)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>ah = SET_MODE;
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>al = mode;
+  int86(VIDEO_INT, &amp;regs, &amp;regs);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  set_unchained_mode                                                    *
+ *    resets VGA mode 0x13 to unchained mode to access all 256K of memory *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> set_unchained_mode(<font color="#0000FF">void</font>)
+{
+  word i;
+  dword *ptr=(dword *)VGA;            <font color="#888888"><i>/* used for faster screen clearing */</i></font>
+
+  outp(SC_INDEX,  MEMORY_MODE);       <font color="#888888"><i>/* turn off chain-4 mode */</i></font>
+  outp(SC_DATA,   <font color="#880088">0x06</font>);
+
+  outpw(SC_INDEX, ALL_PLANES);        <font color="#888888"><i>/* set map mask to all 4 planes */</i></font>
+
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">0x4000</font>;i++)               <font color="#888888"><i>/* clear all 256K of memory */</i></font>
+    *ptr++ = <font color="#880088">0</font>;
+
+  outp(CRTC_INDEX,UNDERLINE_LOCATION);<font color="#888888"><i>/* turn off long mode */</i></font>
+  outp(CRTC_DATA, <font color="#880088">0x00</font>);
+
+  outp(CRTC_INDEX,MODE_CONTROL);      <font color="#888888"><i>/* turn on byte mode */</i></font>
+  outp(CRTC_DATA, <font color="#880088">0xe3</font>);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  page_flip                                                             *
+ *    switches the pages at the appropriate time and waits for the        *
+ *    vertical retrace.                                                   *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> page_flip(word *page1,word *page2)
+{
+  word high_address,low_address;
+  word temp;
+
+  temp=*page1;
+  *page1=*page2;
+  *page2=temp;
+
+  high_address = HIGH_ADDRESS | (*page1 &amp; <font color="#880088">0xff00</font>);
+  low_address  = LOW_ADDRESS  | (*page1 &lt;&lt; <font color="#880088">8</font>);
+
+  <font color="#008800">#ifdef</font> VERTICAL_RETRACE
+    <font color="#0000FF">while</font> ((inp(INPUT_STATUS_1) &amp; DISPLAY_ENABLE));
+  <font color="#008800">#endif</font>
+  outpw(CRTC_INDEX, high_address);
+  outpw(CRTC_INDEX, low_address);
+  <font color="#008800">#ifdef</font> VERTICAL_RETRACE
+    <font color="#0000FF">while</font> (!(inp(INPUT_STATUS_1) &amp; VRETRACE));
+  <font color="#008800">#endif</font>
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  show_buffer                                                           *
+ *    displays a memory buffer on the screen                              *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> show_buffer(byte *buffer)
+{
+  <font color="#008800">#ifdef</font> VERTICAL_RETRACE
+    <font color="#0000FF">while</font> ((inp(INPUT_STATUS_1) &amp; VRETRACE));
+    <font color="#0000FF">while</font> (!(inp(INPUT_STATUS_1) &amp; VRETRACE));
+  <font color="#008800">#endif</font>
+  memcpy(VGA,buffer,SCREEN_SIZE);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  load_bmp                                                              *
+ *    Loads a bitmap file into memory.                                    *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> load_bmp(<font color="#0000FF">char</font> *file,BITMAP *b)
+{
+  FILE *fp;
+  <font color="#0000FF">long</font> index;
+  word num_colors;
+  <font color="#0000FF">int</font> x;
+
+  <font color="#888888"><i>/* open the file */</i></font>
+  <font color="#0000FF">if</font> ((fp = fopen(file,<font color="#FF00FF">&quot;rb&quot;</font>)) == NULL)
+  {
+    printf(<font color="#FF00FF">&quot;Error opening file %s.\n&quot;</font>,file);
+    exit(<font color="#880088">1</font>);
+  }
+
+  <font color="#888888"><i>/* check to see if it is a valid bitmap file */</i></font>
+  <font color="#0000FF">if</font> (fgetc(fp)!=<font color="#FF00FF">'B'</font> || fgetc(fp)!=<font color="#FF00FF">'M'</font>)
+  {
+    fclose(fp);
+    printf(<font color="#FF00FF">&quot;%s is not a bitmap file.\n&quot;</font>,file);
+    exit(<font color="#880088">1</font>);
+  }
+
+  <font color="#888888"><i>/* read in the width and height of the image, and the
+     number of colors used; ignore the rest */</i></font>
+  fskip(fp,<font color="#880088">16</font>);
+  fread(&amp;b-&gt;width, <font color="#0000FF">sizeof</font>(word), <font color="#880088">1</font>, fp);
+  fskip(fp,<font color="#880088">2</font>);
+  fread(&amp;b-&gt;height,<font color="#0000FF">sizeof</font>(word), <font color="#880088">1</font>, fp);
+  fskip(fp,<font color="#880088">22</font>);
+  fread(&amp;num_colors,<font color="#0000FF">sizeof</font>(word), <font color="#880088">1</font>, fp);
+  fskip(fp,<font color="#880088">6</font>);
+
+  <font color="#888888"><i>/* assume we are working with an 8-bit file */</i></font>
+  <font color="#0000FF">if</font> (num_colors==<font color="#880088">0</font>) num_colors=<font color="#880088">256</font>;
+
+  <font color="#888888"><i>/* try to allocate memory */</i></font>
+  <font color="#0000FF">if</font> ((b-&gt;data = (byte *) malloc((word)(b-&gt;width*b-&gt;height))) == NULL)
+  {
+    fclose(fp);
+    printf(<font color="#FF00FF">&quot;Error allocating memory for file %s.\n&quot;</font>,file);
+    exit(<font color="#880088">1</font>);
+  }
+
+  <font color="#888888"><i>/* read the palette information */</i></font>
+  <font color="#0000FF">for</font>(index=<font color="#880088">0</font>;index&lt;num_colors;index++)
+  {
+    b-&gt;palette[(<font color="#0000FF">int</font>)(index*<font color="#880088">3</font>+<font color="#880088">2</font>)] = fgetc(fp) &gt;&gt; <font color="#880088">2</font>;
+    b-&gt;palette[(<font color="#0000FF">int</font>)(index*<font color="#880088">3</font>+<font color="#880088">1</font>)] = fgetc(fp) &gt;&gt; <font color="#880088">2</font>;
+    b-&gt;palette[(<font color="#0000FF">int</font>)(index*<font color="#880088">3</font>+<font color="#880088">0</font>)] = fgetc(fp) &gt;&gt; <font color="#880088">2</font>;
+    x=fgetc(fp);
+  }
+
+  <font color="#888888"><i>/* read the bitmap */</i></font>
+  <font color="#0000FF">for</font>(index = (b-&gt;height-<font color="#880088">1</font>)*b-&gt;width; index &gt;= <font color="#880088">0</font>;index-=b-&gt;width)
+    <font color="#0000FF">for</font>(x = <font color="#880088">0</font>; x &lt; b-&gt;width; x++)
+      b-&gt;data[(<font color="#0000FF">int</font>)(index+x)]=(byte)fgetc(fp);
+
+  fclose(fp);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  set_palette                                                           *
+ *    Sets all 256 colors of the palette.                                 *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> set_palette(byte *palette)
+{
+  <font color="#0000FF">int</font> i;
+
+  outp(PALETTE_INDEX,<font color="#880088">0</font>);              <font color="#888888"><i>/* tell the VGA that palette data
+                                         is coming. */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">256</font>*<font color="#880088">3</font>;i++)
+    outp(PALETTE_DATA,palette[i]);    <font color="#888888"><i>/* write the data */</i></font>
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  plot_pixel                                                            *
+ *    Plots a pixel in unchained mode                                     *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> plot_pixel(<font color="#0000FF">int</font> x,<font color="#0000FF">int</font> y,byte color)
+{
+  outp(SC_INDEX, MAP_MASK);          <font color="#888888"><i>/* select plane */</i></font>
+  outp(SC_DATA,  <font color="#880088">1</font> &lt;&lt; (x&amp;<font color="#880088">3</font>) );
+
+  VGA[(y&lt;&lt;<font color="#880088">6</font>)+(y&lt;&lt;<font color="#880088">4</font>)+(x&gt;&gt;<font color="#880088">2</font>)]=color;
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  Main                                                                  *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> main(<font color="#0000FF">int</font> argc, <font color="#0000FF">char</font> *argv[])
+{
+  word bitmap_offset,screen_offset;
+  word visual_page = <font color="#880088">0</font>;
+  word active_page = SCREEN_SIZE/<font color="#880088">4</font>;
+  word start;
+  <font color="#0000FF">float</font> t1,t2;
+  <font color="#0000FF">int</font> i,repeat,plane,num_objects=<font color="#880088">0</font>;
+  word x,y;
+  byte *double_buffer;
+  BITMAP bmp;
+  OBJECT *object;
+
+  <font color="#0000FF">if</font> (__djgpp_nearptr_enable() == <font color="#880088">0</font>)
+  {
+    printf(<font color="#FF00FF">&quot;Could get access to first 640K of memory.\n&quot;</font>);
+    exit(-<font color="#880088">1</font>);
+  }
+
+  VGA+=__djgpp_conventional_base;
+  my_clock = (<font color="#0000FF">void</font> *)my_clock + __djgpp_conventional_base;
+
+  <font color="#888888"><i>/* get command-line options */</i></font>
+  <font color="#0000FF">if</font> (argc&gt;<font color="#880088">0</font>) num_objects=atoi(argv[<font color="#880088">1</font>]);
+  <font color="#0000FF">if</font> (num_objects&lt;=<font color="#880088">0</font>) num_objects=<font color="#880088">8</font>;
+
+  <font color="#888888"><i>/* allocate memory for double buffer and background image */</i></font>
+  <font color="#0000FF">if</font> ((double_buffer = (byte *) malloc(SCREEN_SIZE)) == NULL)
+  {
+    printf(<font color="#FF00FF">&quot;Not enough memory for double buffer.\n&quot;</font>);
+    exit(<font color="#880088">1</font>);
+  }
+  <font color="#888888"><i>/* allocate memory for objects */</i></font>
+  <font color="#0000FF">if</font> ((object = (OBJECT *) malloc(<font color="#0000FF">sizeof</font>(OBJECT)*num_objects)) == NULL)
+  {
+    printf(<font color="#FF00FF">&quot;Not enough memory for objects.\n&quot;</font>);
+    free(double_buffer);
+    exit(<font color="#880088">1</font>);
+  }
+
+  <font color="#888888"><i>/* load the images */</i></font>
+  load_bmp(<font color="#FF00FF">&quot;balls.bmp&quot;</font>,&amp;bmp);
+
+  <font color="#888888"><i>/* set the object positions */</i></font>
+  srand(*my_clock);
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;num_objects;i++)
+  {
+    object[i].width   = BITMAP_WIDTH;
+    object[i].height  = BITMAP_HEIGHT;
+    object[i].x       = rand() % (SCREEN_WIDTH - BITMAP_WIDTH );
+    object[i].y       = rand() % (SCREEN_HEIGHT- BITMAP_HEIGHT);
+    object[i].dx      = (rand()%<font color="#880088">5</font>) - <font color="#880088">2</font>;
+    object[i].dy      = (rand()%<font color="#880088">5</font>) - <font color="#880088">2</font>;
+  }
+
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode. */</i></font>
+  set_palette(bmp<font color="#880088">.</font>palette);
+
+  start=*my_clock;                    <font color="#888888"><i>/* record the starting time. */</i></font>
+  <font color="#0000FF">for</font>(repeat=<font color="#880088">0</font>;repeat&lt;TOTAL_FRAMES;repeat++)
+  {
+    <font color="#0000FF">if</font> ((repeat%ANIMATION_FRAMES)==<font color="#880088">0</font>) bitmap_offset=<font color="#880088">0</font>;
+    <font color="#888888"><i>/* clear background */</i></font>
+    memset(double_buffer,<font color="#880088">0</font>,SCREEN_SIZE);
+
+    <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;num_objects;i++)
+    {
+      screen_offset = (object[i].y&lt;&lt;<font color="#880088">8</font>) + (object[i].y&lt;&lt;<font color="#880088">6</font>) + object[i].x;
+      <font color="#888888"><i>/* draw the object. */</i></font>
+      <font color="#0000FF">for</font>(y=<font color="#880088">0</font>;y&lt;BITMAP_HEIGHT*bmp<font color="#880088">.</font>width;y+=bmp<font color="#880088">.</font>width)
+        <font color="#0000FF">for</font>(x=<font color="#880088">0</font>;x&lt;BITMAP_WIDTH;x++)
+          <font color="#0000FF">if</font> (bmp<font color="#880088">.</font>data[bitmap_offset+y+x]!=<font color="#880088">0</font>)
+            double_buffer[screen_offset+y+x]=bmp<font color="#880088">.</font>data[bitmap_offset+y+x];
+      <font color="#888888"><i>/* check to see if the object is within boundries */</i></font>
+      <font color="#0000FF">if</font> (object[i].x + object[i].dx &lt; <font color="#880088">0</font> ||
+          object[i].x + object[i].dx &gt; SCREEN_WIDTH-object[i].width-<font color="#880088">1</font>)
+            object[i].dx=-object[i].dx;
+      <font color="#0000FF">if</font> (object[i].y + object[i].dy &lt; <font color="#880088">0</font> ||
+          object[i].y + object[i].dy &gt; SCREEN_HEIGHT-object[i].height-<font color="#880088">1</font>)
+            object[i].dy=-object[i].dy;
+      <font color="#888888"><i>/* move the object */</i></font>
+      object[i].x+=object[i].dx;
+      object[i].y+=object[i].dy;
+    }
+
+    <font color="#888888"><i>/* point to the next image in the animation */</i></font>
+    bitmap_offset+=BITMAP_WIDTH;
+    <font color="#0000FF">if</font> ((bitmap_offset%bmp<font color="#880088">.</font>width)==<font color="#880088">0</font>)
+      bitmap_offset+=bmp<font color="#880088">.</font>width*(BITMAP_HEIGHT-<font color="#880088">1</font>);
+
+    <font color="#888888"><i>/* show the buffer */</i></font>
+    show_buffer(double_buffer);
+  }
+  t1=(*my_clock-start)/<font color="#880088">18.2</font>;          <font color="#888888"><i>/* calculate how long it took. */</i></font>
+
+  free(double_buffer);                <font color="#888888"><i>/* free up memory used */</i></font>
+
+  <font color="#888888"><i>/************************************************************************/</i></font>
+
+  set_unchained_mode();               <font color="#888888"><i>/* set unchained mode */</i></font>
+
+  start=*my_clock;                    <font color="#888888"><i>/* record the starting time. */</i></font>
+  <font color="#0000FF">for</font>(repeat=<font color="#880088">0</font>;repeat&lt;TOTAL_FRAMES;repeat++)
+  {
+    <font color="#0000FF">if</font> ((repeat%ANIMATION_FRAMES)==<font color="#880088">0</font>) bitmap_offset=<font color="#880088">0</font>;
+    <font color="#888888"><i>/* clear background */</i></font>
+    outpw(SC_INDEX,ALL_PLANES);
+    memset(&amp;VGA[active_page],<font color="#880088">0</font>,SCREEN_SIZE/<font color="#880088">4</font>);
+
+    outp(SC_INDEX, MAP_MASK);          <font color="#888888"><i>/* select plane */</i></font>
+    <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;num_objects;i++)
+    {
+      screen_offset = (object[i].y&lt;&lt;<font color="#880088">6</font>) + (object[i].y&lt;&lt;<font color="#880088">4</font>) + (object[i].x&gt;&gt;<font color="#880088">2</font>);
+      <font color="#888888"><i>/* draw the object. */</i></font>
+      <font color="#0000FF">for</font>(plane=<font color="#880088">0</font>;plane&lt;<font color="#880088">4</font>;plane++)
+      {
+        <font color="#888888"><i>/* select plane */</i></font>
+        outp(SC_DATA,  <font color="#880088">1</font> &lt;&lt; ((plane+object[i].x)&amp;<font color="#880088">3</font>) );
+        <font color="#0000FF">for</font>(y=<font color="#880088">0</font>;y&lt;BITMAP_HEIGHT*bmp<font color="#880088">.</font>width;y+=bmp<font color="#880088">.</font>width)
+          <font color="#0000FF">for</font>(x=plane;x&lt;BITMAP_WIDTH;x+=<font color="#880088">4</font>)
+            <font color="#0000FF">if</font> (bmp<font color="#880088">.</font>data[bitmap_offset+y+x]!=<font color="#880088">0</font>)
+              VGA[active_page+screen_offset+(y&gt;&gt;<font color="#880088">2</font>)+((x+(object[i].x&amp;<font color="#880088">3</font>)) &gt;&gt; <font color="#880088">2</font>)]=
+                bmp<font color="#880088">.</font>data[bitmap_offset+y+x];
+      }
+      <font color="#888888"><i>/* check to see if the object is within boundries */</i></font>
+      <font color="#0000FF">if</font> (object[i].x + object[i].dx &lt; <font color="#880088">0</font> ||
+          object[i].x + object[i].dx &gt; SCREEN_WIDTH-object[i].width-<font color="#880088">1</font>)
+            object[i].dx=-object[i].dx;
+      <font color="#0000FF">if</font> (object[i].y + object[i].dy &lt; <font color="#880088">0</font> ||
+          object[i].y + object[i].dy &gt; SCREEN_HEIGHT-object[i].height-<font color="#880088">1</font>)
+            object[i].dy=-object[i].dy;
+      <font color="#888888"><i>/* move the object */</i></font>
+      object[i].x+=object[i].dx;
+      object[i].y+=object[i].dy;
+    }
+
+    <font color="#888888"><i>/* point to the next image in the animation */</i></font>
+    bitmap_offset+=BITMAP_WIDTH;
+    <font color="#0000FF">if</font> ((bitmap_offset%bmp<font color="#880088">.</font>width)==<font color="#880088">0</font>)
+      bitmap_offset+=bmp<font color="#880088">.</font>width*(BITMAP_HEIGHT-<font color="#880088">1</font>);
+
+    <font color="#888888"><i>/* flip the pages */</i></font>
+    page_flip(&amp;visual_page,&amp;active_page);
+  }
+  t2=(*my_clock-start)/<font color="#880088">18.2</font>;          <font color="#888888"><i>/* calculate how long it took. */</i></font>
+
+  free(bmp<font color="#880088">.</font>data);
+  free(object);
+
+  set_mode(TEXT_MODE);                <font color="#888888"><i>/* set the video mode back to
+                                         text mode. */</i></font>
+  <font color="#888888"><i>/* output the results... */</i></font>
+
+  printf(<font color="#FF00FF">&quot;Results with %i objects&quot;</font>,num_objects);
+  <font color="#008800">#ifdef</font> VERTICAL_RETRACE
+    printf(<font color="#FF00FF">&quot;:\n&quot;</font>);
+  <font color="#008800">#else</font>
+    printf(<font color="#FF00FF">&quot; (vertical retrace *ignored*):\n&quot;</font>);
+  <font color="#008800">#endif</font>
+  printf(<font color="#FF00FF">&quot;  Mode 13h with double buffering:\n&quot;</font>);
+  printf(<font color="#FF00FF">&quot;    %f seconds,\n&quot;</font>,t1);
+  printf(<font color="#FF00FF">&quot;    %f frames per second.\n&quot;</font>,(<font color="#0000FF">float</font>)TOTAL_FRAMES/t1);
+  printf(<font color="#FF00FF">&quot;  Unchained mode with page flipping:\n&quot;</font>);
+  printf(<font color="#FF00FF">&quot;    %f seconds,\n&quot;</font>,t2);
+  printf(<font color="#FF00FF">&quot;    %f frames per second.\n&quot;</font>,(<font color="#0000FF">float</font>)TOTAL_FRAMES/t2);
+  <font color="#0000FF">if</font> (t2 != <font color="#880088">0</font>) 
+    printf(<font color="#FF00FF">&quot;  Unchained mode with page flipping was %f times faster.\n&quot;</font>,t1/t2);
+
+  __djgpp_nearptr_disable();
+  printf(<font color="#FF00FF">&quot;%p\n&quot;</font>,my_clock);
+
+  <font color="#0000FF">return</font>;
+}
+
+
+
+</pre>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+<p><font size="2">Back to <a href="../../unchain.html#unchain8.0">Double Buffering, Page Flipping, &amp; Unchained Mode</a></font></p></body>
+</html>

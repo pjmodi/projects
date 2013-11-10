@@ -1,0 +1,541 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <link rel=stylesheet href="256vpc.css" type="text/css">
+  <title>256-Color VGA Programming in C - Mouse Support &amp; Animation</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<script language="JavaScript"><!--
+nav = navVersion();
+ie = ieVersion();
+
+preloadImage("images/ui/subhead_left.gif");
+preloadImage("images/ui/subhead_right.gif");
+preloadImage("images/ui/dot.gif");
+preloadImage("images/ui/navigate_next_hover.gif");
+preloadImage("images/ui/navigate_prev_hover.gif");
+
+function navVersion()
+{
+	var ua = window.navigator.userAgent;
+	var nav = ua.indexOf ( "Mozilla/" );
+	if (nav>=0)
+		return parseInt ( ua.substring ( nav+8, ua.indexOf (".") ) );
+	else
+		return 0;	// is other browser
+}
+
+function ieVersion()
+{
+	var ua = window.navigator.userAgent;
+	var msie = ua.indexOf("MSIE ");
+	if (msie>=0)	
+		return parseInt ( ua.substring ( msie+5, ua.indexOf ( ".", msie ) ) );
+	else
+		return 0;	
+}
+
+function changeImage(image, filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image.src = "images/ui/" + filename + ".gif"
+	}
+}
+
+function preloadImage(filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image = new Image();
+    image.src = filename;
+	}
+
+}
+// --></script>
+
+<a href="index.html"><font size="2">256-Color VGA Programming in C</font></a><br><font size="6" face="tahoma, arial, helvetica"><strong><a name="top"></a>Mouse Support &amp; Animation</strong></font><br>
+<strong>Contents:</strong><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#mouse1.0"><font size="2">Why a mouse?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#mouse2.0"><font size="2">Initializing the mouse</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#mouse3.0"><font size="2">Mouse status</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#mouse4.0"><font size="2">Mouse motion</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#mouse5.0"><font size="2">Mouse buttons</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#mouse6.0"><font size="2">Animation</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#mouse7.0"><font size="2">Program: mouse.c</font></a><br>
+
+
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="mouse1.0"></a><strong>&nbsp;Why a mouse?</strong></font></td>
+    <td align="right" valign="middle"><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#mouse2.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Initializing the mouse" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>If a program that is meant to have an easy-to-use interface
+does not have mouse support, some would say it would not (and
+could not) be an easy-to-use interface. Programming the mouse is
+fairly simple on the low level, but there is a lot to deal with
+when considering buttons and animated mouse pointers, all of
+which will be covered in this section. </p>
+
+<p>There are two ways to communicate with the mouse: </p>
+
+<ul>
+    <li>with the serial port itself, or </li>
+    <li>with the installed mouse driver through interrupt 0x33. </li>
+</ul>
+
+<p>Reading the serial port can be cumbersome because the mouse
+must be detected, not to mention there are usually two or more
+serial ports on a computer, each of which could be connected to
+the mouse. Not to mention some mice use a PS/2 port or USB port.</p>
+
+<p>The mouse driver, if installed on the user's machine, provides
+an easy way to detect the mouse's existence and poll messages
+like when a mouse button has been pressed and when the mouse has
+moved. Using the mouse driver also ensures the code will work no
+matter what type of mouse the user has. The driver also provides
+mouse pointer support, but it is limited to two-color mouse
+pointers. The program <code>mouse.c</code> at the end of this
+section uses all of its own mouse pointers instead of the
+driver's.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="mouse2.0"></a><strong>&nbsp;Initializing the mouse</strong></font></td>
+    <td align="right" valign="middle"><a href="#mouse1.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Why a mouse?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#mouse3.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Mouse status" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Initializing the mouse is as easy as setting <code>AX</code>
+to zero and calling interrupt 0x33. If the mouse is installed, <code>AX</code>
+is set to FFFFh on return. The <code>BX</code> register returns
+the number of mouse buttons.</p>
+
+<pre>union REGS regs;
+
+regs.x.ax = 0;
+int86(0x33, &amp;regs, &amp;regs);
+mouse_on = regs.x.ax;
+num_buttons = regs.x.bx;
+</pre>
+
+<p>This also sets the mouse driver's internal mouse position to
+the center of the screen. The center of the screen, according to
+the mouse driver, is not (160,100), it is (320,100). This is
+because the mouse driver maps the <i>x</i> position of the mouse
+from 0 to 639 and the <i>y</i> position from 0 to 199, no matter
+what video mode is currently active. </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="mouse3.0"></a><strong>&nbsp;Mouse status</strong></font></td>
+    <td align="right" valign="middle"><a href="#mouse2.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Initializing the mouse" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#mouse4.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Mouse motion" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>To get the mouse's current status, set <code>AX</code> to 3
+and call interrupt 0x33. The <i>x</i> value is returned in <code>CX</code>
+and the <i>y</i> value is returned in <code>DX</code>. <code>BX</code>
+contains the status of the mouse buttons (Figure 17). </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00027.gif" width="281"
+        height="137"><br>
+        <br>
+        <b>Figure 17.</b> The status of the mouse buttons
+        returned in <code>BL</code> after calling function 3. </td>
+    </tr>
+</table>
+</center></div>
+
+<p align="center">&nbsp;</p>
+
+<p>The following program segment is a basic mouse handler than
+uses a pixel as the mouse pointer. The program exits when a mouse
+button is pressed. </p>
+
+<pre>union REGS regs;
+
+regs.x.ax = 0;
+int86(0x33, &amp;regs, &amp;regs);
+mouse_on = regs.x.ax;
+if (!mouse_on) 
+{
+  printf(&quot;Mouse not found.\n&quot;);
+  exit(1);
+}
+
+buttons=0;
+while (!buttons)
+{
+  regs.x.ax=3;
+  int86(0x33, &amp;regs, &amp;regs);
+  cx = regs.x.cx;
+  dx = regs.x.dx;
+  offset = (cx&gt;&gt;1)+(dx&lt;&lt;8)+(dx&lt;&lt;6);
+  VGA[offset] = 15;
+  if (regs.x.bx) buttons=1;
+}
+</pre>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="mouse4.0"></a><strong>&nbsp;Mouse motion</strong></font></td>
+    <td align="right" valign="middle"><a href="#mouse3.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Mouse status" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#mouse5.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Mouse buttons" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Using the mouse driver's mouse position is easy, but it is not
+very portable to other video modes, like 320<tt>x</tt>240 or 640<tt>x</tt>480.
+An alternate way to keep track of the mouse position is to let
+the program do it, using function 0xB to get the motion that the
+mouse has moved. This function returns the motion the mouse has
+moved horizontally in <code>CX</code>, and the motion the mouse
+has moved vertically in <code>DX</code>. The following program
+segment uses function 0xB keep track of the mouse pointer. The
+loop exits when the mouse is placed in the upper-left corner. </p>
+
+<pre>union REGS reg;
+
+x=160;
+y=100;
+while (x&gt;0 || y&gt;0)
+{
+  /*... display mouse here ...*/
+
+  reg.x.ax=0x0B;
+  int86(0x33,&amp;regs,&amp;regs);  
+  x += (int)reg.x.cx;
+  y += (int)reg.x.dx;    
+  if (x&lt;0) x=0;
+  if (y&lt;0) y=0;
+  if (x&gt;319) x=319;
+  if (y&gt;199) y=199;
+}
+</pre>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="mouse5.0"></a><strong>&nbsp;Mouse buttons</strong></font></td>
+    <td align="right" valign="middle"><a href="#mouse4.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Mouse motion" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#mouse6.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Animation" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Sometimes it does not matter if a mouse button is up or down,
+only if it was just <i>pressed</i>. With functions 5 and 6,
+instead of reading when a button is <i>down</i>, they read when a
+button is first <i>pressed</i> and finally <i>released</i>. To do
+this, set <code>BX</code> to the button (0=left, 1=right,
+2=middle) and call interrupt 0x33. The function returns the
+number of presses or releases that have occurred in <code>BX</code>.
+The following code displays the status of the left button. The
+loop exits when the right button is released. </p>
+
+<pre>printf(&quot;Press right button to quit\n&quot;);
+do
+{
+  regs.x.ax=5;
+  regs.x.bx=0;
+  int86(0x33,&amp;regs,&amp;regs);
+  if (regs.x.bx)
+    printf(&quot;Left button pressed.\n&quot;);
+  regs.x.ax=6;
+  regs.x.bx=0;
+  int86(0x33,&amp;regs,&amp;regs);
+  if (regs.x.bx)
+    printf(&quot;Left button released.\n&quot;);
+  regs.x.ax=6;
+  regs.x.bx=1;
+  int86(0x33,&amp;regs,&amp;regs);
+} while (!regs.x.bx)
+</pre>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="mouse6.0"></a><strong>&nbsp;Animation</strong></font></td>
+    <td align="right" valign="middle"><a href="#mouse5.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Mouse buttons" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#mouse7.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Program: mouse.c" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>In a user-friendly interface, when the user selects a command
+that takes a while to execute, the mouse pointer might become an
+animated clock that lets the user know the computer is working.
+This technique is demonstrated in <code>mouse.c</code>. The mouse
+bitmap is stored in a structure that has a pointer to another
+mouse pointer, which is the next bitmap in the animation. </p>
+
+<p>The vertical retrace is monitored to eliminate flickering of
+the mouse pointer as well. </p>
+
+<p>All the button bitmaps and mouse pointers are stored in a
+single file, <code>images.bmp</code> (Figure 18). The BMP file is
+read, then the separate icons are extracted from it. </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00028.gif" width="288"
+        height="48"><br>
+        <br>
+        <b>Figure 18</b>. <code>images.bmp</code>.</td>
+    </tr>
+</table>
+</center></div>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="mouse7.0"></a><strong>&nbsp;Program: mouse.c</strong></font></td>
+    <td align="right" valign="middle"><a href="#mouse6.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Animation" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#mouse8.0"><img src="images/ui/arrow_right.gif"
+    alt="Bottom" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>
+
+<table border="0" cellspacing="0" bgcolor="#000000">
+    <tr>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>Borland C /
+                Turbo C /etc.</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/bc31/mouse.c.html"><img
+                src="images/ui/doc.gif" alt="View mouse.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/bc31/mouse.c.html">mouse.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/bc31/mouse.zip"><img
+                src="images/ui/download.gif"
+                alt="Download mouse.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/bc31/mouse.zip">mouse.zip</a>
+                (20K)<br>
+                <font size="2">Contains mouse.c, mouse.exe,
+images.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>DJGPP 2.0</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/djgpp20/mouse.c.html"><img
+                src="images/ui/doc.gif" alt="View mouse.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/djgpp20/mouse.c.html">mouse.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/djgpp20/mouse.zip"><img
+                src="images/ui/download.gif"
+                alt="Download mouse.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/djgpp20/mouse.zip">mouse.zip</a>
+                (52K)<br>
+                <font size="2">Contains mouse.c, mouse.exe,
+images.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td width="100%"><font size="2">Having trouble compiling
+        or running the program? See the </font><a
+        href="trouble.html"><font size="2">Troubleshooting</font></a><font
+        size="2"> page.</font></td>
+    </tr>
+</table>
+</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00029.gif" width="320"
+        height="200"><br>
+        <br>
+        <b>Figure 19. </b>Output from <code>mouse.exe</code>. </td>
+    </tr>
+</table>
+</center></div>
+
+<p>The previous program is the most substantial program in this
+manual. It covers everything from this section and the previous
+section, and actually demonstrates a solid user interface,
+although the program does not do anything useful. With the ideas
+from these past three programs, a pull-down menu system could be
+created. </p>
+
+<p>However, the scheme used to reduce flickering in this program
+is not very accurate at times. To create flicker-free programs,
+one of two techniques should be used: double buffering or page
+flipping. Both of these techniques are discussed in the next
+section.</p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="mouse8.0"></a>&nbsp;</font></td>
+    <td align="right" valign="middle"><a href="#mouse7.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Program: mouse.c" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+<br><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td align="left" valign="top"><a href="bitmaps.html"
+onmouseout="changeImage(prev,'navigate_prev')"
+onmouseover="changeImage(prev,'navigate_prev_hover')"><img src="images/ui/navigate_prev.gif" align="absmiddle"
+border="0" hspace="2" width="32" height="32" name="prev"><font
+size="2">Previous: Bitmaps &amp; Palette Manipulation</font></a></td><td align="right" valign="top"><a href="unchain.html"
+onmouseout="changeImage(next,'navigate_next')"
+onmouseover="changeImage(next,'navigate_next_hover')"><font size="2">Next: Double Buffering, Page Flipping, &amp; Unchained Mode</font><img
+src="images/ui/navigate_next.gif" align="absmiddle"
+border="0" hspace="2" width="32" height="32" name="next"></a></td></tr></table><p>&nbsp;</p><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td>  <font size="2" face="tahoma, arial, helvetica"><strong><a href="index.html">256-Color VGA Programming in C</a></strong>
+ | <a href="intro.html">Introduction</a>
+ | <a href="basics.html">VGA Basics</a>
+ | <a href="shapes.html">Primitive Shapes &amp; Lines</a>
+ | <a href="bitmaps.html">Bitmaps &amp; Palette Manipulation</a>
+ | <a href="mouse.html">Mouse Support &amp; Animation</a>
+ | <a href="unchain.html">Double Buffering, Page Flipping, &amp; Unchained Mode</a>
+ | <a href="announce.html">Announcements</a>
+ | <a href="resource.html">Links and Other Resources</a>
+ | <a href="download.html">Download</a>
+ | <a href="trouble.html">FAQ and Troubleshooting</a>
+  </font></td></tr></table>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>

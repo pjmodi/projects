@@ -1,0 +1,471 @@
+#include<iostream.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<graphics.h>
+#include<dos.h>
+#include<alloc.h>
+#include<stdio.h>
+
+
+//-----------------------
+//Variable Declarations |
+//-----------------------
+int count;
+int ip=0;
+int readip=0;
+int check=0;
+char t[11]="          ";	//TiC Tac Toe Main Board
+char b[11]="0000000000"; 	//Buffer
+char *ptr=b;			//Pointer to Buffer
+char c[2]=" ";
+char ic[2]=" ";			//Input String
+char *conv;                     //Pointer to Input String
+char ch1,ch2;
+
+union REGS i,o;
+struct SREGS s;
+
+int cursorX[32]={
+		/*cursor 1. X*/
+		/*screen mask*/
+		0xffff,0x3ffc,0x9ff9,0xcff3,
+		0xe7e7,0xf3cf,0xf99f,0xfc3f,
+		0xfc3f,0xf99f,0xf3cf,0xe7e7,
+		0xcff3,0x9ff9,0x3ffc,0xffff,
+
+		/*mouse pointer bitmap*/
+		0x0000,0xc003,0x6006,0x300c,
+		0x1818,0x0c30,0x0660,0x03c0,
+		0x03c0,0x0660,0x0c30,0x1818,
+		0x300c,0x6006,0xc003,0x0000,
+		};
+
+int cursorO[32]={
+		/*cursor 2. 0*/
+		/*screen mask*/
+		0xfc3f,0xf42f,0xe7e7,0xcff3,
+		0x9ff9,0xffff,0x3ffc,0x3ffc,
+		0x3ffc,0x3ffc,0xffff,0x9ff9,
+		0xcff3,0xe7e7,0xf42f,0xfc3f,
+
+		/*mouse pointer bitmap*/
+		0x03c0,0x0bd0,0x1818,0x300c,
+		0x6006,0x0000,0xc003,0xc003,
+		0xc003,0xc003,0x0000,0x6006,
+		0x300c,0x1818,0x0bd0,0x03c0,
+		};
+
+
+//*************************************************************************
+
+//----------------------
+//Function Definitions  |
+//----------------------
+
+
+initmouse()
+{
+i.x.ax=0;
+int86(0x33,&i,&o);
+return(o.x.ax);
+}
+
+void showmouseptr()
+{
+i.x.ax=1;
+int86(0x33,&i,&o);
+}
+
+void getmousepos(int *button, int *x, int *y)
+{
+i.x.ax=3;
+int86(0x33,&i,&o);
+*button=o.x.bx;
+*x=o.x.cx;
+*y=o.x.dx;
+}
+
+void hidemouseptr()
+{
+i.x.ax=2;
+int86(0x33,&i,&o);
+}
+
+void changecursor(int *shape)
+{
+i.x.ax=9;
+i.x.bx=0;
+i.x.cx=0;
+i.x.dx=(unsigned)shape;
+segread(&s);
+s.es=s.ds;
+int86x(0x33,&i,&i,&s);
+}
+
+
+void init(void)  //For re-initializing the variables
+{
+extern int count;
+extern int ip; ip=0;
+extern int readip;readip=0;
+extern int check;check=0;
+extern char t[11]; t[0]=' '; t[1]=' '; t[2]=' '; t[3]=' '; t[4]=' '; t[5]=' '; t[6]=' '; t[7]=' '; t[8]=' '; t[9]=' ';
+extern char b[11]; b[0]=' '; b[1]=' '; b[2]=' '; b[3]=' '; b[4]=' '; b[5]=' '; b[6]=' '; b[7]=' '; b[8]=' '; b[9]=' ';
+extern char *conv;
+extern char *ptr; ptr=b;
+}
+
+
+void convert(void)
+{
+conv=c;
+ip=atoi(conv);
+}
+
+void get(void)
+{
+cout << "Please enter a number between 1 & 9 - ";
+c[0]=getche();		//Allows only one character input
+//getch();   	        //Waits for player to confirm continuation
+
+if (c[0]<'1' || c[0]>'9')	//Makes sure i/p is a number between 1-9
+	{
+	cout << endl;
+	get();
+	}
+
+for (int i=1; i<=10; i++)       //Dis-allows duplicate entries
+	{
+	if (c[0]==b[i])
+		{
+		cout << "\nThis number has already been used. ";
+		get();
+		}
+	}
+}
+
+void block(void)
+{
+if( (t[1]==ch1 && t[2]==ch1) && (t[3]==' ') )
+     {ip=3;check=1;}
+else if( (t[1]==ch1 && t[3]==ch1) && (t[2]==' ') )
+     {ip=2;check=1;}
+else if( (t[2]==ch1 && t[3]==ch1) && (t[1]==' ') )
+     {ip=1;check=1;}
+else if( (t[4]==ch1 && t[5]==ch1) && (t[6]==' ') )
+     {ip=6;check=1;}
+else if( (t[4]==ch1 && t[6]==ch1) && (t[5]==' ') )
+     {ip=5;check=1;}
+else if( (t[5]==ch1 && t[6]==ch1) && (t[4]==' ') )
+     {ip=4;check=1;}
+else if( (t[7]==ch1 && t[8]==ch1) && (t[9]==' ') )
+     {ip=9;check=1;}
+else if( (t[7]==ch1 && t[9]==ch1) && (t[8]==' ') )
+     {ip=8;check=1;}
+else if( (t[8]==ch1 && t[9]==ch1) && (t[7]==' ') )
+     {ip=7;check=1;}
+else if( (t[1]==ch1 && t[4]==ch1) && (t[7]==' ') )
+     {ip=7;check=1;}
+else if( (t[1]==ch1 && t[7]==ch1) && (t[4]==' ') )
+     {ip=4;check=1;}
+else if( (t[4]==ch1 && t[7]==ch1) && (t[1]==' ') )
+     {ip=1;check=1;}
+else if( (t[2]==ch1 && t[5]==ch1) && (t[8]==' ') )
+     {ip=8;check=1;}
+else if( (t[2]==ch1 && t[8]==ch1) && (t[5]==' ') )
+     {ip=5;check=1;}
+else if( (t[5]==ch1 && t[8]==ch1) && (t[2]==' ') )
+     {ip=2;check=1;}
+else if( (t[3]==ch1 && t[6]==ch1) && (t[9]==' ') )
+     {ip=9;check=1;}
+else if( (t[6]==ch1 && t[9]==ch1) && (t[3]==' ') )
+     {ip=3;check=1;}
+else if( (t[3]==ch1 && t[9]==ch1) && (t[6]==' ') )
+     {ip=6;check=1;}
+else if( (t[1]==ch1 && t[5]==ch1) && (t[9]==' ') )
+     {ip=9;check=1;}
+else if( (t[1]==ch1 && t[9]==ch1) && (t[5]==' ') )
+     {ip=5;check=1;}
+else if( (t[5]==ch1 && t[9]==ch1) && (t[1]==' ') )
+     {ip=1;check=1;}
+else if( (t[3]==ch1 && t[5]==ch1) && (t[7]==' ') )
+     {ip=7;check=1;}
+else if( (t[3]==ch1 && t[7]==ch1) && (t[5]==' ') )
+     {ip=5;check=1;}
+else if( (t[5]==ch1 && t[7]==ch1) && (t[3]==' ') )
+     {ip=3;check=1;}
+
+
+else if( (t[1]==ch2 && t[2]==ch2) && (t[3]==' ') )
+     {ip=3;check=1;}
+else if( (t[1]==ch2 && t[3]==ch2) && (t[2]==' ') )
+     {ip=2;check=1;}
+else if( (t[2]==ch2 && t[3]==ch2) && (t[1]==' ') )
+     {ip=1;check=1;}
+else if( (t[4]==ch2 && t[5]==ch2) && (t[6]==' ') )
+     {ip=6;check=1;}
+else if( (t[4]==ch2 && t[6]==ch2) && (t[5]==' ') )
+     {ip=5;check=1;}
+else if( (t[5]==ch2 && t[6]==ch2) && (t[4]==' ') )
+     {ip=4;check=1;}
+else if( (t[7]==ch2 && t[8]==ch2) && (t[9]==' ') )
+     {ip=9;check=1;}
+else if( (t[7]==ch2 && t[9]==ch2) && (t[8]==' ') )
+     {ip=8;check=1;}
+else if( (t[8]==ch2 && t[9]==ch2) && (t[7]==' ') )
+     {ip=7;check=1;}
+else if( (t[1]==ch2 && t[4]==ch2) && (t[7]==' ') )
+     {ip=7;check=1;}
+else if( (t[1]==ch2 && t[7]==ch2) && (t[4]==' ') )
+     {ip=4;check=1;}
+else if( (t[4]==ch2 && t[7]==ch2) && (t[1]==' ') )
+     {ip=1;check=1;}
+else if( (t[2]==ch2 && t[5]==ch2) && (t[8]==' ') )
+     {ip=8;check=1;}
+else if( (t[2]==ch2 && t[8]==ch2) && (t[5]==' ') )
+     {ip=5;check=1;}
+else if( (t[5]==ch2 && t[8]==ch2) && (t[2]==' ') )
+     {ip=2;check=1;}
+else if( (t[3]==ch2 && t[6]==ch2) && (t[9]==' ') )
+     {ip=9;check=1;}
+else if( (t[6]==ch2 && t[9]==ch2) && (t[3]==' ') )
+     {ip=3;check=1;}
+else if( (t[3]==ch2 && t[9]==ch2) && (t[6]==' ') )
+     {ip=6;check=1;}
+else if( (t[1]==ch2 && t[5]==ch2) && (t[9]==' ') )
+     {ip=9;check=1;}
+else if( (t[1]==ch2 && t[9]==ch2) && (t[5]==' ') )
+     {ip=5;check=1;}
+else if( (t[5]==ch2 && t[9]==ch2) && (t[1]==' ') )
+     {ip=1;check=1;}
+else if( (t[3]==ch2 && t[5]==ch2) && (t[7]==' ') )
+     {ip=7;check=1;}
+else if( (t[3]==ch2 && t[7]==ch2) && (t[5]==' ') )
+     {ip=5;check=1;}
+else if( (t[5]==ch2 && t[7]==ch2) && (t[3]==' ') )
+     {ip=3;check=1;}
+}
+
+/* Get the computer's move */
+void get_computer_move(void)
+{
+check=0;
+block();
+if(check==0)
+	{
+	if (count==1)
+	ip=7;
+	else if(count==3)
+		{
+		if(t[1]=='O' || t[9]=='O')
+		  ip=3;
+		else if(t[3]=='O' || t[4]=='O')
+		ip=9;
+		else if(t[2]=='O' || t[8]=='O' || t[6]=='O')
+		ip=1;
+		else if(t[5]=='O')
+		ip=6;
+		}
+	else if(count==5)
+		{
+		switch(readip)
+			{
+			case 5: if(t[1]=='O')
+				  ip=9;
+				else if(t[9]=='O')
+				  ip=1;
+				else do
+					{
+					ip=random(10);
+					}while(ip==0);
+				break;
+			case 8: if(t[3]=='O')
+				  ip=1;
+				else if(t[4]=='O')
+				  ip=3;
+				else do
+					{
+					ip=random(10);
+					}while(ip==0);
+				break;
+			case 4: if(t[2]=='O' || t[6]=='O' || t[8]=='O')
+				  ip=5;
+				else do
+					{
+					ip=random(10);
+					}while(ip==0);
+				break;
+			case 1: ip=9;
+				break;
+			default:do
+				{
+				ip=random(10);
+				}while(ip==0);
+				break;
+			}
+		}
+	else if (count==7)
+		{
+		do
+			{
+			ip=random(10);
+			}
+		while(ip==0);
+		}
+	else if(count==9)
+		{
+		for (int i=1;i<=9;i++)
+			{
+			itoa(i,ic,10);
+			if(t[i]==ic[0])
+				{
+				ip=i;
+				break;
+				}
+			}
+		}
+	}
+
+itoa(ip,c,10);
+
+for (int i=1; i<=10; i++)       //Dis-allows duplicate entries
+     {
+	if (c[0]==b[i])
+		{
+		get_computer_move();
+		}
+     }
+}
+
+
+void test(void)		//Checks for a winner or continues the game
+{
+//X's winning conditions
+if (
+	(t[1] == 'X' && t[2] == 'X' && t[3] == 'X') ||
+	(t[4] == 'X' && t[5] == 'X' && t[6] == 'X') ||
+	(t[7] == 'X' && t[8] == 'X' && t[9] == 'X') ||
+	(t[1] == 'X' && t[4] == 'X' && t[7] == 'X') ||
+	(t[2] == 'X' && t[5] == 'X' && t[8] == 'X') ||
+	(t[3] == 'X' && t[6] == 'X' && t[9] == 'X') ||
+	(t[1] == 'X' && t[5] == 'X' && t[9] == 'X') ||
+	(t[3] == 'X' && t[5] == 'X' && t[7] == 'X')
+   )
+	{cout << "\n\nPlayer 1 WINS!!";}
+
+//O's winning conditions
+else if (
+	(t[1] == 'O' && t[2] == 'O' && t[3] == 'O') ||
+	(t[4] == 'O' && t[5] == 'O' && t[6] == 'O') ||
+	(t[7] == 'O' && t[8] == 'O' && t[9] == 'O') ||
+	(t[1] == 'O' && t[4] == 'O' && t[7] == 'O') ||
+	(t[2] == 'O' && t[5] == 'O' && t[8] == 'O') ||
+	(t[3] == 'O' && t[6] == 'O' && t[9] == 'O') ||
+	(t[1] == 'O' && t[5] == 'O' && t[9] == 'O') ||
+	(t[3] == 'O' && t[5] == 'O' && t[7] == 'O')
+    )
+	{cout << "\n\nPlayer 2 WINS!!";}
+
+//Draw conditions
+else if (count == 10)
+		{
+		cout << "\n\nIt's a Draw! Please try again.";
+		}
+
+//For alternate turns of the 2 players
+else    {
+	if (count%2 != 0)
+		{
+		cout << "\n\nPlayer 2's turn. ";
+		ch1='X';
+		changecursor(cursorX);
+		showmouseptr();
+		get_computer_move();
+		t[ip]='X';
+		}
+	else
+		{
+		cout << "\n\nPlayer 1's turn. ";
+		ch2='O';
+		changecursor(cursorO);
+		showmouseptr();
+		get();
+		convert();
+		t[ip]='O';
+		readip=ip;
+		}
+	}
+}
+
+void show(void)		//Clears screen & throws output
+{
+	clearviewport();
+	gotoxy(1,1);
+	cout << "\n\n"
+	     << "\t\t\t|\t\t|" << endl
+	     << "\t\t" << t[1] << "\t|\t" << t[2] << "\t|\t" << t[3] << endl
+	     << "\t\t\t|\t\t|" << endl
+	     << "            -----------------------------------------\n"
+	     << "\t\t\t|\t\t|" << endl
+	     << "\t\t" << t[4] << "\t|\t" << t[5] << "\t|\t" << t[6] << endl
+	     << "\t\t\t|\t\t|" << endl
+	     << "            -----------------------------------------\n"
+	     << "\t\t\t|\t\t|" << endl
+	     << "\t\t" << t[7] << "\t|\t" << t[8] << "\t|\t" << t[9] << endl
+	     << "\t\t\t|\t\t|\n\n";
+		*ptr=c[0];
+		ptr++;
+}
+
+
+//*************************************************************************
+
+//-------------------------
+//Main program starts here |
+//-------------------------
+void main()
+{
+int gd=DETECT,gm,button,x,y,area,i,choice;
+char *p;
+
+initgraph(&gd,&gm,"d:\\tc\\bgi");
+
+if(initmouse()==0)
+	{
+	closegraph();
+	puts("Mouse not installed");
+	exit(1);
+	}
+
+
+for (count=1; count<=10; count++)
+	{
+		show();
+		test();
+	}
+
+cout << "\n\nPress 'Y' to play again or any other key to exit.";
+char getc=getch();
+if (getc=='Y' || getc=='y')
+	{
+	init();		//re-initializes the varialbles
+	main();		//re-calls the main program
+	}
+
+closegraph();
+restorecrtmode();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*************************************************************************

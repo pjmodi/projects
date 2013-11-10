@@ -1,0 +1,390 @@
+<html><!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!-- $Id: emacs.html,v 1.2 1999/07/22 19:46:10 jake Exp $ -->
+<html>
+  <head>
+    <title>the dot files</title>
+  </head>
+
+  <body>
+    <p>This is my .emacs file as of July 1999. Maybe you'll find parts
+       of it useful. A lot of it is just accumulated cruft though.
+
+<pre>
+  ;; $Id: emacs.html,v 1.2 1999/07/22 19:46:10 jake Exp $
+    (message "Loading ~/.emacs")
+
+    (setq load-path
+          (append '("/home/jake/lib/emacs"
+                    "/home/jake/lib/emacs/bbdb-2.00/lisp")
+                  load-path))
+
+    (setq default-major-mode 'text-mode)
+    (add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+    (setq mail-self-address "Jake Donham <jake@bitmechanic.com>")
+    (setq user-mail-address "Jake Donham <jake@bitmechanic.com>")
+
+    (random t)
+
+    (gnuserv-start)
+
+    (defvar frame-title-format (concat "%S@" "hostname" ": %b"))
+
+    (global-set-key "^C^C" 'compile)
+    (global-set-key "^C^E" 'load-dot-emacs)
+
+    (defun load-dot-emacs ()
+      (interactive)
+      (load-file "/home/jake/.emacs"))
+
+    (put 'eval-expression 'disabled nil)
+
+    (setq-default browse-url-browser-function 'browse-url-netscape)
+
+    (font-lock-mode t)
+</pre>
+<p>Some random junk.
+<pre>
+    ;;; Glimpse interface
+    (defun glimpse (words)
+      (interactive
+       (list (read-string "Search Glimpse index for: ")))
+      (let ((grep-null-device ""))
+        (grep (concat "glimpse -inwy \"" words "\""))))
+</pre>
+<p>OK, here's something kind of cool. Set up a cron job to index your
+   home directory with glimpse every night. Now you can search it
+   inside of Emacs and jump to each match with ^X`.
+<pre>
+     ;;; mh-e stuff
+
+     (setq mh-progs "/usr/bin"
+           mh-lib "/usr/lib/nmh"
+     ;      mh-summary-height 11
+           mh-reply-default-reply-to "from"
+           mh-forward-subject-format "FWD: %s")
+     ;;      mh-inc-prog "/home/jake/bin/inc") ;; fetchmail before inc
+
+     ; a does regular reply, A does reply to all
+     (defun jake:mh-reply (message &optional includep)
+       (interactive (list (mh-get-msg-num t) current-prefix-arg))
+       (let ((mh-reply-default-reply-to "cc"))
+         (mh-reply message)))
+
+     (defun jake:mh-add-bozo ()
+       (interactive)
+       (mh-show)
+       (save-excursion
+         (set-buffer mh-show-buffer)
+         (shell-command-on-region
+          (point-min)
+          (point-max)
+          "formail -rt -xTo: | tr -d ' \t' >> /home/jake/misc/bozos"))
+       (display-message 'command "")
+       (mh-delete-msg (mh-get-msg-num t)))
+
+     (defun jake:mh-folder-mode-hook ()
+       (define-key mh-folder-mode-map "A" 'jake:mh-reply)
+       (define-key mh-folder-mode-map "b" 'jake:mh-add-bozo))
+
+     (add-hook 'mh-folder-mode-hook 'jake:mh-folder-mode-hook)
+
+     (defun jake:mh-letter-mode-hook ()
+       "Hook to prepare letter for editing."
+       (save-excursion
+         (goto-char (point-max))          ; go to end of message to
+         (mh-insert-signature)))          ;   insert signature
+     
+     (add-hook 'mh-letter-mode-hook 'jake:mh-letter-mode-hook)
+
+     (require 'mh-comp) ; so that we don't get overwritten
+     (setq mime-editor/split-message nil) ; don't auto-split large messages
+
+     ; copied from mh-comp.el--switched args to format
+     (defun mh-forwarded-letter-subject (from subject)
+       ;; Return a Subject suitable for a forwarded message.
+       ;; Original message has headers FROM and SUBJECT.
+       (let ((addr-start (string-match "<" from))
+     	(comment (string-match "(" from)))
+         (cond ((and addr-start (> addr-start 0))
+     	   ;; Full Name <luser@host>
+     	   (setq from (substring from 0 (1- addr-start))))
+     	  (comment
+     	   ;; luser@host (Full Name)
+     	   (setq from (substring from (1+ comment) (1- (length from)))))))
+       (format mh-forward-subject-format subject from))
+
+     ; MIME support inside of mh-e
+     (require 'tm-setup)
+     (require 'mime-setup)
+</pre>
+<p>This chunk deals with some mail things. It's nice having a
+   reply-to-all and I don't think mh-e has one by default (or at least 
+   I couldn't find it). The bozo command adds addresses to a bozo list 
+   I keep, which I use to filter out spam and people I don't want to
+   know. (It's not very effective for spam, though, since it tends not 
+   to have the same return address twice.)
+
+<p>If you're interested, here's the procmail stuff for the other end
+   of the bozo filter:
+<pre>
+    # mass bozo filter
+    :0 Wc
+    | formail -rt -xTo: | xargs -ifrom grep from $HOME/misc/bozos
+
+    :0 a
+    /dev/null
+</pre>
+<p>Now back to .emacs:
+<pre>
+    ;;; CPerl Mode (from Forrest)
+
+    (autoload 'perl-mode "cperl-mode" "alternate mode for editing Perl programs")
+    (setq cperl-hairy t)
+    (setq auto-mode-alist
+          (append '(("\\.[pP][Llm]$" . perl-mode)
+                    ("\\.cgi$" . perl-mode)
+                    ("\\.pod$" . perl-mode))
+                  auto-mode-alist ))
+    (setq auto-mode-alist
+          (append '(("\\.xs$" . c-mode) ("\\.x$" . c-mode)) auto-mode-alist))
+    (setq auto-mode-alist
+          (append '(("\\.idl$" . idl-mode)) auto-mode-alist))
+    (setq interpreter-mode-alist (append interpreter-mode-alist
+                                         '(("miniperl" . perl-mode))))
+
+
+
+    ;; SML mode
+    (autoload 'sml-mode "sml-mode" "Major mode for editing SML." t)
+    (setq auto-mode-alist
+          (append '(("\\.sml$" . sml-mode)
+                  ("\\.ML$"  . sml-mode)) auto-mode-alist))
+
+
+
+    ;;; Indent C/Java how I like it
+    (setq c-basic-offset 2)
+
+
+
+    ;;; BBDB 2.0 stuff
+    (require 'bbdb)
+    (bbdb-initialize 'message 'w3 'mh-e)
+
+
+
+    ;; filladapt stuff from Forrest
+    (require 'filladapt)
+    (setq-default filladapt-mode t)
+    (setq filladapt-mode-line-string nil)
+
+    (setq filladapt-token-table
+          (append
+            ;;
+            ;; &lt;li&gt;xx xxx xxxx xx x xx xxx x xxx xx x xxx
+            ;;     xxx xx xx 
+            ;;
+           '(("&lt;li&gt;" bullet)
+             ("&lt;p&gt;[ \t]*" bullet)
+             ("&lt;dd&gt;" bullet))
+           filladapt-token-table))
+</pre>
+<p>More random stuff. Filladapt for HTML elements is nice although I'm 
+   not sure it does anything here--I usually use HTML mode to edit HTML.
+<pre>
+    ;;; find
+    (defun find-grep (named word)
+     (interactive
+       (list (read-string "Find files named: ")
+             (read-string "Containing: ")))
+      (let ((grep-null-device ""))
+        (grep (concat "find . -name '" named "' | xargs grep -n " word))))
+</pre>
+<p>Hey, here's something cool. I use this to grep down a tree and then 
+   step through the matches (again with ^X`).
+<pre>
+    ;;; Gnus setup
+
+    (setq gnus-user-full-name       "Jake Donham"
+          gnus-nntp-server          "news.pacbell.net"
+    ;      gnus-local-domain         "pacbell.net"
+          gnus-local-timezone       "-0800"
+    ;      gnus-use-generic-from     "pacbell.net"
+          gnus-total-expirable-newsgroups ".*")
+
+    ; save msgs in MH boxes
+    (setq gnus-default-article-saver 'gnus-summary-save-in-folder
+          gnus-file-save-name 'gnus-folder-save-name
+          gnus-use-long-file-name t)
+
+    ; this is suppose to make Gnus start faster
+    (setq gnus-check-new-newsgroups nil
+          gnus-read-active-file 'some
+          gnus-nov-is-evil nil
+          gnus-select-method '(nntp gnus-nntp-server))
+
+    ; stuff to read MH boxes with Gnus
+    (setq nnmail-keep-last-article t
+          nnmail-spool-file "procmail")
+
+    ; auto spam removal
+    ;(setq gnus-use-nocem t)
+
+    ; use mh-e, SC, mailcrypt with Gnus
+    (setq gnus-use-mhe t
+          gnus-use-sc t
+          gnus-use-mailcrypt t
+          gnus-use-tm t)
+
+    (require 'gnus-setup)
+</pre>
+<p>More stuff, for gnus. I use gnus to read mailing lists too, which
+   is nice.
+<pre>
+    ;;; SuperCite setup
+
+    (add-hook 'mail-citation-hook 'sc-cite-original)
+
+    (autoload 'sc-cite-original "supercite" "supercite")
+
+    (setq sc-reference-tag-string "")
+    (setq sc-preferred-header-style 0)
+    (setq sc-rewrite-header-list
+          '((sc-header-attributed-random-verb)))
+
+    (defvar sc-verbs '("writes" "inscribes" "jots" "scrawls" "scribbles"
+    "states" "declares" "proclaims" "comments" "remarks" "affirms"
+    "asserts" "says" "murmurs" "whispers" "shouts" "opines" "ruminates"
+    "reflects" "muses" "mentions"))
+
+    (defun sc-random-verb ()
+      (let* ((len (length sc-verbs))
+             (num (random len)))
+        (nth num sc-verbs)))
+
+    (defun sc-header-attributed-random-verb ()
+      (let ((sc-mumble "")
+            (whofrom (sc-whofrom)))
+        (if whofrom
+            (insert sc-reference-tag-string
+                    (sc-hdr "\"" (sc-mail-field "sc-attribution") "\" == ")
+                    (sc-hdr ""   (sc-mail-field "sc-author") " ")
+                    (or (sc-hdr "<" (sc-mail-field "sc-from-address") ">" t)
+                        (sc-hdr "<" (sc-mail-field "sc-reply-address") ">"  t)
+                        "")
+                    " "
+                    (sc-random-verb)
+    ;               ":\n"))))
+                    ":"))))
+</pre>
+<p>This stuff makes a cute little 'foo@bar.com said' message with a
+   random verb when I reply to mail. Just fluff.
+<pre>
+    ;;; compile Java buffers
+    (require 'compile)
+
+     ; parse funky Jikes error strings
+    (setq compilation-error-regexp-alist
+          (cons (list "\\([^:\n]+\\):\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3)
+                  compilation-error-regexp-alist))
+
+    (defun jake:compile-java-buffer ()
+       (interactive)
+       (let* ((javac "jikes +E")
+                (command (concat javac " -classpath "
+			  (getenv "CLASSPATH") " "
+			  buffer-file-name)))
+         (compile command)))
+
+    (defun jake:java-mode-hook ()
+      (define-key java-mode-map
+        [(control c) (control j)] 'jake:compile-java-buffer)
+      (setq c-basic-offset 2))
+
+    (add-hook 'java-mode-hook 'jake:java-mode-hook)
+</pre>
+<p>A key to compile the Java file in the current buffer. The jikes
+   error message parser is handy too.
+<pre>
+    ;; Mocha stuff from Peter Seibel
+    (defun mocha-find-file ()
+      "Find a classfile and mocha it, opening the new .mocha file instead."
+      (interactive)
+      (let ((classfile (read-file-name ".class file: ")))
+        (find-file classfile)
+        (mocha-buffer)
+        (java-mode)))
+
+    (defun mocha-buffer ()
+      (let*
+          ;; Just set these vars appropriately and you're good to go.
+          ;; Forward slashes, obviously on UNIX and : instead of ;
+          ((javahome "/usr/local/java/")
+           (java (concat javahome "bin/java"))
+           (javaclasspath (concat javahome "lib/classes.zip"))
+           (mochaclasspath "/home/jake/src/java")
+           (pathdelim ":")
+           (classpath (concat javaclasspath pathdelim mochaclasspath))
+           (mocha (concat java " -classpath " classpath " mocha.Decompiler -o "))
+           (classfile (file-name-nondirectory (buffer-file-name)))
+           (mochafile (concat (substring classfile 0 -5) "mocha"))
+           (command (concat mocha classfile)))
+        (shell-command command)
+        (find-alternate-file mochafile)))
+
+    ;; add these lines to your .emacs if you want to be able to
+    ;; automatically mocha-find-file .class files 
+
+    (add-hook
+     'find-file-hooks
+     (lambda () 
+       (let ((file (buffer-file-name)))
+         (cond ((string= (substring file -6) ".class")
+                (progn (mocha-buffer) (java-mode)))))))
+</pre>
+<p>A key to run Mocha on Java class files when you open them.
+<pre>
+    ; auto-uncompress
+    (jka-compr-install)
+
+    ; this is just so my bbdb window will be small
+    (setq window-min-height 1)
+
+    ;; mailcrypt stuff
+    (autoload 'mc-install-write-mode "mailcrypt" nil t)
+    (autoload 'mc-install-read-mode "mailcrypt" nil t)
+    (add-hook 'mail-mode-hook 'mc-install-write-mode)
+    (add-hook 'mh-folder-mode-hook 'mc-install-read-mode)
+    (add-hook 'mh-letter-mode-hook 'mc-install-write-mode)
+    (add-hook 'gnus-summary-mode-hook 'mc-install-read-mode)
+    (add-hook 'news-reply-mode-hook 'mc-install-write-mode)
+
+    (message "done")
+
+    ;; Options Menu Settings
+    ;; =====================
+    (cond
+     ((and (string-match "XEmacs" emacs-version)
+           (boundp 'emacs-major-version)
+           (or (and
+                (= emacs-major-version 19)
+                (>= emacs-minor-version 14))
+               (= emacs-major-version 20))
+           (fboundp 'load-options-file))
+      (load-options-file "/home/jake/.xemacs-options")))
+    ;; ============================
+    ;; End of Options Menu Settings
+    (custom-set-variables
+     '(bbdb-pop-up-target-lines 1)
+     '(bbdb-elided-display t)
+     '(user-mail-address "jake@bitmechanic.com" t)
+     '(query-user-mail-address nil))
+    (custom-set-faces)
+
+    (setq minibuffer-max-depth nil)
+</pre>
+<p>And more random stuff. You can send me <a
+   href="public-key.html" tppabs="http://www.jaked.org/public-key.html">PGP-encrypted</a> mail and I will read it
+   with mailcrypt.
+<pre>

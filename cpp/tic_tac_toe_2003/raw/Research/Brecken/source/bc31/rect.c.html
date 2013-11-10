@@ -1,0 +1,314 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor and C2HTML">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <title>256-Color VGA Programming in C - rect.c</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<font size="2">Back to <a href="../../shapes.html#shapes7.0">Primitive Shapes &amp; Lines</a></font><br><font size="6" face="tahoma, arial, helvetica"><strong>rect.c</strong></font><br>
+<font size="2"><a href="rect.c">Plain text version</a><br>&nbsp;</font><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+
+<pre><font color="#888888"><i>/**************************************************************************
+ * rect.c                                                                 *
+ * written by David Brackeen                                              *
+ * http://www.brackeen.com/home/vga/                                      *
+ *                                                                        *
+ * This is a 16-bit program.                                              *
+ * Tab stops are set to 2.                                                *
+ * Remember to compile in the LARGE memory model!                         *
+ * To compile in Borland C: bcc -ml rect.c                                *
+ *                                                                        *
+ * This program will only work on DOS- or Windows-based systems with a    *
+ * VGA, SuperVGA or compatible video adapter.                             *
+ *                                                                        *
+ * Please feel free to copy this source code.                             *
+ *                                                                        *
+ * DESCRIPTION: This program demostrates drawing how much faster it is to *
+ * draw rectangles without using previously created functions.            *
+ **************************************************************************/</i></font>
+
+<font color="#008800">#include</font> &lt;stdio<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;stdlib<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;dos<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;mem<font color="#880088">.</font>h&gt;
+
+<font color="#008800">#define</font> VIDEO_INT           <font color="#880088">0x10</font>      <font color="#888888"><i>/* the BIOS video interrupt. */</i></font>
+<font color="#008800">#define</font> SET_MODE            <font color="#880088">0x00</font>      <font color="#888888"><i>/* BIOS func to set the video mode. */</i></font>
+<font color="#008800">#define</font> VGA_256_COLOR_MODE  <font color="#880088">0x13</font>      <font color="#888888"><i>/* use to set 256-color mode. */</i></font>
+<font color="#008800">#define</font> TEXT_MODE           <font color="#880088">0x03</font>      <font color="#888888"><i>/* use to set 80x25 text mode. */</i></font>
+
+<font color="#008800">#define</font> SCREEN_WIDTH        <font color="#880088">320</font>       <font color="#888888"><i>/* width in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> SCREEN_HEIGHT       <font color="#880088">200</font>       <font color="#888888"><i>/* height in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> NUM_COLORS          <font color="#880088">256</font>       <font color="#888888"><i>/* number of colors in mode 0x13 */</i></font>
+
+<font color="#008800">#define</font> sgn(x) ((x&lt;<font color="#880088">0</font>)?-<font color="#880088">1</font>:((x&gt;<font color="#880088">0</font>)?<font color="#880088">1</font>:<font color="#880088">0</font>)) <font color="#888888"><i>/* macro to return the sign of a
+                                         number */</i></font>
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">char</font>  byte;
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">short</font> word;
+
+byte *VGA=(byte *)<font color="#880088">0xA0000000L</font>;        <font color="#888888"><i>/* this points to video memory. */</i></font>
+word *my_clock=(word *)<font color="#880088">0x0000046C</font>;    <font color="#888888"><i>/* this points to the 18.2hz system
+                                         clock. */</i></font>
+
+<font color="#888888"><i>/**************************************************************************
+ *  set_mode                                                              *
+ *     Sets the video mode.                                               *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> set_mode(byte mode)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>ah = SET_MODE;
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>al = mode;
+  int86(VIDEO_INT, &amp;regs, &amp;regs);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  plot_pixel                                                            *
+ *    Plot a pixel by directly writing to video memory, with no           *
+ *    multiplication.                                                     *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> plot_pixel(<font color="#0000FF">int</font> x,<font color="#0000FF">int</font> y,byte color)
+{
+  <font color="#888888"><i>/*  y*320 = y*256 + y*64 = y*2^8 + y*2^6   */</i></font>
+  VGA[(y&lt;&lt;<font color="#880088">8</font>)+(y&lt;&lt;<font color="#880088">6</font>)+x]=color;
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  line                                                                  *
+ *    draws a line using Bresenham's line-drawing algorithm, which uses   *
+ *    no multiplication or division.                                      *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> line(<font color="#0000FF">int</font> x1, <font color="#0000FF">int</font> y1, <font color="#0000FF">int</font> x2, <font color="#0000FF">int</font> y2, byte color)
+{
+  <font color="#0000FF">int</font> i,dx,dy,sdx,sdy,dxabs,dyabs,x,y,px,py;
+
+  dx=x2-x1;      <font color="#888888"><i>/* the horizontal distance of the line */</i></font>
+  dy=y2-y1;      <font color="#888888"><i>/* the vertical distance of the line */</i></font>
+  dxabs=abs(dx);
+  dyabs=abs(dy);
+  sdx=sgn(dx);
+  sdy=sgn(dy);
+  x=dyabs&gt;&gt;<font color="#880088">1</font>;
+  y=dxabs&gt;&gt;<font color="#880088">1</font>;
+  px=x1;
+  py=y1;
+
+  VGA[(py&lt;&lt;<font color="#880088">8</font>)+(py&lt;&lt;<font color="#880088">6</font>)+px]=color;
+
+  <font color="#0000FF">if</font> (dxabs&gt;=dyabs) <font color="#888888"><i>/* the line is more horizontal than vertical */</i></font>
+  {
+    <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;dxabs;i++)
+    {
+      y+=dyabs;
+      <font color="#0000FF">if</font> (y&gt;=dxabs)
+      {
+        y-=dxabs;
+        py+=sdy;
+      }
+      px+=sdx;
+      plot_pixel(px,py,color);
+    }
+  }
+  <font color="#0000FF">else</font> <font color="#888888"><i>/* the line is more vertical than horizontal */</i></font>
+  {
+    <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;dyabs;i++)
+    {
+      x+=dxabs;
+      <font color="#0000FF">if</font> (x&gt;=dyabs)
+      {
+        x-=dyabs;
+        px+=sdx;
+      }
+      py+=sdy;
+      plot_pixel(px,py,color);
+    }
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  rect_slow                                                             *
+ *    Draws a rectangle by calling the line function four times.          *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> rect_slow(<font color="#0000FF">int</font> left,<font color="#0000FF">int</font> top, <font color="#0000FF">int</font> right, <font color="#0000FF">int</font> bottom, byte color)
+{
+  line(left,top,right,top,color);
+  line(left,top,left,bottom,color);
+  line(right,top,right,bottom,color);
+  line(left,bottom,right,bottom,color);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  rect_fast                                                             *
+ *    Draws a rectangle by drawing all lines by itself.                   *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> rect_fast(<font color="#0000FF">int</font> left,<font color="#0000FF">int</font> top, <font color="#0000FF">int</font> right, <font color="#0000FF">int</font> bottom, byte color)
+{
+  word top_offset,bottom_offset,i,temp;
+
+  <font color="#0000FF">if</font> (top&gt;bottom)
+  {
+    temp=top;
+    top=bottom;
+    bottom=temp;
+  }
+  <font color="#0000FF">if</font> (left&gt;right)
+  {
+    temp=left;
+    left=right;
+    right=temp;
+  }
+
+  top_offset=(top&lt;&lt;<font color="#880088">8</font>)+(top&lt;&lt;<font color="#880088">6</font>);
+  bottom_offset=(bottom&lt;&lt;<font color="#880088">8</font>)+(bottom&lt;&lt;<font color="#880088">6</font>);
+
+  <font color="#0000FF">for</font>(i=left;i&lt;=right;i++)
+  {
+    VGA[top_offset+i]=color;
+    VGA[bottom_offset+i]=color;
+  }
+  <font color="#0000FF">for</font>(i=top_offset;i&lt;=bottom_offset;i+=SCREEN_WIDTH)
+  {
+    VGA[left+i]=color;
+    VGA[right+i]=color;
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  rect_fill                                                             *
+ *    Draws and fills a rectangle.                                        *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> rect_fill(<font color="#0000FF">int</font> left,<font color="#0000FF">int</font> top, <font color="#0000FF">int</font> right, <font color="#0000FF">int</font> bottom, byte color)
+{
+  word top_offset,bottom_offset,i,temp,width;
+
+  <font color="#0000FF">if</font> (top&gt;bottom)
+  {
+    temp=top;
+    top=bottom;
+    bottom=temp;
+  }
+  <font color="#0000FF">if</font> (left&gt;right)
+  {
+    temp=left;
+    left=right;
+    right=temp;
+  }
+
+  top_offset=(top&lt;&lt;<font color="#880088">8</font>)+(top&lt;&lt;<font color="#880088">6</font>)+left;
+  bottom_offset=(bottom&lt;&lt;<font color="#880088">8</font>)+(bottom&lt;&lt;<font color="#880088">6</font>)+left;
+  width=right-left+<font color="#880088">1</font>;
+
+  <font color="#0000FF">for</font>(i=top_offset;i&lt;=bottom_offset;i+=SCREEN_WIDTH)
+  {
+    memset(&amp;VGA[i],color,width);
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  Main                                                                  *
+ *    Draws 5000 rectangles                                               *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> main()
+{
+  <font color="#0000FF">int</font> x1,y1,x2,y2,color;
+  <font color="#0000FF">float</font> t1,t2;
+  word i,start;
+
+  srand(*my_clock);                   <font color="#888888"><i>/* seed the number generator. */</i></font>
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode. */</i></font>
+
+  start=*my_clock;                    <font color="#888888"><i>/* record the starting time. */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">5000</font>;i++)                 <font color="#888888"><i>/* randomly draw 5000 rectangles. */</i></font>
+  {
+    x1=rand()%SCREEN_WIDTH;
+    y1=rand()%SCREEN_HEIGHT;
+    x2=rand()%SCREEN_WIDTH;
+    y2=rand()%SCREEN_HEIGHT;
+    color=rand()%NUM_COLORS;
+    rect_slow(x1,y1,x2,y2,color);
+  }
+
+  t1=(*my_clock-start)/<font color="#880088">18.2</font>;          <font color="#888888"><i>/* calculate how long it took. */</i></font>
+
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode again in order
+                                         to clear the screen. */</i></font>
+
+  start=*my_clock;                    <font color="#888888"><i>/* record the starting time. */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">5000</font>;i++)                 <font color="#888888"><i>/* randomly draw 5000 rectangles. */</i></font>
+  {
+    x1=rand()%SCREEN_WIDTH;
+    y1=rand()%SCREEN_HEIGHT;
+    x2=rand()%SCREEN_WIDTH;
+    y2=rand()%SCREEN_HEIGHT;
+    color=rand()%NUM_COLORS;
+    rect_fast(x1,y1,x2,y2,color);
+  }
+
+  t2=(*my_clock-start)/<font color="#880088">18.2</font>;          <font color="#888888"><i>/* calculate how long it took. */</i></font>
+
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode again in order
+                                         to clear the screen. */</i></font>
+
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">1000</font>;i++)                 <font color="#888888"><i>/* randomly draw 1000 filled rects. */</i></font>
+  {
+    x1=rand()%SCREEN_WIDTH;
+    y1=rand()%SCREEN_HEIGHT;
+    x2=rand()%SCREEN_WIDTH;
+    y2=rand()%SCREEN_HEIGHT;
+    color=rand()%NUM_COLORS;
+    rect_fill(x1,y1,x2,y2,color);
+  }
+
+  set_mode(TEXT_MODE);                <font color="#888888"><i>/* set the video mode back to
+                                         text mode. */</i></font>
+
+  <font color="#888888"><i>/* output the results... */</i></font>
+  printf(<font color="#FF00FF">&quot;Slow rectangle drawing took %f seconds.\n&quot;</font>,t1);
+  printf(<font color="#FF00FF">&quot;Fast rectangle drawing took %f seconds.\n&quot;</font>,t2);
+  <font color="#0000FF">if</font> (t2 != <font color="#880088">0</font>) printf(<font color="#FF00FF">&quot;Fast rectangle drawing was %f times faster.\n&quot;</font>,t1/t2);
+
+  <font color="#0000FF">return</font>;
+}
+
+</pre>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+<p><font size="2">Back to <a href="../../shapes.html#shapes7.0">Primitive Shapes &amp; Lines</a></font></p></body>
+</html>

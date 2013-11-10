@@ -1,0 +1,652 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <link rel=stylesheet href="256vpc.css" type="text/css">
+  <title>256-Color VGA Programming in C - FAQ and Troubleshooting</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<script language="JavaScript"><!--
+nav = navVersion();
+ie = ieVersion();
+
+preloadImage("images/ui/subhead_left.gif");
+preloadImage("images/ui/subhead_right.gif");
+preloadImage("images/ui/dot.gif");
+preloadImage("images/ui/navigate_next_hover.gif");
+preloadImage("images/ui/navigate_prev_hover.gif");
+
+function navVersion()
+{
+	var ua = window.navigator.userAgent;
+	var nav = ua.indexOf ( "Mozilla/" );
+	if (nav>=0)
+		return parseInt ( ua.substring ( nav+8, ua.indexOf (".") ) );
+	else
+		return 0;	// is other browser
+}
+
+function ieVersion()
+{
+	var ua = window.navigator.userAgent;
+	var msie = ua.indexOf("MSIE ");
+	if (msie>=0)	
+		return parseInt ( ua.substring ( msie+5, ua.indexOf ( ".", msie ) ) );
+	else
+		return 0;	
+}
+
+function changeImage(image, filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image.src = "images/ui/" + filename + ".gif"
+	}
+}
+
+function preloadImage(filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image = new Image();
+    image.src = filename;
+	}
+
+}
+// --></script>
+
+<a href="index.html"><font size="2">256-Color VGA Programming in C</font></a><br><font size="6" face="tahoma, arial, helvetica"><strong><a name="top"></a>FAQ and Troubleshooting</strong></font><br>
+<strong>Contents:</strong><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble1.0"><font size="2">Introduction</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble2.0"><font size="2">How do I compile the source code using DJGPP 2.0?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble3.0"><font size="2">How do I compile the source code using Watcom C/C++ 10.6?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble4.0"><font size="2">How do I compile the source code using an older version of Turbo C or Borland C?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble5.0"><font size="2">How do I compile the source code using Quick C?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble6.0"><font size="2">How do I compile the source code using GCC?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble7.0"><font size="2">How do I compile the source code using Visual C++?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble8.0"><font size="2">The code compiles fine, but I run the program the screen goes black and/or Windows locks up.</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble9.0"><font size="2">When I compile, I get the error "Code has no effect in function" and it points to the outp() function.</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble10.0"><font size="2">When I run the program, I get the error "Not enough memory for double buffer".</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble11.0"><font size="2">I have Borland C++ 5.0 for Windows 95 and I can't get the programs to compile. It says undefined structure 'REGS'.</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble12.0"><font size="2">The programs only seem to work with the bitmaps that come with each program (i.e. rocket.bmp and mset.bmp).</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble13.0"><font size="2">How do you display text in mode 0x13?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble14.0"><font size="2">What is a good graphics program?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble15.0"><font size="2">Could you please send me information on 640x480 or 800x600 or [enter your favorite video mode here]?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble16.0"><font size="2">Could you please send me information on or source code for [enter your favorite subject here]?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#trouble17.0"><font size="2">ARGH! Help me! I've got an assignment due tommorow, could you please modify your code to my assignment's specifications and send it to me?</font></a><br>
+
+
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble1.0"></a><strong>&nbsp;Introduction</strong></font></td>
+    <td align="right" valign="middle"><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble2.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: How do I compile the source code using DJGPP 2.0?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>First there's a few tidbits about a few compilers. Some of
+this information is from my experiences, other information is
+from people e-mailing me about their experiences. If anyone has
+any information about getting the code at this site to work with
+a particular compiler, let me know!</p>
+
+<p>After the compiler information is some solutions to common VGA
+programming problems, mainly based on feedback from this site.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble2.0"></a><strong>&nbsp;How do I compile the source code using DJGPP 2.0?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble1.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Introduction" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble3.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: How do I compile the source code using Watcom C/C++ 10.6?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Well, the good news is that <a
+href="http://www.delorie.com/djgpp/">DJGPP</a> source is now
+included on the site! In case you are wondering, here are the
+changes.</p>
+
+<p>DJGPP creates protected mode programs, so you can't access the
+video segment directly without some trickery. You can use the <code>__djgpp_nearptr_enable()</code>
+function to get access to the first 640K of memory. So, in <code>main()</code>
+add these lines at the beggining:</p>
+
+<pre>if (__djgpp_nearptr_enable() == 0)
+  exit(-1);
+  
+VGA=(byte *)(0xa0000 + __djgpp_conventional_base);
+my_clock=(word *)(0x0046c + __djgpp_conventional_base);
+</pre>
+
+<p>At the end of the program, use <code>__djgpp_nearptr_disable();</code>
+to get the program back to regular protected mode. Also, don't
+forget to #include <code>&lt;sys/nearptr.h&gt;</code>.</p>
+
+<p>This should get all of the programs to work except <code>mouse.c</code>.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble3.0"></a><strong>&nbsp;How do I compile the source code using Watcom C/C++ 10.6?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble2.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: How do I compile the source code using DJGPP 2.0?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble4.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: How do I compile the source code using an older version of Turbo C or Borland C?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Like DJGPP, Watcom C/C++ creates protected-mode programs, but
+the first megabyte or memory can be access directly by your
+program without any changes. Memory is linear instead of based on
+segments and offsets. So, change this</p>
+
+<pre>byte *VGA=(byte*)0xA0000000L;
+</pre>
+
+<p>to this:</p>
+
+<pre>byte *VGA=(byte*)0xA0000L;
+</pre>
+
+<p>Also, chage all <code>int86();</code> functions to <code>int386();</code>
+and make sure you #include <code>&lt;i86.h&gt;</code>.</p>
+
+<p>In the <code>plot_pixel_slow();</code> function in <code>pixel.c</code>,
+change this</p>
+
+<pre>regs.x.cx = x;
+regs.x.dx = y;
+</pre>
+
+<p>to this:</p>
+
+<pre>regs.w.cx = x;
+regs.w.dx = y;
+</pre>
+
+<p>That should do it! All the programs should work except <code>mouse.c</code>.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble4.0"></a><strong>&nbsp;How do I compile the source code using an older version of Turbo C or Borland C?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble3.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: How do I compile the source code using Watcom C/C++ 10.6?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble5.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: How do I compile the source code using Quick C?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Some people have told me the Turbo C compiler does not accept
+direct pointers. For those of you with Turbo C, every section of
+code that looks like this: </p>
+
+<pre>byte *VGA=(byte *)0xA0000000L;
+word *my_clock=(word *)0x0000046C;
+</pre>
+
+<p>Should be changed to: </p>
+
+<pre>byte *VGA=(byte *)MK_FP(0xA000,0);
+word *my_clock=(word *)MK_FP(0,0x046C);
+</pre>
+
+<p>Also, make sure to include <code>&lt;dos.h&gt;</code>.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble5.0"></a><strong>&nbsp;How do I compile the source code using Quick C?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble4.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: How do I compile the source code using an older version of Turbo C or Borland C?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble6.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: How do I compile the source code using GCC?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>For users of Quick C, change <code>#include &lt;mem.h&gt;</code>
+to <code>#include &lt;memory.h&gt;</code> </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble6.0"></a><strong>&nbsp;How do I compile the source code using GCC?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble5.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: How do I compile the source code using Quick C?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble7.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: How do I compile the source code using Visual C++?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>The code is really DOS-mode only, so you'll need a DOS
+compiler. GCC on Linux or other operating systems won't work, and
+the Windows port of GCC (<a
+href="http://sourceware.cygnus.com/cygwin/" target="_top" target>Cygwin</a>)
+won't work either. Try <a href="http://www.delorie.com/djgpp/">DJGPP</a>,
+which is a DOS port of GCC.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble7.0"></a><strong>&nbsp;How do I compile the source code using Visual C++?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble6.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: How do I compile the source code using GCC?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble8.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: The code compiles fine, but I run the program the screen goes black and/or Windows locks up." border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Visual C++ version 2.0 and above are for Windows <em>only</em>.
+I've heard that versions 3.0 and 4.0 has Visual C++ 1.42 on the
+CD somewhere, which is a DOS compiler that would be compatible
+with the code at this site. Could anyone verify this?</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble8.0"></a><strong>&nbsp;The code compiles fine, but I run the program the screen goes black and/or Windows locks up.</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble7.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: How do I compile the source code using Visual C++?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble9.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: When I compile, I get the error "Code has no effect in function" and it points to the outp() function." border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>This is by far the most common problem I've seen amoung newer
+programmers. In order for the programs to access the video memory
+area, the programs at this site must be compiled in the LARGE
+memory model. Otherwise, they <i>will</i> crash.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble9.0"></a><strong>&nbsp;When I compile, I get the error "Code has no effect in function" and it points to the outp() function.</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble8.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: The code compiles fine, but I run the program the screen goes black and/or Windows locks up." border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble10.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: When I run the program, I get the error "Not enough memory for double buffer"." border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>I've heard about this happening in Turbo 3.0, Borland 4.5. At
+the top of the program, insert the code <code>#undef outp</code>.
+I wish I knew the name of the person who told me this to give him
+credit!</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble10.0"></a><strong>&nbsp;When I run the program, I get the error "Not enough memory for double buffer".</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble9.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: When I compile, I get the error "Code has no effect in function" and it points to the outp() function." border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble11.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: I have Borland C++ 5.0 for Windows 95 and I can't get the programs to compile. It says undefined structure 'REGS'." border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>I thinks this only happens in older versions of Borland
+C/Turbo C. If you are running the program from the IDE, there is
+not enough <em>conventional</em> memory to run both the IDE and
+the program at the same time. After you compile, either exit
+Borland C to run the program or go to a dos shell to run the
+program.</p>
+
+<p>Some people wrote in and said this: Change the debugger
+memory. Go to the options menu, then debugger. Change the program
+heap size to around 350K or so.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble11.0"></a><strong>&nbsp;I have Borland C++ 5.0 for Windows 95 and I can't get the programs to compile. It says undefined structure 'REGS'.</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble10.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: When I run the program, I get the error "Not enough memory for double buffer"." border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble12.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: The programs only seem to work with the bitmaps that come with each program (i.e. rocket.bmp and mset.bmp)." border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Make sure you compile the programs for DOS, not Windows.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble12.0"></a><strong>&nbsp;The programs only seem to work with the bitmaps that come with each program (i.e. rocket.bmp and mset.bmp).</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble11.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: I have Borland C++ 5.0 for Windows 95 and I can't get the programs to compile. It says undefined structure 'REGS'." border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble13.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: How do you display text in mode 0x13?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Here are four reasons your bitmaps may not be working:</p>
+
+<ol>
+    <li>Make sure the bitmap's width is divisible by 4 (for
+        example, a width of 24 is okay but a width of 25 is not)</li>
+    <li>In your paint program, do not save your bitmaps as
+        compressed or RLE bitmaps. The code can only handle
+        uncompressed format BMP files.</li>
+    <li>In your paint program, make sure you save in 256-color (8
+        bit) format. </li>
+    <li>Use the code from palette.c (rather than bitmap.c) if
+        your bitmap uses a non-standard palette.</li>
+</ol>
+
+<p>If you are <em>positive</em> you've done these four things and
+you are still having a problem, email me the bitmap and I will
+try to figure it out.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble13.0"></a><strong>&nbsp;How do you display text in mode 0x13?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble12.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: The programs only seem to work with the bitmaps that come with each program (i.e. rocket.bmp and mset.bmp)." border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble14.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: What is a good graphics program?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>I haven't done any research in this area, but I tell everyone
+the same thing: make your own font routines. You can easily
+create a bitmap for the ASCII characters in a paint program, and
+then write the code to read the bitmaps and display a string.
+Plus, bitmap fonts are a lot better than the BIOS fonts.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble14.0"></a><strong>&nbsp;What is a good graphics program?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble13.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: How do you display text in mode 0x13?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble15.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Could you please send me information on 640x480 or 800x600 or [enter your favorite video mode here]?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Paint Shop Pro is a great graphics program, and I use it all
+the time. Download the shareware version at <a
+href="http://www.jasc.com" target="_top">www.jasc.com</a>. You
+could use Microsoft Pain(t) that comes with Windows, but you'll
+be better off with a more powerfull graphics program.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble15.0"></a><strong>&nbsp;Could you please send me information on 640x480 or 800x600 or [enter your favorite video mode here]?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble14.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: What is a good graphics program?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble16.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Could you please send me information on or source code for [enter your favorite subject here]?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Sorry, I really don't have any VESA SVGA code to give out.
+Check out <a
+href="http://www.geocities.com/SiliconValley/Park/9784/index.html"
+target="_top">Steel's page</a> and look at the &quot;vesa&quot;
+programming information. Or check out the <a
+href="http://dir.yahoo.com/Recreation/Games/Computer_Games/Programming/DirectX/"
+target="_top">DirectX section at Yahoo</a>.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble16.0"></a><strong>&nbsp;Could you please send me information on or source code for [enter your favorite subject here]?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble15.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Could you please send me information on 640x480 or 800x600 or [enter your favorite video mode here]?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble17.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: ARGH! Help me! I've got an assignment due tommorow, could you please modify your code to my assignment's specifications and send it to me?" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Sorry, guys, I don't have a hard drive filled with tutorials
+on various subjects that I only release to people who email me.
+Every tutorial I've ever done is on the web site. Also, I don't
+enjoy surfing the web to find the material you are looking for.
+Sorry if I sound harsh but you woudn't believe some of the things
+people ask me to do. </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble17.0"></a><strong>&nbsp;ARGH! Help me! I've got an assignment due tommorow, could you please modify your code to my assignment's specifications and send it to me?</strong></font></td>
+    <td align="right" valign="middle"><a href="#trouble16.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Could you please send me information on or source code for [enter your favorite subject here]?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#trouble18.0"><img src="images/ui/arrow_right.gif"
+    alt="Bottom" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>This always makes me laugh. The funny thing is, this question
+gets asked quite often. Short answer: No. Long answer: Do your
+own work.</p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="trouble18.0"></a>&nbsp;</font></td>
+    <td align="right" valign="middle"><a href="#trouble17.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: ARGH! Help me! I've got an assignment due tommorow, could you please modify your code to my assignment's specifications and send it to me?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+<br><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td align="left" valign="top">&nbsp;</td><td align="right" valign="top">&nbsp;</td></tr></table><p>&nbsp;</p><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td>  <font size="2" face="tahoma, arial, helvetica"><strong><a href="index.html">256-Color VGA Programming in C</a></strong>
+ | <a href="intro.html">Introduction</a>
+ | <a href="basics.html">VGA Basics</a>
+ | <a href="shapes.html">Primitive Shapes &amp; Lines</a>
+ | <a href="bitmaps.html">Bitmaps &amp; Palette Manipulation</a>
+ | <a href="mouse.html">Mouse Support &amp; Animation</a>
+ | <a href="unchain.html">Double Buffering, Page Flipping, &amp; Unchained Mode</a>
+ | <a href="announce.html">Announcements</a>
+ | <a href="resource.html">Links and Other Resources</a>
+ | <a href="download.html">Download</a>
+ | <a href="trouble.html">FAQ and Troubleshooting</a>
+  </font></td></tr></table>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>

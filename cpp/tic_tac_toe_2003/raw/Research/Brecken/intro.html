@@ -1,0 +1,201 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <link rel=stylesheet href="256vpc.css" type="text/css">
+  <title>256-Color VGA Programming in C - Introduction</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<script language="JavaScript"><!--
+nav = navVersion();
+ie = ieVersion();
+
+preloadImage("images/ui/subhead_left.gif");
+preloadImage("images/ui/subhead_right.gif");
+preloadImage("images/ui/dot.gif");
+preloadImage("images/ui/navigate_next_hover.gif");
+preloadImage("images/ui/navigate_prev_hover.gif");
+
+function navVersion()
+{
+	var ua = window.navigator.userAgent;
+	var nav = ua.indexOf ( "Mozilla/" );
+	if (nav>=0)
+		return parseInt ( ua.substring ( nav+8, ua.indexOf (".") ) );
+	else
+		return 0;	// is other browser
+}
+
+function ieVersion()
+{
+	var ua = window.navigator.userAgent;
+	var msie = ua.indexOf("MSIE ");
+	if (msie>=0)	
+		return parseInt ( ua.substring ( msie+5, ua.indexOf ( ".", msie ) ) );
+	else
+		return 0;	
+}
+
+function changeImage(image, filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image.src = "images/ui/" + filename + ".gif"
+	}
+}
+
+function preloadImage(filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image = new Image();
+    image.src = filename;
+	}
+
+}
+// --></script>
+
+<a href="index.html"><font size="2">256-Color VGA Programming in C</font></a><br><font size="6" face="tahoma, arial, helvetica"><strong><a name="top"></a>Introduction</strong></font><br>
+<strong>Contents:</strong><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#intro1.0"><font size="2">Who this manual is for</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#intro2.0"><font size="2">Materials needed</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#intro3.0"><font size="2">Document Syntax</font></a><br>
+
+
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="intro1.0"></a><strong>&nbsp;Who this manual is for</strong></font></td>
+    <td align="right" valign="middle"><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#intro2.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Materials needed" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>This manual covers many topics in VGA programming in the C
+programming language. Users of this manual should have a
+comprehensive understanding of C and should also have a
+familiarity with DOS and BIOS function calls and interrupts. </p>
+
+<p>A general knowledge of trigonometry and/or geometry would be
+helpful in the second section, &quot;Primitive Shapes &amp;
+Lines&quot;. </p>
+
+<p>As with any sort of programming, an understanding of the
+hexadecimal number system would be helpful. </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="intro2.0"></a><strong>&nbsp;Materials needed</strong></font></td>
+    <td align="right" valign="middle"><a href="#intro1.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Who this manual is for" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#intro3.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Document Syntax" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>All the code in this manual was complied using Borland C/C++
+3.1 and DJGPP 2.0. The code was made to be as portable as
+possible, sticking close to the ANSI C standard, except for the
+DOS function calls and direct memory access. The programs should
+compile without a problem with the DOS 16-bit compilers Microsoft
+C (not Visual C++), Turbo C, and Borland C. For other compilers,
+see the <a href="trouble.html">Troubleshooting</a> page.</p>
+
+<p>Besides a compiler, the only other thing needed is a 286 or
+better computer (with a VGA card) running DOS. Remember to
+compile 16-bit programs in the LARGE memory model!</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="intro3.0"></a><strong>&nbsp;Document Syntax</strong></font></td>
+    <td align="right" valign="middle"><a href="#intro2.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Materials needed" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#intro4.0"><img src="images/ui/arrow_right.gif"
+    alt="Bottom" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Text in <code>fixed type</code> is a program, a program
+segment, a DOS file name, or refers to a variable in a program or
+program segment. </p>
+
+<p>Text in <i>italics</i> is a variable, usually in a formula. </p>
+
+<p>Hexadecimal numbers will have an &quot;0x&quot; prepended to
+them, like 0x3CF.</p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="intro4.0"></a>&nbsp;</font></td>
+    <td align="right" valign="middle"><a href="#intro3.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Document Syntax" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+<br><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td align="left" valign="top">&nbsp;</td><td align="right" valign="top"><a href="basics.html"
+onmouseout="changeImage(next,'navigate_next')"
+onmouseover="changeImage(next,'navigate_next_hover')"><font size="2">Next: VGA Basics</font><img
+src="images/ui/navigate_next.gif" align="absmiddle"
+border="0" hspace="2" width="32" height="32" name="next"></a></td></tr></table><p>&nbsp;</p><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td>  <font size="2" face="tahoma, arial, helvetica"><strong><a href="index.html">256-Color VGA Programming in C</a></strong>
+ | <a href="intro.html">Introduction</a>
+ | <a href="basics.html">VGA Basics</a>
+ | <a href="shapes.html">Primitive Shapes &amp; Lines</a>
+ | <a href="bitmaps.html">Bitmaps &amp; Palette Manipulation</a>
+ | <a href="mouse.html">Mouse Support &amp; Animation</a>
+ | <a href="unchain.html">Double Buffering, Page Flipping, &amp; Unchained Mode</a>
+ | <a href="announce.html">Announcements</a>
+ | <a href="resource.html">Links and Other Resources</a>
+ | <a href="download.html">Download</a>
+ | <a href="trouble.html">FAQ and Troubleshooting</a>
+  </font></td></tr></table>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>

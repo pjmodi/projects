@@ -1,0 +1,298 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <link rel=stylesheet href="256vpc.css" type="text/css">
+  <title>256-Color VGA Programming in C - Links and Other Resources</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<script language="JavaScript"><!--
+nav = navVersion();
+ie = ieVersion();
+
+preloadImage("images/ui/subhead_left.gif");
+preloadImage("images/ui/subhead_right.gif");
+preloadImage("images/ui/dot.gif");
+preloadImage("images/ui/navigate_next_hover.gif");
+preloadImage("images/ui/navigate_prev_hover.gif");
+
+function navVersion()
+{
+	var ua = window.navigator.userAgent;
+	var nav = ua.indexOf ( "Mozilla/" );
+	if (nav>=0)
+		return parseInt ( ua.substring ( nav+8, ua.indexOf (".") ) );
+	else
+		return 0;	// is other browser
+}
+
+function ieVersion()
+{
+	var ua = window.navigator.userAgent;
+	var msie = ua.indexOf("MSIE ");
+	if (msie>=0)	
+		return parseInt ( ua.substring ( msie+5, ua.indexOf ( ".", msie ) ) );
+	else
+		return 0;	
+}
+
+function changeImage(image, filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image.src = "images/ui/" + filename + ".gif"
+	}
+}
+
+function preloadImage(filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image = new Image();
+    image.src = filename;
+	}
+
+}
+// --></script>
+
+<a href="index.html"><font size="2">256-Color VGA Programming in C</font></a><br><font size="6" face="tahoma, arial, helvetica"><strong><a name="top"></a>Links and Other Resources</strong></font><br>
+<strong>Contents:</strong><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#resource1.0"><font size="2">Compilers</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#resource2.0"><font size="2">Software</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#resource3.0"><font size="2">Links</font></a><br>
+
+
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="resource1.0"></a><strong>&nbsp;Compilers</strong></font></td>
+    <td align="right" valign="middle"><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#resource2.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Software" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td valign="top" width="50%"><ul>
+            <li><a href="http://www.delorie.com/djgpp/"
+                target="_top">DJGPP</a> <br>
+                <font size="2">A free 32-bit DOS compiler. See
+                also </font><a
+                href="http://www.rt66.com/~brennan/djgpp/"
+                target="_top"><font size="2">Brennan's DJGPP +
+                Game Resources</font></a><font size="2">.</font></li>
+            <li><a
+                href="http://www.powersoft.com/products/languages/watccpl.html"
+                target="_top">Watcom C/C++</a> <br>
+                <font size="2">Version 11 supports DOS
+                applications, and it's fast! See also </font><a
+                href="http://www.geocities.com/siliconvalley/9498/index.html"
+                target="_top"><font size="2">Paul Hsieh's Home
+                Page</font></a><font size="2">.|</font></li>
+        </ul>
+        </td>
+        <td valign="top" width="50%"><ul>
+            <li><a href="http://www.borland.com/borlandcpp/"
+                target="_top">Borland C/C++</a> <br>
+                <font size="2">Borland sells TurboSuite, which
+                has Turbo C++ 3.0. Turbo C++ 3.0 can be used for
+                the DOS programs at this site.</font></li>
+            <li><a href="http://www.microsoft.com/visualc/"
+                target="_top">Microsoft Visual C++</a> <br>
+                <font size="2">For Windows and DirectX
+                applications. They don't make a DOS compiler
+                anymore.</font></li>
+        </ul>
+        </td>
+    </tr>
+</table>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="resource2.0"></a><strong>&nbsp;Software</strong></font></td>
+    <td align="right" valign="middle"><a href="#resource1.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Compilers" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#resource3.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Links" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td valign="top" width="50%"><ul>
+            <li><a href="http://www.jasc.com/psp.html"
+                target="_top">Paint Shop Pro</a> <br>
+                <font size="2">Fantastic graphics program.</font></li>
+            <li><a href="http://www.goldwave.com" target="_top">GoldWave</a><br>
+                <font size="2">Sound editor.</font></li>
+        </ul>
+        </td>
+        <td valign="top" width="50%"><ul>
+            <li><a href="http://www.editplus.com" target="_top">EditPlus</a><font
+                size="2"><br>
+                Text editor great for C/C++, Java, Perl, HTML,
+                etc.</font></li>
+        </ul>
+        </td>
+    </tr>
+</table>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="resource3.0"></a><strong>&nbsp;Links</strong></font></td>
+    <td align="right" valign="middle"><a href="#resource2.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Software" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#resource4.0"><img src="images/ui/arrow_right.gif"
+    alt="Bottom" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td valign="top" width="50%"><ul>
+            <li><a
+                href="http://pages.infinit.net/jstlouis/blackhol.htm"
+                target="_top">The 3D Coding Blackhole</a> <br>
+                <font size="2">Great 3D tutorial.</font></li>
+            <li><a
+                href="http://www.geocities.com/SiliconValley/Park/9784/index.html"
+                target="_top">Steel's Programming Resource Page</a>
+                <br>
+                <font size="2">Tutorials on 3D, VESA SVGA, and
+                fractals. Lots of links, too.</font></li>
+            <li><a
+                href="http://www.geocities.com/siliconvalley/9498/index.html"
+                target="_top">Paul Hsieh's Home Page</a> <br>
+                <font size="2">Programming, graphics, games,
+                optimizations, Watcom C/C++, etc.</font></li>
+            <li><a href="http://www.ctyme.com/rbrown.htm"
+                target="_top">Ralf Brown's Interrupt List</a> <br>
+                <font size="2">A must-see for DOS programmers.</font></li>
+            <li><a
+                href="ftp://x2ftp.oulu.fi/pub/msdos/programming/">x2ftp</a>
+                <br>
+                <font size="2">Almost everything you could ask
+                for in the realm of game programming.</font></li>
+            <li><a href="http://www.addr.com/~ardy/"
+                target="_top">Programmers' Lair</a><br>
+                <font size="2">Tutorials on graphics, sound and
+                artificial intelligence. Also game source, links
+                and books.</font></li>
+            <li><a href="http://developer.dungeon-crawl.com/"
+                target="_top">Game Development Search Engine</a><br>
+                <font size="2">What the name says. :)</font></li>
+        </ul>
+        </td>
+        <td valign="top" width="50%"><ul>
+            <li><a href="http://www.qzx.com/pc-gpe/"
+                target="_top">PC-GPE online</a> <br>
+                <font size="2">DOS game programming reference.</font></li>
+            <li><a href="http://www.resourcium.com" target="_top">The
+                Resourcium</a> <br>
+                <font size="2">DOS and Windows game programming
+                web sites, books, etc.</font></li>
+            <li><a
+                href="http://www.vadsbogymn.mariestad.se/pers/c-kurs/faq-001.html"
+                target="_top">comp.os.msdos.programmer FAQ</a> <br>
+                <font size="2">You've got questions, they've got
+                answers.</font></li>
+            <li><a
+                href="http://www.perplexed.com/GPMega/index.htm"
+                target="_top">Game Programmer's MegaSite</a> <br>
+                <font size="2">Lots of info, files, and links.</font></li>
+            <li><a href="http://www.europa.com/~viper/"
+                target="_top">Viper's C/C++ Web Page</a> <br>
+                <font size="2">Lots of info, files, and
+                tutorials.</font></li>
+            <li><a href="http://www.rt66.com/~brennan/djgpp/"
+                target="_top">Brennan's DJGPP + Game Resources</a>
+                <br>
+                <font size="2">If you have DJGPP or are planning
+                on getting it, go here.</font></li>
+            <li><a
+                href="http://www.yahoo.com/recreation/games/computer_games/programming/"
+                target="_top">Yahoo - Game Programming</a> <br>
+                <font size="2">Links to other sites.</font></li>
+            <li><a href="http://www.programmersheaven.com"
+                target="_top">Programmer's Heaven</a> <br>
+                <font size="2">Lots of files and links, well
+                organized, has much of the same material as
+                x2ftp.</font></li>
+        </ul>
+        </td>
+    </tr>
+</table>
+
+<p>&nbsp;</p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="resource4.0"></a>&nbsp;</font></td>
+    <td align="right" valign="middle"><a href="#resource3.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Links" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+<br><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td align="left" valign="top">&nbsp;</td><td align="right" valign="top">&nbsp;</td></tr></table><p>&nbsp;</p><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td>  <font size="2" face="tahoma, arial, helvetica"><strong><a href="index.html">256-Color VGA Programming in C</a></strong>
+ | <a href="intro.html">Introduction</a>
+ | <a href="basics.html">VGA Basics</a>
+ | <a href="shapes.html">Primitive Shapes &amp; Lines</a>
+ | <a href="bitmaps.html">Bitmaps &amp; Palette Manipulation</a>
+ | <a href="mouse.html">Mouse Support &amp; Animation</a>
+ | <a href="unchain.html">Double Buffering, Page Flipping, &amp; Unchained Mode</a>
+ | <a href="announce.html">Announcements</a>
+ | <a href="resource.html">Links and Other Resources</a>
+ | <a href="download.html">Download</a>
+ | <a href="trouble.html">FAQ and Troubleshooting</a>
+  </font></td></tr></table>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>

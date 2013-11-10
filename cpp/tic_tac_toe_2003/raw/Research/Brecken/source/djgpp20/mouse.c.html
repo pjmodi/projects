@@ -1,0 +1,662 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor and C2HTML">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <title>256-Color VGA Programming in C - mouse.c</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<font size="2">Back to <a href="../../mouse.html#mouse7.0">Mouse Support &amp; Animation</a></font><br><font size="6" face="tahoma, arial, helvetica"><strong>mouse.c</strong></font><br>
+<font size="2"><a href="mouse.c">Plain text version</a><br>&nbsp;</font><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+
+<pre><font color="#888888"><i>/**************************************************************************
+ * mouse.c                                                                *
+ * written by David Brackeen                                              *
+ * http://www.brackeen.com/home/vga/                                      *
+ *                                                                        *
+ * Tab stops are set to 2.                                                *
+ * This program compiles with DJGPP! (www.delorie.com)                    *
+ * To compile in DJGPP: gcc mouse.c -o mouse.exe                          *
+ *                                                                        *
+ * This program will only work on DOS- or Windows-based systems with a    *
+ * VGA, SuperVGA, or compatible video adapter.                            *
+ *                                                                        *
+ * Please feel free to copy this source code.                             *
+ *                                                                        *
+ * DESCRIPTION: This program demostrates mouse functions.                 *
+ **************************************************************************/</i></font>
+
+<font color="#008800">#include</font> &lt;stdio<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;stdlib<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;dos<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;sys/nearptr<font color="#880088">.</font>h&gt;
+
+<font color="#008800">#define</font> VIDEO_INT           <font color="#880088">0x10</font>      <font color="#888888"><i>/* the BIOS video interrupt. */</i></font>
+<font color="#008800">#define</font> SET_MODE            <font color="#880088">0x00</font>      <font color="#888888"><i>/* BIOS func to set the video mode. */</i></font>
+<font color="#008800">#define</font> VGA_256_COLOR_MODE  <font color="#880088">0x13</font>      <font color="#888888"><i>/* use to set 256-color mode. */</i></font>
+<font color="#008800">#define</font> TEXT_MODE           <font color="#880088">0x03</font>      <font color="#888888"><i>/* use to set 80x25 text mode. */</i></font>
+
+<font color="#008800">#define</font> PALETTE_INDEX       <font color="#880088">0x03c8</font>
+<font color="#008800">#define</font> PALETTE_DATA        <font color="#880088">0x03c9</font>
+<font color="#008800">#define</font> INPUT_STATUS        <font color="#880088">0x03da</font>
+<font color="#008800">#define</font> VRETRACE            <font color="#880088">0x08</font>
+
+<font color="#008800">#define</font> SCREEN_WIDTH        <font color="#880088">320</font>       <font color="#888888"><i>/* width in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> SCREEN_HEIGHT       <font color="#880088">200</font>       <font color="#888888"><i>/* height in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> NUM_COLORS          <font color="#880088">256</font>       <font color="#888888"><i>/* number of colors in mode 0x13 */</i></font>
+
+<font color="#008800">#define</font> MOUSE_INT           <font color="#880088">0x33</font>
+<font color="#008800">#define</font> MOUSE_RESET         <font color="#880088">0x00</font>
+<font color="#008800">#define</font> MOUSE_GETPRESS      <font color="#880088">0x05</font>
+<font color="#008800">#define</font> MOUSE_GETRELEASE    <font color="#880088">0x06</font>
+<font color="#008800">#define</font> MOUSE_GETMOTION     <font color="#880088">0x0B</font>
+<font color="#008800">#define</font> LEFT_BUTTON         <font color="#880088">0x00</font>
+<font color="#008800">#define</font> RIGHT_BUTTON        <font color="#880088">0x01</font>
+<font color="#008800">#define</font> MIDDLE_BUTTON       <font color="#880088">0x02</font>
+
+
+<font color="#008800">#define</font> MOUSE_WIDTH         <font color="#880088">24</font>
+<font color="#008800">#define</font> MOUSE_HEIGHT        <font color="#880088">24</font>
+<font color="#008800">#define</font> MOUSE_SIZE          (MOUSE_HEIGHT*MOUSE_WIDTH)
+
+<font color="#008800">#define</font> BUTTON_WIDTH        <font color="#880088">48</font>
+<font color="#008800">#define</font> BUTTON_HEIGHT       <font color="#880088">24</font>
+<font color="#008800">#define</font> BUTTON_SIZE         (BUTTON_HEIGHT*BUTTON_WIDTH)
+<font color="#008800">#define</font> BUTTON_BITMAPS      <font color="#880088">3</font>
+<font color="#008800">#define</font> STATE_NORM          <font color="#880088">0</font>
+<font color="#008800">#define</font> STATE_ACTIVE        <font color="#880088">1</font>
+<font color="#008800">#define</font> STATE_PRESSED       <font color="#880088">2</font>
+<font color="#008800">#define</font> STATE_WAITING       <font color="#880088">3</font>
+
+<font color="#008800">#define</font> NUM_BUTTONS         <font color="#880088">2</font>
+<font color="#008800">#define</font> NUM_MOUSEBITMAPS    <font color="#880088">9</font>
+
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">char</font>  byte;
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">short</font> word;
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">long</font>  dword;
+<font color="#0000FF">typedef</font> <font color="#0000FF">short</font> sword;                  <font color="#888888"><i>/* signed word */</i></font>
+
+byte *VGA = (byte *)<font color="#880088">0xA0000</font>;          <font color="#888888"><i>/* this points to video memory. */</i></font>
+word *my_clock = (word *)<font color="#880088">0x046C</font>;      <font color="#888888"><i>/* this points to the 18.2hz system
+                                         clock. */</i></font>
+
+<font color="#0000FF">typedef</font> <font color="#0000FF">struct</font>                         <font color="#888888"><i>/* the structure for a bitmap. */</i></font>
+{
+  word width;
+  word height;
+  byte palette[<font color="#880088">256</font>*<font color="#880088">3</font>];
+  byte *data;
+} BITMAP;
+                                      <font color="#888888"><i>/* the structure for animated
+                                         mouse pointers. */</i></font>
+<font color="#0000FF">typedef</font> <font color="#0000FF">struct</font> tagMOUSEBITMAP MOUSEBITMAP;
+<font color="#0000FF">struct</font> tagMOUSEBITMAP
+{
+  <font color="#0000FF">int</font> hot_x;
+  <font color="#0000FF">int</font> hot_y;
+  byte data[MOUSE_SIZE];
+  MOUSEBITMAP *next;   <font color="#888888"><i>/* points to the next mouse bitmap, if any */</i></font>
+};
+
+<font color="#0000FF">typedef</font> <font color="#0000FF">struct</font>            <font color="#888888"><i>/* the structure for a mouse. */</i></font>
+{
+  byte on;
+  byte button1;
+  byte button2;
+  byte button3;
+  <font color="#0000FF">int</font> num_buttons;
+  sword x;
+  sword y;
+  byte under[MOUSE_SIZE];
+  MOUSEBITMAP *bmp;
+
+} MOUSE;
+
+<font color="#0000FF">typedef</font> <font color="#0000FF">struct</font>              <font color="#888888"><i>/* the structure for a button. */</i></font>
+{
+  <font color="#0000FF">int</font> x;
+  <font color="#0000FF">int</font> y;
+  <font color="#0000FF">int</font> state;
+  byte bitmap[BUTTON_BITMAPS][BUTTON_SIZE];
+
+} BUTTON;
+
+<font color="#888888"><i>/**************************************************************************
+ *  fskip                                                                 *
+ *     Skips bytes in a file.                                             *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> fskip(FILE *fp, <font color="#0000FF">int</font> num_bytes)
+{
+   <font color="#0000FF">int</font> i;
+   <font color="#0000FF">for</font> (i=<font color="#880088">0</font>; i&lt;num_bytes; i++)
+      fgetc(fp);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  set_mode                                                              *
+ *     Sets the video mode.                                               *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> set_mode(byte mode)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>ah = SET_MODE;
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>al = mode;
+  int86(VIDEO_INT, &amp;regs, &amp;regs);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  load_bmp                                                              *
+ *    Loads a bitmap file into memory.                                    *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> load_bmp(<font color="#0000FF">char</font> *file,BITMAP *b)
+{
+  FILE *fp;
+  <font color="#0000FF">long</font> index;
+  word num_colors;
+  <font color="#0000FF">int</font> x;
+
+  <font color="#888888"><i>/* open the file */</i></font>
+  <font color="#0000FF">if</font> ((fp = fopen(file,<font color="#FF00FF">&quot;rb&quot;</font>)) == NULL)
+  {
+    printf(<font color="#FF00FF">&quot;Error opening file %s.\n&quot;</font>,file);
+    exit(<font color="#880088">1</font>);
+  }
+
+  <font color="#888888"><i>/* check to see if it is a valid bitmap file */</i></font>
+  <font color="#0000FF">if</font> (fgetc(fp)!=<font color="#FF00FF">'B'</font> || fgetc(fp)!=<font color="#FF00FF">'M'</font>)
+  {
+    fclose(fp);
+    printf(<font color="#FF00FF">&quot;%s is not a bitmap file.\n&quot;</font>,file);
+    exit(<font color="#880088">1</font>);
+  }
+
+  <font color="#888888"><i>/* read in the width and height of the image, and the
+     number of colors used; ignore the rest */</i></font>
+  fskip(fp,<font color="#880088">16</font>);
+  fread(&amp;b-&gt;width, <font color="#0000FF">sizeof</font>(word), <font color="#880088">1</font>, fp);
+  fskip(fp,<font color="#880088">2</font>);
+  fread(&amp;b-&gt;height,<font color="#0000FF">sizeof</font>(word), <font color="#880088">1</font>, fp);
+  fskip(fp,<font color="#880088">22</font>);
+  fread(&amp;num_colors,<font color="#0000FF">sizeof</font>(word), <font color="#880088">1</font>, fp);
+  fskip(fp,<font color="#880088">6</font>);
+
+  <font color="#888888"><i>/* assume we are working with an 8-bit file */</i></font>
+  <font color="#0000FF">if</font> (num_colors==<font color="#880088">0</font>) num_colors=<font color="#880088">256</font>;
+
+  <font color="#888888"><i>/* try to allocate memory */</i></font>
+  <font color="#0000FF">if</font> ((b-&gt;data = (byte *) malloc((word)(b-&gt;width*b-&gt;height))) == NULL)
+  {
+    fclose(fp);
+    printf(<font color="#FF00FF">&quot;Error allocating memory for file %s.\n&quot;</font>,file);
+    exit(<font color="#880088">1</font>);
+  }
+
+  <font color="#888888"><i>/* read the palette information */</i></font>
+  <font color="#0000FF">for</font>(index=<font color="#880088">0</font>;index&lt;num_colors;index++)
+  {
+    b-&gt;palette[(<font color="#0000FF">int</font>)(index*<font color="#880088">3</font>+<font color="#880088">2</font>)] = fgetc(fp) &gt;&gt; <font color="#880088">2</font>;
+    b-&gt;palette[(<font color="#0000FF">int</font>)(index*<font color="#880088">3</font>+<font color="#880088">1</font>)] = fgetc(fp) &gt;&gt; <font color="#880088">2</font>;
+    b-&gt;palette[(<font color="#0000FF">int</font>)(index*<font color="#880088">3</font>+<font color="#880088">0</font>)] = fgetc(fp) &gt;&gt; <font color="#880088">2</font>;
+    x=fgetc(fp);
+  }
+
+  <font color="#888888"><i>/* read the bitmap */</i></font>
+  <font color="#0000FF">for</font>(index=(b-&gt;height-<font color="#880088">1</font>)*b-&gt;width;index&gt;=<font color="#880088">0</font>;index-=b-&gt;width)
+    <font color="#0000FF">for</font>(x=<font color="#880088">0</font>;x&lt;b-&gt;width;x++)
+      b-&gt;data[(word)(index+x)]=(byte)fgetc(fp);
+
+  fclose(fp);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  set_palette                                                           *
+ *    Sets all 256 colors of the palette.                                 *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> set_palette(byte *palette)
+{
+  <font color="#0000FF">int</font> i;
+
+  outp(PALETTE_INDEX,<font color="#880088">0</font>);              <font color="#888888"><i>/* tell the VGA that palette data
+                                         is coming. */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">256</font>*<font color="#880088">3</font>;i++)
+    outp(PALETTE_DATA,palette[i]);    <font color="#888888"><i>/* write the data */</i></font>
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  wait_for_retrace                                                      *
+ *    Wait until the *beginning* of a vertical retrace cycle (60hz).      *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> wait_for_retrace(<font color="#0000FF">void</font>)
+{
+    <font color="#888888"><i>/* wait until done with vertical retrace */</i></font>
+    <font color="#0000FF">while</font>  ((inp(INPUT_STATUS) &amp; VRETRACE));
+    <font color="#888888"><i>/* wait until done refreshing */</i></font>
+    <font color="#0000FF">while</font> (!(inp(INPUT_STATUS) &amp; VRETRACE));
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  get_mouse_motion                                                      *
+ *    Returns the distance the mouse has moved since it was lasted        *
+ *    checked.                                                            *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> get_mouse_motion(sword *dx, sword *dy)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>x<font color="#880088">.</font>ax = MOUSE_GETMOTION;
+  int86(MOUSE_INT, &amp;regs, &amp;regs);
+  *dx=regs<font color="#880088">.</font>x<font color="#880088">.</font>cx;
+  *dy=regs<font color="#880088">.</font>x<font color="#880088">.</font>dx;
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  init_mouse                                                            *
+ *    Resets the mouse.  Returns 0 if mouse not found.                    *
+ **************************************************************************/</i></font>
+
+sword init_mouse(MOUSE *mouse)
+{
+  sword dx,dy;
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>x<font color="#880088">.</font>ax = MOUSE_RESET;
+  int86(MOUSE_INT, &amp;regs, &amp;regs);
+  mouse-&gt;on=regs<font color="#880088">.</font>x<font color="#880088">.</font>ax;
+  mouse-&gt;num_buttons=regs<font color="#880088">.</font>x<font color="#880088">.</font>bx;
+  mouse-&gt;button1=<font color="#880088">0</font>;
+  mouse-&gt;button2=<font color="#880088">0</font>;
+  mouse-&gt;button3=<font color="#880088">0</font>;
+  mouse-&gt;x=SCREEN_WIDTH/<font color="#880088">2</font>;
+  mouse-&gt;y=SCREEN_HEIGHT/<font color="#880088">2</font>;
+  get_mouse_motion(&amp;dx,&amp;dy);
+  <font color="#0000FF">return</font> mouse-&gt;on;
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  get_mouse_press                                                       *
+ *    Returns 1 if a button has been pressed since it was last checked.   *
+ **************************************************************************/</i></font>
+
+sword get_mouse_press(sword button)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>x<font color="#880088">.</font>ax = MOUSE_GETPRESS;
+  regs<font color="#880088">.</font>x<font color="#880088">.</font>bx = button;
+  int86(MOUSE_INT, &amp;regs, &amp;regs);
+  <font color="#0000FF">return</font> regs<font color="#880088">.</font>x<font color="#880088">.</font>bx;
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  get_mouse_release                                                     *
+ *    Returns 1 if a button has been released since it was last checked.  *
+ **************************************************************************/</i></font>
+
+sword get_mouse_release(sword button)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>x<font color="#880088">.</font>ax = MOUSE_GETRELEASE;
+  regs<font color="#880088">.</font>x<font color="#880088">.</font>bx = button;
+  int86(MOUSE_INT, &amp;regs, &amp;regs);
+  <font color="#0000FF">return</font> regs<font color="#880088">.</font>x<font color="#880088">.</font>bx;
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  show_mouse                                                            *
+ *    Displays the mouse.  This code is not optimized.                    *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> show_mouse(MOUSE *mouse)
+{
+  <font color="#0000FF">int</font> x, y;
+  <font color="#0000FF">int</font> mx = mouse-&gt;x - mouse-&gt;bmp-&gt;hot_x;
+  <font color="#0000FF">int</font> my = mouse-&gt;y - mouse-&gt;bmp-&gt;hot_y;
+  <font color="#0000FF">long</font> screen_offset = (my&lt;&lt;<font color="#880088">8</font>)+(my&lt;&lt;<font color="#880088">6</font>);
+  word bitmap_offset = <font color="#880088">0</font>;
+  byte data;
+
+  <font color="#0000FF">for</font>(y=<font color="#880088">0</font>;y&lt;MOUSE_HEIGHT;y++)
+  {
+    <font color="#0000FF">for</font>(x=<font color="#880088">0</font>;x&lt;MOUSE_WIDTH;x++,bitmap_offset++)
+    {
+      mouse-&gt;under[bitmap_offset] = VGA[(word)(screen_offset+mx+x)];
+      <font color="#888888"><i>/* check for screen boundries */</i></font>
+      <font color="#0000FF">if</font> (mx+x &lt; SCREEN_WIDTH  &amp;&amp; mx+x &gt;= <font color="#880088">0</font> &amp;&amp;
+          my+y &lt; SCREEN_HEIGHT &amp;&amp; my+y &gt;= <font color="#880088">0</font>)
+      {
+        data = mouse-&gt;bmp-&gt;data[bitmap_offset];
+        <font color="#0000FF">if</font> (data) VGA[(word)(screen_offset+mx+x)] = data;
+      }
+    }
+    screen_offset+=SCREEN_WIDTH;
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  hide_mouse                                                            *
+ *    hides the mouse.  This code is not optimized.                       *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> hide_mouse(MOUSE *mouse)
+{
+  <font color="#0000FF">int</font> x, y;
+  <font color="#0000FF">int</font> mx = mouse-&gt;x - mouse-&gt;bmp-&gt;hot_x;
+  <font color="#0000FF">int</font> my = mouse-&gt;y - mouse-&gt;bmp-&gt;hot_y;
+  <font color="#0000FF">long</font> screen_offset = (my&lt;&lt;<font color="#880088">8</font>)+(my&lt;&lt;<font color="#880088">6</font>);
+  word bitmap_offset = <font color="#880088">0</font>;
+
+  <font color="#0000FF">for</font>(y=<font color="#880088">0</font>;y&lt;MOUSE_HEIGHT;y++)
+  {
+    <font color="#0000FF">for</font>(x=<font color="#880088">0</font>;x&lt;MOUSE_WIDTH;x++,bitmap_offset++)
+    {
+      <font color="#888888"><i>/* check for screen boundries */</i></font>
+      <font color="#0000FF">if</font> (mx+x &lt; SCREEN_WIDTH  &amp;&amp; mx+x &gt;= <font color="#880088">0</font> &amp;&amp;
+          my+y &lt; SCREEN_HEIGHT &amp;&amp; my+y &gt;= <font color="#880088">0</font>)
+      {
+
+        VGA[(word)(screen_offset+mx+x)] = mouse-&gt;under[bitmap_offset];
+      }
+    }
+
+    screen_offset+=SCREEN_WIDTH;
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  draw_button                                                           *
+ *    Draws a button.                                                     *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> draw_button(BUTTON *button)
+{
+  <font color="#0000FF">int</font> x, y;
+  word screen_offset = (button-&gt;y&lt;&lt;<font color="#880088">8</font>)+(button-&gt;y&lt;&lt;<font color="#880088">6</font>);
+  word bitmap_offset = <font color="#880088">0</font>;
+  byte data;
+
+  <font color="#0000FF">for</font>(y=<font color="#880088">0</font>;y&lt;BUTTON_HEIGHT;y++)
+  {
+    <font color="#0000FF">for</font>(x=<font color="#880088">0</font>;x&lt;BUTTON_WIDTH;x++,bitmap_offset++)
+    {
+      data = button-&gt;bitmap[button-&gt;state%BUTTON_BITMAPS][bitmap_offset];
+      <font color="#0000FF">if</font> (data) VGA[screen_offset+button-&gt;x+x] = data;
+    }
+    screen_offset+=SCREEN_WIDTH;
+  }
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  Main                                                                  *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> main()
+{
+  BITMAP bmp;
+  MOUSE  mouse;
+  MOUSEBITMAP *mb[NUM_MOUSEBITMAPS],
+    *mouse_norm, *mouse_wait, *mouse_new=NULL;
+
+  BUTTON *button[NUM_BUTTONS];
+  word redraw;
+  sword dx = <font color="#880088">0</font>, dy = <font color="#880088">0</font>, new_x, new_y;
+  word press, release;
+  <font color="#0000FF">int</font> i,j, done = <font color="#880088">0</font>, x,y;
+  word last_time;
+
+  <font color="#0000FF">if</font> (__djgpp_nearptr_enable() == <font color="#880088">0</font>)
+  {
+    printf(<font color="#FF00FF">&quot;Could get access to first 640K of memory.\n&quot;</font>);
+    exit(-<font color="#880088">1</font>);
+  }
+
+  VGA+=__djgpp_conventional_base;
+  my_clock = (<font color="#0000FF">void</font> *)my_clock + __djgpp_conventional_base;
+
+  <font color="#0000FF">for</font> (i=<font color="#880088">0</font>; i&lt;NUM_MOUSEBITMAPS; i++)
+  {
+    <font color="#0000FF">if</font> ((mb[i] = (MOUSEBITMAP *) malloc(<font color="#0000FF">sizeof</font>(MOUSEBITMAP))) == NULL)
+    {
+      printf(<font color="#FF00FF">&quot;Error allocating memory for bitmap.\n&quot;</font>);
+      exit(<font color="#880088">1</font>);
+    }
+  }
+
+  <font color="#0000FF">for</font> (i=<font color="#880088">0</font>; i&lt;NUM_BUTTONS; i++)
+  {
+    <font color="#0000FF">if</font> ((button[i] = (BUTTON *) malloc(<font color="#0000FF">sizeof</font>(BUTTON))) == NULL)
+    {
+      printf(<font color="#FF00FF">&quot;Error allocating memory for bitmap.\n&quot;</font>);
+      exit(<font color="#880088">1</font>);
+    }
+  }
+  mouse_norm = mb[<font color="#880088">0</font>];
+  mouse_wait = mb[<font color="#880088">1</font>];
+
+  mouse<font color="#880088">.</font>bmp = mouse_norm;
+
+  button[<font color="#880088">0</font>]-&gt;x     = <font color="#880088">48</font>;               <font color="#888888"><i>/* set button states */</i></font>
+  button[<font color="#880088">0</font>]-&gt;y     = <font color="#880088">152</font>;
+  button[<font color="#880088">0</font>]-&gt;state = STATE_NORM;
+
+  button[<font color="#880088">1</font>]-&gt;x     = <font color="#880088">224</font>;
+  button[<font color="#880088">1</font>]-&gt;y     = <font color="#880088">152</font>;
+  button[<font color="#880088">1</font>]-&gt;state = STATE_NORM;
+
+  <font color="#0000FF">if</font> (!init_mouse(&amp;mouse))            <font color="#888888"><i>/* init mouse */</i></font>
+  {
+    printf(<font color="#FF00FF">&quot;Mouse not found.\n&quot;</font>);
+    exit(<font color="#880088">1</font>);
+  }
+
+  load_bmp(<font color="#FF00FF">&quot;images.bmp&quot;</font>,&amp;bmp);        <font color="#888888"><i>/* load icons */</i></font>
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode. */</i></font>
+
+
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;NUM_MOUSEBITMAPS;i++)     <font color="#888888"><i>/* copy mouse pointers */</i></font>
+    <font color="#0000FF">for</font>(y=<font color="#880088">0</font>;y&lt;MOUSE_HEIGHT;y++)
+      <font color="#0000FF">for</font>(x=<font color="#880088">0</font>;x&lt;MOUSE_WIDTH;x++)
+      {
+        mb[i]-&gt;data[x+y*MOUSE_WIDTH] = bmp<font color="#880088">.</font>data[i*MOUSE_WIDTH+x+y*bmp<font color="#880088">.</font>width];
+        mb[i]-&gt;next = mb[i+<font color="#880088">1</font>];
+        mb[i]-&gt;hot_x = <font color="#880088">12</font>;
+        mb[i]-&gt;hot_y = <font color="#880088">12</font>;
+      }
+
+  mb[<font color="#880088">0</font>]-&gt;next  = mb[<font color="#880088">0</font>];
+  mb[<font color="#880088">8</font>]-&gt;next  = mb[<font color="#880088">1</font>];
+  mb[<font color="#880088">0</font>]-&gt;hot_x = <font color="#880088">7</font>;
+  mb[<font color="#880088">0</font>]-&gt;hot_y = <font color="#880088">2</font>;
+                                      <font color="#888888"><i>/* copy button bitmaps */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;NUM_BUTTONS;i++)
+    <font color="#0000FF">for</font>(j=<font color="#880088">0</font>;j&lt;BUTTON_BITMAPS;j++)
+      <font color="#0000FF">for</font>(y=<font color="#880088">0</font>;y&lt;BUTTON_HEIGHT;y++)
+        <font color="#0000FF">for</font>(x=<font color="#880088">0</font>;x&lt;BUTTON_WIDTH;x++)
+        {
+          button[i]-&gt;bitmap[j][x+y*BUTTON_WIDTH] =
+            bmp<font color="#880088">.</font>data[i*(bmp<font color="#880088">.</font>width&gt;&gt;<font color="#880088">1</font>) + j*BUTTON_WIDTH + x +
+            (BUTTON_HEIGHT+y)*bmp<font color="#880088">.</font>width];
+        }
+
+  free(bmp<font color="#880088">.</font>data);                     <font color="#888888"><i>/* free up memory used */</i></font>
+
+  set_palette(bmp<font color="#880088">.</font>palette);
+
+  <font color="#0000FF">for</font>(y=<font color="#880088">0</font>;y&lt;SCREEN_HEIGHT;y++)        <font color="#888888"><i>/* display a background */</i></font>
+    <font color="#0000FF">for</font>(x=<font color="#880088">0</font>;x&lt;SCREEN_WIDTH;x++)
+      VGA[(y&lt;&lt;<font color="#880088">8</font>)+(y&lt;&lt;<font color="#880088">6</font>)+x]=y;
+
+  new_x=mouse<font color="#880088">.</font>x;
+  new_y=mouse<font color="#880088">.</font>y;
+  redraw=<font color="#880088">0xFFFF</font>;
+  show_mouse(&amp;mouse);
+  last_time=*my_clock;
+  <font color="#0000FF">while</font> (!done)                       <font color="#888888"><i>/* start main loop */</i></font>
+  {
+    <font color="#0000FF">if</font> (redraw)                       <font color="#888888"><i>/* draw the mouse only as needed */</i></font>
+    {
+      wait_for_retrace();
+      hide_mouse(&amp;mouse);
+      <font color="#0000FF">if</font> (redraw&gt;<font color="#880088">1</font>)
+      {
+        <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;NUM_BUTTONS;i++)
+          <font color="#0000FF">if</font> (redraw &amp; (<font color="#880088">2</font>&lt;&lt;i)) draw_button(button[i]);
+      }
+      <font color="#0000FF">if</font> (mouse_new!=NULL) mouse<font color="#880088">.</font>bmp=mouse_new;
+      mouse<font color="#880088">.</font>x=new_x;
+      mouse<font color="#880088">.</font>y=new_y;
+      show_mouse(&amp;mouse);
+      last_time=*my_clock;
+      redraw=<font color="#880088">0</font>;
+      mouse_new=NULL;
+    }
+
+    <font color="#0000FF">do</font> {                              <font color="#888888"><i>/* check mouse status */</i></font>
+      get_mouse_motion(&amp;dx,&amp;dy);
+      press   = get_mouse_press(LEFT_BUTTON);
+      release = get_mouse_release(LEFT_BUTTON);
+    } <font color="#0000FF">while</font> (dx==<font color="#880088">0</font> &amp;&amp; dy==<font color="#880088">0</font> &amp;&amp; press==<font color="#880088">0</font> &amp;&amp; release==<font color="#880088">0</font> &amp;&amp;
+      *my_clock==last_time);
+
+    <font color="#0000FF">if</font> (*my_clock!=last_time)         <font color="#888888"><i>/* check animation clock */</i></font>
+    {
+      <font color="#0000FF">if</font> (mouse<font color="#880088">.</font>bmp!=mouse<font color="#880088">.</font>bmp-&gt;next)
+      {
+        redraw=<font color="#880088">1</font>;
+        mouse<font color="#880088">.</font>bmp = mouse<font color="#880088">.</font>bmp-&gt;next;
+      }
+      <font color="#0000FF">else</font>
+        last_time = *my_clock;
+    }
+
+    <font color="#0000FF">if</font> (press) mouse<font color="#880088">.</font>button1=<font color="#880088">1</font>;
+    <font color="#0000FF">if</font> (release) mouse<font color="#880088">.</font>button1=<font color="#880088">0</font>;
+
+    <font color="#0000FF">if</font> (dx || dy)                     <font color="#888888"><i>/* calculate movement */</i></font>
+    {
+      new_x = mouse<font color="#880088">.</font>x+dx;
+      new_y = mouse<font color="#880088">.</font>y+dy;
+      <font color="#0000FF">if</font> (new_x&lt;<font color="#880088">0</font>)   new_x=<font color="#880088">0</font>;
+      <font color="#0000FF">if</font> (new_y&lt;<font color="#880088">0</font>)   new_y=<font color="#880088">0</font>;
+      <font color="#0000FF">if</font> (new_x&gt;<font color="#880088">319</font>) new_x=<font color="#880088">319</font>;
+      <font color="#0000FF">if</font> (new_y&gt;<font color="#880088">199</font>) new_y=<font color="#880088">199</font>;
+      redraw=<font color="#880088">1</font>;
+    }
+
+    <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;NUM_BUTTONS;i++)        <font color="#888888"><i>/* check button status */</i></font>
+    {
+      <font color="#0000FF">if</font> (new_x &gt;= button[i]-&gt;x &amp;&amp; new_x &lt; button[i]-&gt;x+<font color="#880088">48</font> &amp;&amp;
+          new_y &gt;= button[i]-&gt;y &amp;&amp; new_y &lt; button[i]-&gt;y+<font color="#880088">24</font>)
+      {
+        <font color="#0000FF">if</font> (release &amp;&amp; button[i]-&gt;state==STATE_PRESSED)
+        {
+          button[i]-&gt;state=STATE_ACTIVE;
+          redraw|=(<font color="#880088">2</font>&lt;&lt;i);
+          <font color="#0000FF">if</font> (i==<font color="#880088">0</font>)
+          {
+            <font color="#0000FF">if</font> (mouse<font color="#880088">.</font>bmp==mouse_norm)
+              mouse_new=mouse_wait;
+            <font color="#0000FF">else</font>
+              mouse_new=mouse_norm;
+          }
+          <font color="#0000FF">else</font> <font color="#0000FF">if</font> (i==<font color="#880088">1</font>) done=<font color="#880088">1</font>;
+        }
+        <font color="#0000FF">else</font> <font color="#0000FF">if</font> (press)
+        {
+          button[i]-&gt;state=STATE_PRESSED;
+          redraw|=(<font color="#880088">2</font>&lt;&lt;i);
+        }
+        <font color="#0000FF">else</font> <font color="#0000FF">if</font> (button[i]-&gt;state==STATE_NORM &amp;&amp; mouse<font color="#880088">.</font>button1==<font color="#880088">0</font>)
+        {
+          button[i]-&gt;state=STATE_ACTIVE;
+          redraw|=(<font color="#880088">2</font>&lt;&lt;i);
+        }
+        <font color="#0000FF">else</font> <font color="#0000FF">if</font> (button[i]-&gt;state==STATE_WAITING)
+        {
+          <font color="#0000FF">if</font> (mouse<font color="#880088">.</font>button1)
+          {
+            button[i]-&gt;state=STATE_PRESSED;
+          }
+          <font color="#0000FF">else</font>
+          {
+            button[i]-&gt;state=STATE_ACTIVE;
+          }
+          redraw|=(<font color="#880088">2</font>&lt;&lt;i);
+        }
+      }
+      <font color="#0000FF">else</font> <font color="#0000FF">if</font> (button[i]-&gt;state==STATE_ACTIVE)
+      {
+        button[i]-&gt;state=STATE_NORM;
+        redraw|=(<font color="#880088">2</font>&lt;&lt;i);
+      }
+      <font color="#0000FF">else</font> <font color="#0000FF">if</font> (button[i]-&gt;state==STATE_PRESSED &amp;&amp; mouse<font color="#880088">.</font>button1)
+      {
+        button[i]-&gt;state=STATE_WAITING;
+        redraw|=(<font color="#880088">2</font>&lt;&lt;i);
+      }
+      <font color="#0000FF">else</font> <font color="#0000FF">if</font> (button[i]-&gt;state==STATE_WAITING &amp;&amp; release)
+      {
+        button[i]-&gt;state=STATE_NORM;
+        redraw|=(<font color="#880088">2</font>&lt;&lt;i);
+      }
+
+    }
+  }                                   <font color="#888888"><i>/* end while loop */</i></font>
+
+  <font color="#0000FF">for</font> (i=<font color="#880088">0</font>; i&lt;NUM_MOUSEBITMAPS; i++)  <font color="#888888"><i>/* free allocated memory */</i></font>
+  {
+    free(mb[i]);
+  }
+
+  <font color="#0000FF">for</font> (i=<font color="#880088">0</font>; i&lt;NUM_BUTTONS; i++)       <font color="#888888"><i>/* free allocated memory */</i></font>
+  {
+    free(button[i]);
+  }
+
+  set_mode(TEXT_MODE);                <font color="#888888"><i>/* set the video mode back to
+                                         text mode. */</i></font>
+  __djgpp_nearptr_disable();
+
+  <font color="#0000FF">return</font>;
+}
+
+</pre>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+<p><font size="2">Back to <a href="../../mouse.html#mouse7.0">Mouse Support &amp; Animation</a></font></p></body>
+</html>

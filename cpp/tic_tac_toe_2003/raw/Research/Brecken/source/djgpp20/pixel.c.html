@@ -1,0 +1,186 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor and C2HTML">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <title>256-Color VGA Programming in C - pixel.c</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<font size="2">Back to <a href="../../basics.html#basics7.0">VGA Basics</a></font><br><font size="6" face="tahoma, arial, helvetica"><strong>pixel.c</strong></font><br>
+<font size="2"><a href="pixel.c">Plain text version</a><br>&nbsp;</font><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+
+<pre><font color="#888888"><i>/**************************************************************************
+ * pixel.c                                                                *
+ * written by David Brackeen                                              *
+ * http://www.brackeen.com/home/vga/                                      *
+ *                                                                        *
+ * Tab stops are set to 2.                                                *
+ * This program compiles with DJGPP! (www.delorie.com)                    *
+ * To compile in DJGPP: gcc pixel.c -o pixel.exe                          *
+ *                                                                        *
+ * This program will only work on DOS- or Windows-based systems with a    *
+ * VGA, SuperVGA, or compatible video adapter.                            *
+ *                                                                        *
+ * Please feel free to copy this source code.                             *
+ *                                                                        *
+ * DESCRIPTION: This program demostrates how much faster writing directly *
+ * to video memory is.                                                    *
+ **************************************************************************/</i></font>
+
+<font color="#008800">#include</font> &lt;stdio<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;stdlib<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;dos<font color="#880088">.</font>h&gt;
+<font color="#008800">#include</font> &lt;sys/nearptr<font color="#880088">.</font>h&gt;
+
+<font color="#008800">#define</font> VIDEO_INT           <font color="#880088">0x10</font>      <font color="#888888"><i>/* the BIOS video interrupt. */</i></font>
+<font color="#008800">#define</font> WRITE_DOT           <font color="#880088">0x0C</font>      <font color="#888888"><i>/* BIOS func to plot a pixel. */</i></font>
+<font color="#008800">#define</font> SET_MODE            <font color="#880088">0x00</font>      <font color="#888888"><i>/* BIOS func to set the video mode. */</i></font>
+<font color="#008800">#define</font> VGA_256_COLOR_MODE  <font color="#880088">0x13</font>      <font color="#888888"><i>/* use to set 256-color mode. */</i></font>
+<font color="#008800">#define</font> TEXT_MODE           <font color="#880088">0x03</font>      <font color="#888888"><i>/* use to set 80x25 text mode. */</i></font>
+
+<font color="#008800">#define</font> SCREEN_WIDTH        <font color="#880088">320</font>       <font color="#888888"><i>/* width in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> SCREEN_HEIGHT       <font color="#880088">200</font>       <font color="#888888"><i>/* height in pixels of mode 0x13 */</i></font>
+<font color="#008800">#define</font> NUM_COLORS          <font color="#880088">256</font>       <font color="#888888"><i>/* number of colors in mode 0x13 */</i></font>
+
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">char</font>  byte;
+<font color="#0000FF">typedef</font> <font color="#0000FF">unsigned</font> <font color="#0000FF">short</font> word;
+
+
+byte *VGA = (byte *)<font color="#880088">0xA0000</font>;          <font color="#888888"><i>/* this points to video memory. */</i></font>
+word *my_clock = (word *)<font color="#880088">0x046C</font>;      <font color="#888888"><i>/* this points to the 18.2hz system
+                                         clock. */</i></font>
+
+<font color="#888888"><i>/**************************************************************************
+ *  set_mode                                                              *
+ *     Sets the video mode.                                               *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> set_mode(byte mode)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>ah = SET_MODE;
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>al = mode;
+  int86(VIDEO_INT, &amp;regs, &amp;regs);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  plot_pixel_slow                                                       *
+ *    Plot a pixel by using BIOS function 0x0C (Write Dot).               *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> plot_pixel_slow(<font color="#0000FF">int</font> x,<font color="#0000FF">int</font> y,byte color)
+{
+  <font color="#0000FF">union</font> REGS regs;
+
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>ah = WRITE_DOT;
+  regs<font color="#880088">.</font>h<font color="#880088">.</font>al = color;
+  regs<font color="#880088">.</font>x<font color="#880088">.</font>cx = x;
+  regs<font color="#880088">.</font>x<font color="#880088">.</font>dx = y;
+  int86(VIDEO_INT, &amp;regs, &amp;regs);
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  plot_pixel_fast                                                       *
+ *    Plot a pixel by directly writing to video memory.                   *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> plot_pixel_fast(<font color="#0000FF">int</font> x,<font color="#0000FF">int</font> y,byte color)
+{
+  VGA[y*SCREEN_WIDTH+x]=color;
+}
+
+<font color="#888888"><i>/**************************************************************************
+ *  Main                                                                  *
+ *    Plots 50000 pixels two different ways: using the BIOS and by        *
+ *    directly writing to video memory.                                   *
+ **************************************************************************/</i></font>
+
+<font color="#0000FF">void</font> main()
+{
+  <font color="#0000FF">int</font> x,y,color;
+  <font color="#0000FF">float</font> t1,t2;
+  word i,start;
+
+  <font color="#0000FF">if</font> (__djgpp_nearptr_enable() == <font color="#880088">0</font>)
+  {
+    printf(<font color="#FF00FF">&quot;Could get access to first 640K of memory.\n&quot;</font>);
+    exit(-<font color="#880088">1</font>);
+  }
+
+  VGA+=__djgpp_conventional_base;
+  my_clock = (<font color="#0000FF">void</font> *)my_clock + __djgpp_conventional_base;
+
+  srand(*my_clock);                   <font color="#888888"><i>/* seed the number generator. */</i></font>
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode. */</i></font>
+
+  start=*my_clock;                    <font color="#888888"><i>/* record the starting time. */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">50000L</font>;i++)               <font color="#888888"><i>/* randomly plot 50000 pixels. */</i></font>
+  {
+    x=rand()%SCREEN_WIDTH;
+    y=rand()%SCREEN_HEIGHT;
+    color=rand()%NUM_COLORS;
+    plot_pixel_slow(x,y,color);
+  }
+
+  t1=(*my_clock-start)/<font color="#880088">18.2</font>;          <font color="#888888"><i>/* calculate how long it took. */</i></font>
+
+  set_mode(VGA_256_COLOR_MODE);       <font color="#888888"><i>/* set the video mode again in order
+                                         to clear the screen. */</i></font>
+
+  start=*my_clock;                    <font color="#888888"><i>/* record the starting time. */</i></font>
+  <font color="#0000FF">for</font>(i=<font color="#880088">0</font>;i&lt;<font color="#880088">50000L</font>;i++)               <font color="#888888"><i>/* randomly plot 50000 pixels. */</i></font>
+  {
+    x=rand()%SCREEN_WIDTH;
+    y=rand()%SCREEN_HEIGHT;
+    color=rand()%NUM_COLORS;
+    plot_pixel_fast(x,y,color);
+  }
+
+  t2=(*my_clock-start)/<font color="#880088">18.2</font>;          <font color="#888888"><i>/* calculate how long it took. */</i></font>
+  set_mode(TEXT_MODE);                <font color="#888888"><i>/* set the video mode back to
+                                         text mode. */</i></font>
+
+  <font color="#888888"><i>/* output the results... */</i></font>
+  printf(<font color="#FF00FF">&quot;Slow pixel plotting took %f seconds.\n&quot;</font>,t1);
+  printf(<font color="#FF00FF">&quot;Fast pixel plotting took %f seconds.\n&quot;</font>,t2);
+  <font color="#0000FF">if</font> (t2 != <font color="#880088">0</font>) printf(<font color="#FF00FF">&quot;Fast pixel plotting was %f times faster.\n&quot;</font>,t1/t2);
+
+  __djgpp_nearptr_disable();
+
+  <font color="#0000FF">return</font>;
+}
+
+</pre>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+<tr>
+  <td valign="top" width="9"><img
+  src="../../images/ui/subhead_left.gif"
+  width="9" height="24"></td>
+  <td width="100%"><font color="#FFFFCC" size="4"
+  face="tahoma, arial, helvetica"><strong>&nbsp; </strong></font></td>
+  <td valign="bottom" width="9"><img
+  src="../../images/ui/subhead_right.gif"
+  width="9" height="24"></td>
+</tr>
+</table>
+
+<p><font size="2">Back to <a href="../../basics.html#basics7.0">VGA Basics</a></font></p></body>
+</html>

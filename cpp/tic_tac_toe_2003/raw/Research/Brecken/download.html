@@ -1,0 +1,278 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <link rel=stylesheet href="256vpc.css" type="text/css">
+  <title>256-Color VGA Programming in C - Download</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<script language="JavaScript"><!--
+nav = navVersion();
+ie = ieVersion();
+
+preloadImage("images/ui/subhead_left.gif");
+preloadImage("images/ui/subhead_right.gif");
+preloadImage("images/ui/dot.gif");
+preloadImage("images/ui/navigate_next_hover.gif");
+preloadImage("images/ui/navigate_prev_hover.gif");
+
+function navVersion()
+{
+	var ua = window.navigator.userAgent;
+	var nav = ua.indexOf ( "Mozilla/" );
+	if (nav>=0)
+		return parseInt ( ua.substring ( nav+8, ua.indexOf (".") ) );
+	else
+		return 0;	// is other browser
+}
+
+function ieVersion()
+{
+	var ua = window.navigator.userAgent;
+	var msie = ua.indexOf("MSIE ");
+	if (msie>=0)	
+		return parseInt ( ua.substring ( msie+5, ua.indexOf ( ".", msie ) ) );
+	else
+		return 0;	
+}
+
+function changeImage(image, filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image.src = "images/ui/" + filename + ".gif"
+	}
+}
+
+function preloadImage(filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image = new Image();
+    image.src = filename;
+	}
+
+}
+// --></script>
+
+<a href="index.html"><font size="2">256-Color VGA Programming in C</font></a><br><font size="6" face="tahoma, arial, helvetica"><strong><a name="top"></a>Download</strong></font><br>
+<strong>Contents:</strong><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#download1.0"><font size="2">Download source code and executables</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#download2.0"><font size="2">Download the entire manual</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#download3.0"><font size="2">About uploading</font></a><br>
+
+
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="download1.0"></a><strong>&nbsp;Download source code and executables</strong></font></td>
+    <td align="right" valign="middle"><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#download2.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Download the entire manual" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+ </p>
+
+<p>Each zip file contains source code, executable, and bitmap (if
+needed). </p>
+
+<table border="1" cellpadding="2" cellspacing="0">
+    <tr>
+        <td valign="top"><strong>Borland C / Turbo C /etc.</strong></td>
+        <td valign="top"><strong>DJGPP 2.0</strong></td>
+        <td valign="top"><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td valign="top" bgcolor="#E0E0E0"><a
+        href="download/bc-all.zip">bc-all.zip</a> (189K)</td>
+        <td valign="top" bgcolor="#E0E0E0"><a
+        href="download/djgpp-all.zip">djgpp-all.zip</a> (421K)</td>
+        <td valign="top" bgcolor="#E0E0E0"><font size="2">All
+        source code, makefiles, executables, and bitmaps. <br>
+        No need to download the other zip files!</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/pixel.zip">pixel.zip</a>
+        (20K)</td>
+        <td valign="top"><a href="download/djgpp20/pixel.zip">pixel.zip</a>
+        (39K)</td>
+        <td valign="top"><font size="2">Pixel plotting and
+        writing directly to video memory.</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/lines.zip">lines.zip</a>
+        (21K)</td>
+        <td valign="top"><a href="download/djgpp20/lines.zip">lines.zip</a>
+        (41K)</td>
+        <td valign="top"><font size="2">Line drawing using heavy
+        math and using Bresenham's algorithm.</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/rect.zip">rect.zip</a>
+        (22K)</td>
+        <td valign="top"><a href="download/djgpp20/rect.zip">rect.zip</a>
+        (42K)</td>
+        <td valign="top"><font size="2">Rectangle drawing using
+        multiple function calls and without.</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/circle.zip">circle.zip</a>
+        (22K)</td>
+        <td valign="top"><a href="download/djgpp20/circle.zip">circle.zip</a>
+        (41K)</td>
+        <td valign="top"><font size="2">Circle drawing using
+        heavy math and using tables.</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/bitmap.zip">bitmap.zip</a>
+        (14K)</td>
+        <td valign="top"><a href="download/djgpp20/bitmap.zip">bitmap.zip</a>
+        (44K)</td>
+        <td valign="top"><font size="2">Bitmap drawing and
+        transparency.</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/palette.zip">palette.zip</a>
+        (19K)</td>
+        <td valign="top"><a href="download/djgpp20/palette.zip">palette.zip</a>
+        (49K)</td>
+        <td valign="top"><font size="2">Modifying and rotating
+        the color palette.</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/mouse.zip">mouse.zip</a>
+        (20K)</td>
+        <td valign="top"><a href="download/djgpp20/mouse.zip">mouse.zip</a>
+        (52K)</td>
+        <td valign="top"><font size="2">Mouse support, animation,
+        and buttons.</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/unchain.zip">unchain.zip</a>
+        (34K)</td>
+        <td valign="top"><a href="download/djgpp20/unchain.zip">unchain.zip</a>
+        (56K)</td>
+        <td valign="top"><font size="2">Unchained mode (mode-x),
+        double buffering, and page flipping.</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><a href="download/bc31/modes.zip">modes.zip</a>
+        (20K)</td>
+        <td valign="top"><a href="download/djgpp20/modes.zip">modes.zip</a>
+        (55K)</td>
+        <td valign="top"><font size="2">Various unchained modes,
+        from 320x200 to 360x480.</font></td>
+    </tr>
+</table>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="download2.0"></a><strong>&nbsp;Download the entire manual</strong></font></td>
+    <td align="right" valign="middle"><a href="#download1.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Download source code and executables" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#download3.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: About uploading" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>This zip file conatines the whole thing, verbatim. </p>
+
+<p>In order to download this file, you've got to have two things:</p>
+
+<ul>
+    <li>An operating system that can handle long file names, like
+        Windows 95 or Windows NT (actually, almost any OS besides
+        DOS/Win 3.x).</li>
+    <li>A program that can read zip files with long file names,
+        such as <a href="http://www.winzip.com" target="_top">WinZip</a>.
+    </li>
+</ul>
+
+<p>Click here to download:</p>
+
+<p><a href="download/vga-all-990512.zip">vga-all-990512.zip</a>
+(1999-05-12, 1.5MB)</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="download3.0"></a><strong>&nbsp;About uploading</strong></font></td>
+    <td align="right" valign="middle"><a href="#download2.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Download the entire manual" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#download4.0"><img src="images/ui/arrow_right.gif"
+    alt="Bottom" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>If you want to upload this file to an archive or to your own
+site, that's great, just let <a href="http://www.brackeen.com">me</a>
+know first.</p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="download4.0"></a>&nbsp;</font></td>
+    <td align="right" valign="middle"><a href="#download3.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: About uploading" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+<br><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td align="left" valign="top">&nbsp;</td><td align="right" valign="top">&nbsp;</td></tr></table><p>&nbsp;</p><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td>  <font size="2" face="tahoma, arial, helvetica"><strong><a href="index.html">256-Color VGA Programming in C</a></strong>
+ | <a href="intro.html">Introduction</a>
+ | <a href="basics.html">VGA Basics</a>
+ | <a href="shapes.html">Primitive Shapes &amp; Lines</a>
+ | <a href="bitmaps.html">Bitmaps &amp; Palette Manipulation</a>
+ | <a href="mouse.html">Mouse Support &amp; Animation</a>
+ | <a href="unchain.html">Double Buffering, Page Flipping, &amp; Unchained Mode</a>
+ | <a href="announce.html">Announcements</a>
+ | <a href="resource.html">Links and Other Resources</a>
+ | <a href="download.html">Download</a>
+ | <a href="trouble.html">FAQ and Troubleshooting</a>
+  </font></td></tr></table>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>

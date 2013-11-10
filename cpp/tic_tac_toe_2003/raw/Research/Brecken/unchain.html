@@ -1,0 +1,842 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <link rel=stylesheet href="256vpc.css" type="text/css">
+  <title>256-Color VGA Programming in C - Double Buffering, Page Flipping, &amp; Unchained Mode</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<script language="JavaScript"><!--
+nav = navVersion();
+ie = ieVersion();
+
+preloadImage("images/ui/subhead_left.gif");
+preloadImage("images/ui/subhead_right.gif");
+preloadImage("images/ui/dot.gif");
+preloadImage("images/ui/navigate_next_hover.gif");
+preloadImage("images/ui/navigate_prev_hover.gif");
+
+function navVersion()
+{
+	var ua = window.navigator.userAgent;
+	var nav = ua.indexOf ( "Mozilla/" );
+	if (nav>=0)
+		return parseInt ( ua.substring ( nav+8, ua.indexOf (".") ) );
+	else
+		return 0;	// is other browser
+}
+
+function ieVersion()
+{
+	var ua = window.navigator.userAgent;
+	var msie = ua.indexOf("MSIE ");
+	if (msie>=0)	
+		return parseInt ( ua.substring ( msie+5, ua.indexOf ( ".", msie ) ) );
+	else
+		return 0;	
+}
+
+function changeImage(image, filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image.src = "images/ui/" + filename + ".gif"
+	}
+}
+
+function preloadImage(filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image = new Image();
+    image.src = filename;
+	}
+
+}
+// --></script>
+
+<a href="index.html"><font size="2">256-Color VGA Programming in C</font></a><br><font size="6" face="tahoma, arial, helvetica"><strong><a name="top"></a>Double Buffering, Page Flipping, &amp; Unchained Mode</strong></font><br>
+<strong>Contents:</strong><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain1.0"><font size="2">Why double buffering and/or page flipping?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain2.0"><font size="2">Double buffering</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain3.0"><font size="2">Page flipping</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain4.0"><font size="2">Structure of unchained mode</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain5.0"><font size="2">Tweaking mode 13h</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain6.0"><font size="2">Plotting a pixel in unchained mode</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain7.0"><font size="2">Page flipping in unchained mode</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain8.0"><font size="2">Program: unchain.c</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain9.0"><font size="2">Other unchained modes</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#unchain10.0"><font size="2">Program: modes.c</font></a><br>
+
+
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain1.0"></a><strong>&nbsp;Why double buffering and/or page flipping?</strong></font></td>
+    <td align="right" valign="middle"><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain2.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Double buffering" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Two important concepts used in many games and multimedia
+applications are double buffering and page flipping. Programmers
+primarily use these techniques for two purposes: </p>
+
+<ul>
+    <li>to keep the user from seeing objects being drawn onto the
+        screen</li>
+    <li>to eliminate flickering.</li>
+</ul>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain2.0"></a><strong>&nbsp;Double buffering</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain1.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Why double buffering and/or page flipping?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain3.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Page flipping" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Double Buffering is a fairly simple concept to grasp. Instead
+of drawing directly to video memory, the program draws everything
+to a double buffer (Figure 20a). When finished, the program
+copies the double buffer to video memory all at once (Figure
+20b). At that point the program clears the double buffer (if
+necessary) and the process starts over. </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00030.gif" width="275"
+        height="360"><br>
+        <br>
+        <b>Figure 20.</b> Double buffering concept. </td>
+    </tr>
+</table>
+</center></div>
+
+<p>Implementing a double buffer is fairly simple as well. The
+double buffer is generally the same size as the screen. In mode
+0x13, the double buffer would be 64,000 bytes. When the program
+begins it allocates memory for the double buffer. </p>
+
+<pre>unsigned char *double_buffer;
+
+...
+
+double_buffer = (unsigned char *) malloc(320*200);
+if (double_buffer==NULL)
+{
+  printf(&quot;Not enough memory for double buffer.\n&quot;);
+  exit(1);
+}
+</pre>
+
+<p>Then, instead of writing to video memory, the program writes
+to the double buffer. </p>
+
+<pre>/* plot a pixel in the double buffer */
+double_buffer[(y&lt;&lt;8) + (y&lt;&lt;6) + x] = color;
+</pre>
+
+<p>When finished, the program copies the double buffer to video
+memory (with careful consideration of the vertical retrace to
+eliminate flickering). </p>
+
+<pre>while ((inp(INPUT_STATUS_1) &amp; VRETRACE));
+while (!(inp(INPUT_STATUS_1) &amp; VRETRACE));
+memcpy(VGA,double_buffer,320*200);
+</pre>
+
+<p>Using a double buffer would be faster if, instead of having to
+copy the information from the double buffer to video memory
+(address 0xA000:0000), the video card could be programmed to get
+video data directly from the double buffer rather than from its
+regular address (0xA000:0000). While this is not possible on the
+VGA, it is close to how page flipping works. </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain3.0"></a><strong>&nbsp;Page flipping</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain2.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Double buffering" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain4.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Structure of unchained mode" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>With page flipping, there must be enough video memory for two
+screens. So, if the screen size is 320x200 at 256 colors,
+2*320*200 or 128,000 bytes of video memory must be available.
+Instead of drawing to the <i>visible</i> area in video memory, or
+<i>visible page</i>, the program draws to the <i>non-visible page</i>
+(Figure 21a). When finished, the program swaps the <i>visible
+page</i> pointer with the <i>non-visible page</i> pointer (Figure
+21b). Now the program clears the newly placed <i>non-visible page</i>
+(if necessary) and the process starts over. </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00031.gif" width="287"
+        height="534"><br>
+        <br>
+        <b>Figure 21.</b> Page flipping concept. </td>
+    </tr>
+</table>
+</center></div>
+
+<p>One problem is this: in mode 0x13, only 64K of video memory is
+available, even if the video card has more memory on it. Even if
+it is a 4MB video card, mode 0x13 can only access 64K. There is a
+way, however, to tweak mode 13h into a 256-color mode that has a
+total of 256K of video memory, so that page flipping is possible.
+This undocumented mode is sometimes referred to as
+&quot;mode-x,&quot; or &quot;unchained mode.&quot; </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain4.0"></a><strong>&nbsp;Structure of unchained mode</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain3.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Page flipping" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain5.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Tweaking mode 13h" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>The VGA card has 256K of memory. Many SVGA cards have much
+more, but even on those cards, VGA modes can only access the
+first 256K-except for mode 0x13, which can only access 64K. The
+reason is that mode 0x13 is a chain-4 mode, which basically means
+only every forth byte of video memory is used. The reason for
+this is because the linear structure of the video memory allowed
+fast and easy video memory access. Turning off chain-4 mode
+allows the program to access of all 256K of video memory, but
+involves more complicated programming. </p>
+
+<p>In unchained mode, memory exists in four 64K <i>planes</i>.
+Each plane corresponds to a specific column of video memory:
+plane 0 contains pixels 0, 4, 8, etc.; plane 1 contains pixels 1,
+5, 9, etc.; plane 2 contains columns 2, 6, 10, etc.; and plane 3
+contains columns 3, 7, 11, etc. (Figure 22). So to plot a pixel
+at position (5,7), plane 1 is selected, and the offset is
+(320*7+5)/4 = 561. </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00032.gif" width="380"
+        height="323"><br>
+        <br>
+        <b>Figure 22.</b> How video memory relates to the screen.
+        </td>
+    </tr>
+</table>
+</center></div>
+
+<p align="left"><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain5.0"></a><strong>&nbsp;Tweaking mode 13h</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain4.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Structure of unchained mode" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain6.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Plotting a pixel in unchained mode" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+ </p>
+
+<p>Since unchained mode is not a standard VGA mode, it cannot be
+set using a BIOS function call. Instead, certain VGA registers
+have to be tweaked. It involves two VGA controllers: the sequence
+controller (port 0x3C4) and the CRT controller (port 0x3D4). </p>
+
+<pre>/* VGA sequence controller */
+#define SC_INDEX      0x03c4
+#define SC_DATA       0x03c5
+
+/* VGA CRT controller */
+#define CRTC_INDEX    0x03d4
+#define CRTC_DATA     0x03d5
+
+#define MEMORY_MODE   0x04
+#define UNDERLINE_LOC 0x14
+#define MODE_CONTROL  0x17
+
+...
+
+/* turn off chain-4 mode */
+outp(SC_INDEX, MEMORY_MODE);
+outp(SC_DATA, 0x06);
+
+/* TODO: Insert code to clear the screen here.
+   (the BIOS only sets every fourth byte
+   to zero -- the rest needs to be set to
+   zero, too) */
+
+/* turn off long mode */
+outp(CRTC_INDEX, UNDERLINE_LOC);
+outp(CRTC_DATA, 0x00);
+/* turn on byte mode */
+outp(CRTC_INDEX, MODE_CONTROL);
+outp(CRTC_DATA, 0xe3);
+</pre>
+
+<p>The VGA registers can sometimes be fairly complex. For a
+complete list of the VGA registers, visit <a
+href="http://www.qzx.com/pc-gpe/" target="_top">PC-GPE Online</a>.
+</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain6.0"></a><strong>&nbsp;Plotting a pixel in unchained mode</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain5.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Tweaking mode 13h" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain7.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Page flipping in unchained mode" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Plotting a pixel in unchained mode is a tad bit more tedious
+than it is in mode 0x13, because the proper plane has to be
+selected. To select a plane, write 2<sup><i>plane</i></sup> to
+the VGA Map Mask register, where <i>plane</i> is a value from 0
+to 3 (Figure 23).</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00033.gif" width="265"
+        height="88"><br>
+        <br>
+        <b>Figure 23.</b> Selecting a plane with the Map Mask
+        register. </td>
+    </tr>
+</table>
+</center></div>
+
+<p>The Map Mask register is located at index 2 of the Sequence
+Controller. To select the Map Mask register, write 2 to the
+Sequence Controller address at port 0x3C4. Then the Map Mask can
+be found at the Sequence Controller's data port at port 0x3C5. </p>
+
+<pre>plane = (x&amp;3);
+/* select the map mask register */
+outp(0x3c4, 0x02);
+/* write 2^plane */
+outp(0x3c5, 1 &lt;&lt; plane);
+</pre>
+
+<p>In mode 0x13, the offset is calculated as 320<i>y </i>+ <i>x</i>.
+Since unchained mode memory is arranged in four planes, the
+offset in unchained mode is calculated as <img
+src="images/img00034.gif" alt="(320·y+x)/4" align="absmiddle"
+width="65" height="42"> (Figure 22). </p>
+
+<pre>VGA[(y&lt;&lt;6) + (y&lt;&lt;4) + (x&gt;&gt;2)] = color;
+</pre>
+
+<p>If a value other than a power of two was used to select a
+plane, multiple planes would be selected. For example, if 13
+(binary 1101) were used, planes 0, 2, and 3 would be selected.
+That means every plane selected is written with the color value.
+One use for this is fast screen-clearing. If every plane is
+selected, only 16,000 bytes need to be written, instead of 64,000
+like in mode 0x13. </p>
+
+<pre>/* set map mask to all 4 planes */
+outpw(0x3c4, 0xff02);
+memset(VGA,0, 16000);
+</pre>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain7.0"></a><strong>&nbsp;Page flipping in unchained mode</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain6.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Plotting a pixel in unchained mode" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain8.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Program: unchain.c" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>First, set up two word-sized variables to keep track of the
+visible and non-visible pages. These are offsets to video memory.
+</p>
+
+<pre>unsigned int visible_page=0;
+unsigned int non_visible_page=320*200/4;
+</pre>
+
+<p>Then do all the drawing to the non-visible page. For instance,
+if a pixel was to be plotted: </p>
+
+<pre>/* select plane */
+outp(SC_INDEX, MAP_MASK);
+outp(SC_DATA,  1 &lt;&lt; (x&amp;3) );
+
+VGA[non_visible_page+(y&lt;&lt;6)+(y&lt;&lt;4)+(x&gt;&gt;2)]=color;
+</pre>
+
+<p>When all the drawing is finished, it is time to switch the
+pages. The new offset is set through two registers on the CRT
+controller. The first, 0x0C, sets the upper 8-bits of the offset,
+and the second, 0Dh, sets the lower 8-bits. </p>
+
+<pre>/* CRT controller registers */
+#define HIGH_ADDRESS 0x0C
+#define LOW_ADDRESS  0x0D
+
+...
+
+temp = visible_page;
+visible_page = non_visible_page;
+non_visible_page = temp;
+
+high_addr=HIGH_ADDRESS | (visible_page &amp; 0xff00);
+low_addr =LOW_ADDRESS  | (visible_page &lt;&lt; 8);
+
+while ((inp(INPUT_STATUS_1) &amp; VRETRACE));
+outpw(CRTC_INDEX, high_addr);
+outpw(CRTC_INDEX, low_addr);
+while (!(inp(INPUT_STATUS_1) &amp; VRETRACE));
+</pre>
+
+<p>Here are some things to consider when using page flipping: </p>
+
+<ul>
+    <li>If the program was using interrupts, it would be
+        advisable to disable interrupts before the page was
+        flipped and re-enable them afterward. If an interrupt
+        occurred at the wrong time, the screen could be
+        temporarily distorted.</li>
+    <li>When the offset registers are changed, the page flip does
+        not occur until the end of the <i>next</i> vertical
+        retrace. So after the page is flipped, the program should
+        wait until the end of the vertical retrace before drawing
+        to the <i>non-visible</i> page.</li>
+</ul>
+
+<p>In the following program, instead of referring to the pages as
+<i>visible</i> and <i>non-visible</i> refers to them as <i>visual</i>
+and <i>active</i>. It draws animated balls (Figure 24) around the
+screen using both double buffering and page flipping, and then
+outputs the results. It defaults to drawing eight balls; a unique
+number of balls can be drawn by specifying a number at the
+command prompt. In this example, 16 balls were drawn by using the
+command <code>unchain 16</code>. </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00035.gif" width="320"
+        height="75"><br>
+        <br>
+        <b>Figure 24.</b> <code>balls.bmp</code>. </td>
+    </tr>
+</table>
+</center></div>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain8.0"></a><strong>&nbsp;Program: unchain.c</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain7.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Page flipping in unchained mode" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain9.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Other unchained modes" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>
+
+<table border="0" cellspacing="0" bgcolor="#000000">
+    <tr>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>Borland C /
+                Turbo C /etc.</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/bc31/unchain.c.html"><img
+                src="images/ui/doc.gif" alt="View unchain.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/bc31/unchain.c.html">unchain.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/bc31/unchain.zip"><img
+                src="images/ui/download.gif"
+                alt="Download unchain.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/bc31/unchain.zip">unchain.zip</a>
+                (34K)<br>
+                <font size="2">Contains unchain.c, unchain.exe,
+balls.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>DJGPP 2.0</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/djgpp20/unchain.c.html"><img
+                src="images/ui/doc.gif" alt="View unchain.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/djgpp20/unchain.c.html">unchain.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/djgpp20/unchain.zip"><img
+                src="images/ui/download.gif"
+                alt="Download unchain.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/djgpp20/unchain.zip">unchain.zip</a>
+                (56K)<br>
+                <font size="2">Contains unchain.c, unchain.exe,
+balls.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td width="100%"><font size="2">Having trouble compiling
+        or running the program? See the </font><a
+        href="trouble.html"><font size="2">Troubleshooting</font></a><font
+        size="2"> page.</font></td>
+    </tr>
+</table>
+</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00036.gif" width="320"
+        height="200"><br>
+        <br>
+        <b>Figure 25.</b> Output from <code>unchain.exe</code>. </td>
+    </tr>
+</table>
+</center></div>
+
+<pre>Results with 16 objects:
+  Mode 13h with double buffering:
+    5.989011 seconds,
+    23.376147 frames per second.
+  Unchained mode with page flipping:
+    4.065934 seconds,
+    34.432431 frames per second.
+  Unchained mode with page flipping was
+  1.472973 times faster.
+</pre>
+
+<p>Although page flipping in unchained mode was faster than
+double buffering in mode 0x13 in this example, it is not always
+faster. This program was created to prove a point: depending on
+the number of pixels drawn and the number of <code>outp()</code>'s
+or <code>outpw()</code>'s used in unchained mode, mode 0x13 can
+still be faster. The program was tested (ignoring the vertical
+retrace) on various numbers of objects to show the relationship
+(Figure 26). </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00037.gif" width="409"
+        height="258"><br>
+        <br>
+        <b>Figure 26.</b> Unchained mode is not always faster. </td>
+    </tr>
+</table>
+</center></div>
+
+<p>One of the reasons mode 0x13 is sometimes faster than
+unchained mode is that for each frame, the selected plane is
+changed four times for each ball object. The program could have
+been created to select the plane only four times per frame, which
+would have increased performance, because <code>outp()</code>'s
+and <code>outpw()</code>'s are very slow statements. When
+designing a program for unchained mode, the number of <code>outp()</code>'s
+and <code>outpw()</code>'s used should be limited to as few as
+possible. </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain9.0"></a><strong>&nbsp;Other unchained modes</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain8.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Program: unchain.c" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain10.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Program: modes.c" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>The code below will someday be included in another section of
+this site, but right know it's just here to show you how to
+program the different unchained modes, like 320x240 and 360x480.</p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain10.0"></a><strong>&nbsp;Program: modes.c</strong></font></td>
+    <td align="right" valign="middle"><a href="#unchain9.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Other unchained modes" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#unchain11.0"><img src="images/ui/arrow_right.gif"
+    alt="Bottom" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>This program demonstrates various unchained modes. It supports
+widths of 320 and 360, and heights of 200, 400, 240, and 480, so
+there are a total of eight combinations. Setting the mode you
+want is done like so:</p>
+
+<pre>set_unchained_mode(320,240);
+</pre>
+
+<p>The program also demonstrates planar bitmaps, which speeds
+things up a bit. Make sure you download <code>ghosts.bmp</code>
+to get the program to work.</p>
+
+<p>
+
+<table border="0" cellspacing="0" bgcolor="#000000">
+    <tr>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>Borland C /
+                Turbo C /etc.</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/bc31/modes.c.html"><img
+                src="images/ui/doc.gif" alt="View modes.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/bc31/modes.c.html">modes.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/bc31/modes.zip"><img
+                src="images/ui/download.gif"
+                alt="Download modes.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/bc31/modes.zip">modes.zip</a>
+                (20K)<br>
+                <font size="2">Contains modes.c, modes.exe,
+ghosts.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>DJGPP 2.0</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/djgpp20/modes.c.html"><img
+                src="images/ui/doc.gif" alt="View modes.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/djgpp20/modes.c.html">modes.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/djgpp20/modes.zip"><img
+                src="images/ui/download.gif"
+                alt="Download modes.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/djgpp20/modes.zip">modes.zip</a>
+                (55K)<br>
+                <font size="2">Contains modes.c, modes.exe,
+ghosts.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td width="100%"><font size="2">Having trouble compiling
+        or running the program? See the </font><a
+        href="trouble.html"><font size="2">Troubleshooting</font></a><font
+        size="2"> page.</font></td>
+    </tr>
+</table>
+</p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="unchain11.0"></a>&nbsp;</font></td>
+    <td align="right" valign="middle"><a href="#unchain10.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Program: modes.c" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+<br><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td align="left" valign="top"><a href="mouse.html"
+onmouseout="changeImage(prev,'navigate_prev')"
+onmouseover="changeImage(prev,'navigate_prev_hover')"><img src="images/ui/navigate_prev.gif" align="absmiddle"
+border="0" hspace="2" width="32" height="32" name="prev"><font
+size="2">Previous: Mouse Support &amp; Animation</font></a></td><td align="right" valign="top">&nbsp;</td></tr></table><p>&nbsp;</p><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td>  <font size="2" face="tahoma, arial, helvetica"><strong><a href="index.html">256-Color VGA Programming in C</a></strong>
+ | <a href="intro.html">Introduction</a>
+ | <a href="basics.html">VGA Basics</a>
+ | <a href="shapes.html">Primitive Shapes &amp; Lines</a>
+ | <a href="bitmaps.html">Bitmaps &amp; Palette Manipulation</a>
+ | <a href="mouse.html">Mouse Support &amp; Animation</a>
+ | <a href="unchain.html">Double Buffering, Page Flipping, &amp; Unchained Mode</a>
+ | <a href="announce.html">Announcements</a>
+ | <a href="resource.html">Links and Other Resources</a>
+ | <a href="download.html">Download</a>
+ | <a href="trouble.html">FAQ and Troubleshooting</a>
+  </font></td></tr></table>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>

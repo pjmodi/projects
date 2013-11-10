@@ -1,0 +1,679 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+  content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="Tofu HTML Preprocessor">
+  <meta name="keywords" content="VGA, VGA programming, game programming, C, mouse, lines, circles, rectangles, polygons,  bitmaps, vertical retrace, animation, 256 color, pixel plotting, mode 13, mode x, double buffering, page flipping, unchained mode, flicker-free">
+  <meta name="description" content="VGA basics, lines and shapes, bitmaps, mouse, double buffering, page flipping, unchained mode, and more">
+  <link rel=stylesheet href="256vpc.css" type="text/css">
+  <title>256-Color VGA Programming in C - Bitmaps &amp; Palette Manipulation</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<script language="JavaScript"><!--
+nav = navVersion();
+ie = ieVersion();
+
+preloadImage("images/ui/subhead_left.gif");
+preloadImage("images/ui/subhead_right.gif");
+preloadImage("images/ui/dot.gif");
+preloadImage("images/ui/navigate_next_hover.gif");
+preloadImage("images/ui/navigate_prev_hover.gif");
+
+function navVersion()
+{
+	var ua = window.navigator.userAgent;
+	var nav = ua.indexOf ( "Mozilla/" );
+	if (nav>=0)
+		return parseInt ( ua.substring ( nav+8, ua.indexOf (".") ) );
+	else
+		return 0;	// is other browser
+}
+
+function ieVersion()
+{
+	var ua = window.navigator.userAgent;
+	var msie = ua.indexOf("MSIE ");
+	if (msie>=0)	
+		return parseInt ( ua.substring ( msie+5, ua.indexOf ( ".", msie ) ) );
+	else
+		return 0;	
+}
+
+function changeImage(image, filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image.src = "images/ui/" + filename + ".gif"
+	}
+}
+
+function preloadImage(filename)
+{
+	if ((nav>=3 && ie==0) || ie>=4)
+	{
+		image = new Image();
+    image.src = filename;
+	}
+
+}
+// --></script>
+
+<a href="index.html"><font size="2">256-Color VGA Programming in C</font></a><br><font size="6" face="tahoma, arial, helvetica"><strong><a name="top"></a>Bitmaps &amp; Palette Manipulation</strong></font><br>
+<strong>Contents:</strong><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#bitmaps1.0"><font size="2">What is a bitmap?</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#bitmaps2.0"><font size="2">The BMP file format</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#bitmaps3.0"><font size="2">Drawing bitmaps</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#bitmaps4.0"><font size="2">Program: bitmap.c</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#bitmaps5.0"><font size="2">Palette manipulation</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#bitmaps6.0"><font size="2">Program: palette.c</font></a><br>
+<img src="images/ui/dot2.gif" width=14 height=11 border=0 alt=""><a href="#bitmaps7.0"><font size="2">Vertical retrace</font></a><br>
+
+
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="bitmaps1.0"></a><strong>&nbsp;What is a bitmap?</strong></font></td>
+    <td align="right" valign="middle"><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#bitmaps2.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: The BMP file format" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>One of the most important things in creating a user-friendly
+interface is the use of bitmaps. Without bitmaps, there would be
+no icons, no fancy buttons, and mouse pointers would have to be
+made of lines. </p>
+
+<p>The term <em>bitmap</em> is a throwback from when monitors
+could only display one other color besides black. For two-color
+data files that store an image, each bit in the data file
+represents one pixel; a 1 meant the pixel was on, a 0 meant the
+pixel was off (Figure 13). Therefore, a two-color image is a map
+of bits.</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00023.gif" width="281"
+        height="133"><br>
+        <br>
+        <b>Figure 13.</b> A black &amp; white bitmap in memory
+        and on the screen. </td>
+    </tr>
+</table>
+</center></div>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="bitmaps2.0"></a><strong>&nbsp;The BMP file format</strong></font></td>
+    <td align="right" valign="middle"><a href="#bitmaps1.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: What is a bitmap?" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#bitmaps3.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Drawing bitmaps" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>There are many file formats for storing bitmaps, such as RLE,
+JPEG, TIFF, TGA, PCX, BMP, PNG, PCD and GIF. The bitmaps studied
+in this section will be 256-color bitmaps, where eight bits
+represents one pixel.. One of the easiest 256-color bitmap file
+format is Windows' BMP. This file format can be stored
+uncompressed, so reading BMP files is fairly simple; most other
+graphics formats are compressed, and some, like GIF, are
+difficult to decompress. To learn about other graphics file
+formats, visit <a
+href="ftp://x2ftp.oulu.fi/pub/msdos/programming/formats/00index.html">x2ftp</a>.
+</p>
+
+<p>There are a few different sub-types of the BMP file format.
+The one studied here is Windows' RGB-encoded BMP format. For
+256-color bitmaps, it has a 54-byte header (Table III) followed
+by a 1024-byte palette table. After that is the actual bitmap,
+which starts at the lower-left hand corner. </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><div align="center"><center><table border="1"
+        cellpadding="2" cellspacing="0" cols="2">
+            <tr>
+                <td><em><strong>Data</strong></em></td>
+                <td><em><strong>Description</strong></em></td>
+            </tr>
+            <tr>
+                <td><code>WORD Type;</code></td>
+                <td>File type. Set to &quot;BM.&quot;</td>
+            </tr>
+            <tr>
+                <td><code>DWORD Size;</code></td>
+                <td>Size in DWORDs of the file</td>
+            </tr>
+            <tr>
+                <td><code>DWORD Reserved;</code></td>
+                <td>Reserved. Set to zero.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD Offset;</code></td>
+                <td>Offset to the data.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD headerSize;</code></td>
+                <td>Size of rest of header. Set to 40.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD Width;</code></td>
+                <td>Width of bitmap in pixels.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD Height;</code></td>
+                <td>Height of bitmap in pixels.</td>
+            </tr>
+            <tr>
+                <td><code>WORD Planes;</code></td>
+                <td>Number of Planes. Set to 1.</td>
+            </tr>
+            <tr>
+                <td><code>WORD BitsPerPixel;</code></td>
+                <td>Number of bits per pixel.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD Compression;</code></td>
+                <td>Compression. Usually set to 0.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD SizeImage;</code></td>
+                <td>Size in bytes of the bitmap. </td>
+            </tr>
+            <tr>
+                <td><code>DWORD XPixelsPerMeter;</code></td>
+                <td>Horizontal pixels per meter.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD YPixelsPerMeter;</code></td>
+                <td>Vertical pixels per meter.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD ColorsUsed;</code></td>
+                <td>Number of colors used.</td>
+            </tr>
+            <tr>
+                <td><code>DWORD ColorsImportant;</code></td>
+                <td>Number of &quot;important&quot; colors.</td>
+            </tr>
+        </table>
+        </center></div><p><b>Table III.</b> Windows' BMP file
+        format header.</p>
+        </td>
+    </tr>
+</table>
+</center></div>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="bitmaps3.0"></a><strong>&nbsp;Drawing bitmaps</strong></font></td>
+    <td align="right" valign="middle"><a href="#bitmaps2.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: The BMP file format" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#bitmaps4.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Program: bitmap.c" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+ </p>
+
+<p>Once read, displaying the bitmap is relatively easy, and
+involves only a few memory copies to display memory. The
+following is the code to display a 32x64 image stored in an array
+<code>bitmap</code>: </p>
+
+<pre>for(y=0;y&lt;64;y++)
+  for(x=0;x&lt;32;x++)
+    VGA [x+y*320]=bitmap [x+y*32];
+</pre>
+
+<p>Something interesting to note about the BMP file format is
+that each scan line is padded to the nearest 4-byte boundry. So,
+if the image read has a width that is not divisible by four, say,
+21 bytes, there would be 3 bytes of padding at the end of every
+scan line. The program <code>bitmap.exe</code> does not account
+for this; it assumes the bitmap's width <i>is</i> divisible by
+four. </p>
+
+<p>There are many techniques to implement transparency. One way
+is to assign one of the 256 colors to be transparent in the
+program. When drawing the image, a byte with the transparency
+value is not written to video memory. The following implements
+this using zero as the transparency value: </p>
+
+<pre>for(y=0;y&lt;64;y++)
+  for(x=0;x&lt;32;x++)
+  {
+    data=bitmap [x+y*32];
+    if (data!=0) VGA [x+y*320]=data;
+  }
+</pre>
+
+<p>The following program <code>bitmap.c</code> reads a bitmap
+file <code>rocket.bmp</code> (Figure 14) and draws it to the
+screen in a tiled fashion, using both opaque and transparent
+bitmap drawing functions.</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00024.gif" width="199"
+        height="199"><br>
+        <br>
+        <b>Figure 14.</b> Bitmap <code>rocket.bmp</code>.</td>
+    </tr>
+</table>
+</center></div>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="bitmaps4.0"></a><strong>&nbsp;Program: bitmap.c</strong></font></td>
+    <td align="right" valign="middle"><a href="#bitmaps3.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Drawing bitmaps" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#bitmaps5.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Palette manipulation" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>
+
+<table border="0" cellspacing="0" bgcolor="#000000">
+    <tr>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>Borland C /
+                Turbo C /etc.</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/bc31/bitmap.c.html"><img
+                src="images/ui/doc.gif" alt="View bitmap.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/bc31/bitmap.c.html">bitmap.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/bc31/bitmap.zip"><img
+                src="images/ui/download.gif"
+                alt="Download bitmap.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/bc31/bitmap.zip">bitmap.zip</a>
+                (14K)<br>
+                <font size="2">Contains bitmap.c, bitmap.exe,
+rocket.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>DJGPP 2.0</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/djgpp20/bitmap.c.html"><img
+                src="images/ui/doc.gif" alt="View bitmap.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/djgpp20/bitmap.c.html">bitmap.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/djgpp20/bitmap.zip"><img
+                src="images/ui/download.gif"
+                alt="Download bitmap.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/djgpp20/bitmap.zip">bitmap.zip</a>
+                (44K)<br>
+                <font size="2">Contains bitmap.c, bitmap.exe,
+rocket.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td width="100%"><font size="2">Having trouble compiling
+        or running the program? See the </font><a
+        href="trouble.html"><font size="2">Troubleshooting</font></a><font
+        size="2"> page.</font></td>
+    </tr>
+</table>
+</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00025.gif" width="320"
+        height="200"><br>
+        <br>
+        <b>Figure 15.</b> Output from <code>bitmap.exe</code>.</td>
+    </tr>
+</table>
+</center></div>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="bitmaps5.0"></a><strong>&nbsp;Palette manipulation</strong></font></td>
+    <td align="right" valign="middle"><a href="#bitmaps4.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Program: bitmap.c" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#bitmaps6.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Program: palette.c" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>The background in the output of <code>bitmap.exe</code> is a
+representation of the VGA's 256-color palette. Fortunately, the
+palette is programmable to other colors, so bitmaps are not
+forced onto an odd palette. Unfortunatly, the VGA only gives us 6
+bits per color channel, so the best you can get is 18-bit color
+(but you can only pick 256 of those colors, of course). Palette
+information is stored after the header in the BMP file format.
+Four bytes define each color: one byte each for blue, green, red,
+and one reserved byte. The VGA understands color values in the
+order red, green, blue, (reverse of the BMP format) plus the
+program needs to change the palette data form 24-bit to 18-bit
+(divide each color by four, or right-shift by two).</p>
+
+<p>To set one color in the palette, write the color index to port
+0x3C8 and then write the red, green, and blue values, in order,
+to port 0x3C9 </p>
+
+<pre>outp(0x03c8, index);
+outp(0x03c9, red);
+outp(0x03c9, green);
+outp(0x03c9, blue);
+</pre>
+
+<p>To set all 256 colors in the palette, write zero to port 0x3C8
+and then write all 768 bytes of the palette to port 0x3C9. </p>
+
+<pre>outp(0x03c8, 0);
+for(i=0;i&lt;256;i++)
+{
+  outp(0x03c9, palette_red[i]);
+  outp(0x03c9, palette_green[i]);
+  outp(0x03c9, palette_blue[i];
+}
+</pre>
+
+<p>Note that the palette cannot be set until the 256-color video
+mode has been set. </p>
+
+<p>The program <code>palette.c</code> reads in an image, displays
+it, and then cycles through all the colors by repeatedly changing
+the palette. </p>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="bitmaps6.0"></a><strong>&nbsp;Program: palette.c</strong></font></td>
+    <td align="right" valign="middle"><a href="#bitmaps5.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Palette manipulation" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#bitmaps7.0"><img src="images/ui/arrow_right.gif"
+    alt="Next: Vertical retrace" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>
+
+<table border="0" cellspacing="0" bgcolor="#000000">
+    <tr>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>Borland C /
+                Turbo C /etc.</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/bc31/palette.c.html"><img
+                src="images/ui/doc.gif" alt="View palette.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/bc31/palette.c.html">palette.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/bc31/palette.zip"><img
+                src="images/ui/download.gif"
+                alt="Download palette.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/bc31/palette.zip">palette.zip</a>
+                (19K)<br>
+                <font size="2">Contains palette.c, palette.exe,
+mset.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+        <td valign="top"><table border="0" cellpadding="2"
+        cellspacing="0" bgcolor="#FFFFCC">
+            <tr>
+                <td valign="top" colspan="2"><strong>DJGPP 2.0</strong></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="source/djgpp20/palette.c.html"><img
+                src="images/ui/doc.gif" alt="View palette.c"
+                border="0" hspace="2" vspace="2" width="14"
+                height="18"></a></td>
+                <td valign="top"><a
+                href="source/djgpp20/palette.c.html">palette.c</a></td>
+            </tr>
+            <tr>
+                <td valign="top"><a
+                href="download/djgpp20/palette.zip"><img
+                src="images/ui/download.gif"
+                alt="Download palette.zip" border="0" width="18"
+                height="22"></a></td>
+                <td valign="top"><a
+                href="download/djgpp20/palette.zip">palette.zip</a>
+                (49K)<br>
+                <font size="2">Contains palette.c, palette.exe,
+mset.bmp</font></td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td width="100%"><font size="2">Having trouble compiling
+        or running the program? See the </font><a
+        href="trouble.html"><font size="2">Troubleshooting</font></a><font
+        size="2"> page.</font></td>
+    </tr>
+</table>
+</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td><img src="images/img00026.gif" width="320"
+        height="200"><br>
+        <br>
+        <b>Figure 16. </b>Output from <code>palette.exe</code>.</td>
+    </tr>
+</table>
+</center></div>
+
+<p><table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="bitmaps7.0"></a><strong>&nbsp;Vertical retrace</strong></font></td>
+    <td align="right" valign="middle"><a href="#bitmaps6.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Program: palette.c" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a><a
+    href="#bitmaps8.0"><img src="images/ui/arrow_right.gif"
+    alt="Bottom" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+</p>
+
+<p>Something to note about the program is the function <code>wait_for_retrace</code>:
+</p>
+
+<pre>void wait_for_retrace(void)
+{
+  /* wait until done with vertical retrace */
+  while  ((inp(INPUT_STATUS) &amp; VRETRACE));
+  /* wait until done refreshing */
+  while (!(inp(INPUT_STATUS) &amp; VRETRACE));
+}
+</pre>
+
+<p>If the <code>while</code> loops in this function were
+commented out and the program was run, two things would happen:
+the palette would cycle very, very quickly, and the image would
+appear to have shearing effect as the palette cycled. The reason
+has to do with the VGA's vertical refresh rate. </p>
+
+<p>The VGA refreshes the screen 70 times a second, or 70hz. An
+electron gun goes across the screen from left to right, top to
+bottom. When it gets to the bottom of the screen, (i.e., it
+finished refreshing), the electron gun has to travel from the
+bottom right corner of the screen to the upper left corner of the
+screen. That time, called the retrace period, is the ideal time
+to change the palette. If the program did not wait for the
+retrace, the palette would sometimes be changed in the middle of
+a refresh, resulting in different colors on the top portion of
+the screen for a split second. This is how the shearing effect
+happens. To eliminate this, <code>palette.c</code> uses the <code>wait_for_retrace</code>
+function. </p>
+
+<p>The other effect is that the function acts as a timer, which,
+since the function is called twice, makes the palette cycle at 35
+times a second. This is very useful when animating bitmaps, which
+is a primary focus in the next section. </p>
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+bgcolor="#00CC00">
+  <tr>
+    <td valign="top" width="9"><img src="images/ui/subhead_left.gif"
+     width="9" height="24"></td>
+    <td valign="middle" width="100%"><font size="4" face="tahoma, arial, helvetica" color="#FFFFCC"><a
+    name="bitmaps8.0"></a>&nbsp;</font></td>
+    <td align="right" valign="middle"><a href="#bitmaps7.0"><img
+    src="images/ui/arrow_left.gif"
+    alt="Previous: Vertical retrace" border="0"
+    width="16" height="16"></a><a href="#top"><img
+    src="images/ui/arrow_up.gif" alt="Top" border="0"
+    width="16" height="16"></a></td>
+    <td valign="bottom" width="9"><img src="images/ui/subhead_right.gif"
+     width="9" height="24"></td>
+  </tr>
+</table>
+<br><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td align="left" valign="top"><a href="shapes.html"
+onmouseout="changeImage(prev,'navigate_prev')"
+onmouseover="changeImage(prev,'navigate_prev_hover')"><img src="images/ui/navigate_prev.gif" align="absmiddle"
+border="0" hspace="2" width="32" height="32" name="prev"><font
+size="2">Previous: Primitive Shapes &amp; Lines</font></a></td><td align="right" valign="top"><a href="mouse.html"
+onmouseout="changeImage(next,'navigate_next')"
+onmouseover="changeImage(next,'navigate_next_hover')"><font size="2">Next: Mouse Support &amp; Animation</font><img
+src="images/ui/navigate_next.gif" align="absmiddle"
+border="0" hspace="2" width="32" height="32" name="next"></a></td></tr></table><p>&nbsp;</p><table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr><td>  <font size="2" face="tahoma, arial, helvetica"><strong><a href="index.html">256-Color VGA Programming in C</a></strong>
+ | <a href="intro.html">Introduction</a>
+ | <a href="basics.html">VGA Basics</a>
+ | <a href="shapes.html">Primitive Shapes &amp; Lines</a>
+ | <a href="bitmaps.html">Bitmaps &amp; Palette Manipulation</a>
+ | <a href="mouse.html">Mouse Support &amp; Animation</a>
+ | <a href="unchain.html">Double Buffering, Page Flipping, &amp; Unchained Mode</a>
+ | <a href="announce.html">Announcements</a>
+ | <a href="resource.html">Links and Other Resources</a>
+ | <a href="download.html">Download</a>
+ | <a href="trouble.html">FAQ and Troubleshooting</a>
+  </font></td></tr></table>
+<p>&nbsp;</p><p>&nbsp;</p>
+</body>
+</html>
