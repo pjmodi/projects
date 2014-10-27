@@ -9,7 +9,6 @@ print date
 bintodec.py
 
 Created by Pushkar Modi on 2010-10-03.
-Copyright (c) 2010 Yahoo!. All rights reserved.
 """
 
 def sets():
