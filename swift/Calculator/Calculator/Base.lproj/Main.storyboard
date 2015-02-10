@@ -183,17 +183,17 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nr1-i9-ghl">
                                 <rect key="frame" x="472" y="76" width="104" height="123"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <state key="normal">
+                                <state key="normal" title="∏">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Jzt-eg-CFy"/>
+                                    <action selector="pi:" destination="BYZ-38-t0r" eventType="touchUpInside" id="FVd-as-sLg"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UUV-ux-AwR">
                                 <rect key="frame" x="472" y="207" width="104" height="123"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <state key="normal">
+                                <state key="normal" title="sin">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -203,7 +203,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8vm-xs-frf">
                                 <rect key="frame" x="472" y="338" width="104" height="123"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <state key="normal">
+                                <state key="normal" title="cos">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>

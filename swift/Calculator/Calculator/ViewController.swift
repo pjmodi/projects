@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Darwin
 
 class ViewController: UIViewController {
     
@@ -25,6 +26,17 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBAction func pi(sender: UIButton) {
+        let pi = M_PI
+        
+        if userIsInTheMiddleOfTypingANumber {
+            enter()
+        }
+        
+        display.text = "\(pi)"
+        enter()
+    }
+    
     
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
@@ -39,6 +51,8 @@ class ViewController: UIViewController {
             case "+": performOperation {$0 + $1}
             case "−": performOperation {$1 - $0}
             case "√": performOperation {sqrt($0)}
+            case "sin": performOperation {sin($0)}
+            case "cos": performOperation {cos($0)}
             default: break
         }
     }
