@@ -14,10 +14,20 @@ class ViewController: UIViewController {
     @IBOutlet weak var display: UILabel!
     
     var userIsInTheMiddleOfTypingANumber = false
+    var decimalsUsed = 0
     var operandStack = Array<Double>()
     
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
+        
+        if digit == "." {
+            if decimalsUsed > 0 {
+                return
+            } else {
+                decimalsUsed++
+            }
+        }
+        
         if userIsInTheMiddleOfTypingANumber {
             display.text = display.text! + digit
         } else {
@@ -36,7 +46,6 @@ class ViewController: UIViewController {
         display.text = "\(pi)"
         enter()
     }
-    
     
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
