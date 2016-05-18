@@ -9,12 +9,23 @@ var createBrowserHistory = require('history/lib/createBrowserHistory');
 
 var h = require('./helpers');
 
+// Firebase
+var Rebase = require('re-base');
+var base = Rebase.createClass('https://glaring-fire-8643.firebaseio.com/');
+
 var App = React.createClass({
     getInitialState : function() {
         return {
             fishes : {},
             order : {}
         }
+    },
+
+    componentDidMount : function() {
+        base.syncState(this.props.params.storeId + '/fishes', {
+            context : this,
+            state : 'fishes'
+        });
     },
 
     addToOrder : function(fish) {
