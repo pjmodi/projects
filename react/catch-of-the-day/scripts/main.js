@@ -14,6 +14,6 @@ var routes = (
         <Route path="/store/:storeId" component={App} />
         <Route path="*" component={NotFound} />
     </Router>
-)
+);
 
 ReactDOM.render(routes, document.querySelector('#main'));
