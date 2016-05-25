@@ -1,11 +1,10 @@
 import React from 'react';
 import { History } from 'react-router';
 import h from '../helpers';
+import reactMixin from 'react-mixin';
 
-var StorePicker = React.createClass({
-    mixins : [History],
-
-    goToStore : function(event) {
+class StorePicker extends React.Component {
+    goToStore(event) {
         event.preventDefault();
 
         // get the data from the input
@@ -14,10 +13,10 @@ var StorePicker = React.createClass({
 
         // transition to new route
         this.history.pushState(null, '/store/' + storeId);
-    },
+    }
 
     // render method is the html that will be displayed.
-    render : function() {
+        render() {
         var name = "Pushkar";
         return (
             <form className="store-selector" onSubmit={this.goToStore}>
@@ -29,6 +28,8 @@ var StorePicker = React.createClass({
             </form>
         )
     }
-});
+}
+
+reactMixin.onClass(StorePicker, History);
 
 export default StorePicker;
